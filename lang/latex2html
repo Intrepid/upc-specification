@@ -6668,6 +6668,9 @@ sub do_cmd_HTMLcode {
 	print "*** no tag given with \\HTML command, ignoring it";
 	return($_);
     }
+    warn "found tag: $tag, which is a "
+         . ((defined $closed_tags_list{$tag}) ? "valid" : "invalid")
+	 . " closed tag\n";
     local($afterHTML) = $_;
     local($value,$TAGattribs,$etag);
     if (defined $unclosed_tags_list{$tag}) {
