@@ -1,5 +1,11 @@
 2011-11-02  Gary Funck <gary@intrepid.com>
 
+	* Makefile: Add definitions for $(RMDIR) and $(CLEAN_FILES)
+	to fully implement the 'clean' target.  This works around some
+	shortcomings in the latex-mk Makefile template.
+
+2011-11-02  Gary Funck <gary@intrepid.com>
+
 	Implement changes to further support HTML generation.
 	* upc-specs-1-2.tex:  Add markup and test for HTML generation.
 	Replace use of math markup such as $i$ with {\tt i}
