@@ -1,5 +1,25 @@
 2011-11-02  Gary Funck <gary@intrepid.com>
 
+	Implement changes to further support HTML generation.
+	* upc-specs-1-2.tex:  Add markup and test for HTML generation.
+	Replace use of math markup such as $i$ with {\tt i}
+	to improve HTML readability and to simplify LaTeX usage.
+	Miscellaneous corrections and improvements.
+	(tab): New command to generate an approximate tab in the
+	HTML output.
+	(np): Modify new paragraph command to add tab character after
+	paragraph number in HTML output.
+	(sterm, ssterm, pterm): New commands to specify section, sub-section,
+	and paragraph level terms.  Used to replace use of explicit section
+	numbering and index tagging.
+	(npf): First occurrences in sections of \np replaced by \npf
+	"number paragraph first" directives throughout.
+	* latex2html: Add improved error diagnostic that is issued
+	when an unmatched HTML tag is encountered.  This is not
+	strictly necessary, but does help debug problems with generated HTML.
+
+2011-11-02  Gary Funck <gary@intrepid.com>
+
 	Define Makefile and infrastructure for building
 	both HTML and PDF versions of the UPC language specification.
 	* upc-specs-1-2.tex: Renamed from upc_specs_1.2.tex.
