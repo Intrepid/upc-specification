@@ -1,6 +1,8 @@
 NAME = upc-specs-1-2
 TEXSRCS =
 USE_PDFLATEX = 1
+RMDIR = $(RM) -rf
+CLEAN_FILES += ${NAME:=.pdfsync}
 ALL = pdf html
 
 .PHONY: make-default
