@@ -1,0 +1,16 @@
+2011-11-02  Gary Funck <gary@intrepid.com>
+
+	Define Makefile and infrastructure for building
+	both HTML and PDF versions of the UPC language specification.
+	* upc-specs-1-2.tex: Renamed from upc_specs_1.2.tex.
+	This form of the file name fits better with the latex-mk
+	makefile infrastructure.
+	* .latex2html-init: New.  latex2html configuration file
+	* latex2html.cfg.pl: New. Symlink to .latex2html-init to
+	provide user-visible name for the latex2html configuration file.
+	Note: svn use of symlinks are not supported on Windows client.
+	* latex2html: New. local copy of the latex2html script.
+	* README.txt: New. Describe files in this directory.
+	* Makefile: New.  Makefile.  Requires installation of 
+	the 'latex-mk' package, and setting of the 'LATEX_MK_DIR'
+	environment variable via /etc/profile.d/latex-mk.sh.
