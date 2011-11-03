@@ -62,9 +62,6 @@
 
 \makeindex
 
-\let\theoriginalindex\theindex
-\def\theindex{\theoriginalindex\phantomsection\addcontentsline{toc}{section}{Index}}
-
 \title{UPC Language Specifications\\
 V1.2 }
 
@@ -132,7 +129,7 @@ may be joined.  Comments on these specifications are always welcome.
 
 \newpage
 
-%\addcontentsline{toc}{section}{Introduction}
+\addcontentsline{toc}{section}{Introduction}
 \section*{Introduction}
 
 \npf UPC is a parallel extension to the C Standard.  UPC follows the
@@ -478,7 +475,7 @@ may be joined.  Comments on these specifications are always welcome.
 \begin{center}
 {\tt\bf 
 \begin{tabular}{lll}
-MYTHREAD & upc\_barrier & upc\_localsizeof  \\ 
+MYTHREAD & upc\_barrier & upc\_localsizeof  \\
 relaxed & upc\_blocksizeof & UPC\_MAX\_BLOCKSIZE \\
 shared &  upc\_elemsizeof & upc\_notify \\
 strict &   upc\_fence  & upc\_wait \\
@@ -569,7 +566,7 @@ as keywords and shall not be otherwise used.
     applied to a definitely blocked shared array under
     the {\em dynamic THREADS} environment.
 
-\paragraph{The {\tt\bf upc\_localsizeof} operator}\ \\\
+\paragraph{The {\tt\bf upc\_localsizeof} operator}\ \\
  
 {\bf Constraints} 
 
@@ -4929,7 +4926,7 @@ StrictPairs(M) {def \atop =} \left\{\ (m_1, m_2)\ \left|\
 \]
 \[
 StrictOnThreads(M) {def \atop =} \left\{\ (m_1, m_2)\ \left|\ 
-\begin{array}{l} m_1 \neq m_2\ \land\ \\ Thread(m_1) = Thread(m_2)\ \land \\ 
+\begin{array}{l} m_1 \neq m_2\ \land\ \\ Thread(m_1) = Thread(m_2)\ \land \\
                  (\ m_1 \in Strict(M)\ \lor\ m_2 \in Strict(M)\ ) \end{array} \right. \right\} 
 \]
 \[
@@ -4961,9 +4958,9 @@ Conflicting(M) {def \atop =} \left\{\ (m_1, m_2)\ \left|\
 \begin{array}{l}
 DependOnThreads(M)\ {def \atop =}
 \left\{ \langle m_1, m_2\rangle  \left|\ \begin{array}{l} 
- m_1 \neq m_2\ \land\ \\ Thread(m_1) = Thread(m_2)\ \land \\ 
+ m_1 \neq m_2\ \land\ \\ Thread(m_1) = Thread(m_2)\ \land \\
  Precedes(m_1, m_2)\ \land \\
- \left( \begin{array}{l} (m_1, m_2) \in Conflicting(M)\ \lor \\ 
+ \left( \begin{array}{l} (m_1, m_2) \in Conflicting(M)\ \lor \\
                          (m_1,m_2) \in StrictOnThreads(M) \end{array}\right)\ \end{array} \right. \right\} 
 \end{array}
 \]
@@ -5973,7 +5970,7 @@ UPC specifications subsection &   C Standard specifications subsection \\
 6.5 &   6.8 \\
 6.6 &   6.10 \\
 7   &   7 \\
-7.1 &   7.1.2 \\ 
+7.1 &   7.1.2 \\
 \hline
 \end{tabular}                                                  
 
