@@ -24,13 +24,13 @@ Makefile
 	environment variable so that the Makefile template can
 	be located via make's 'include' mechanism.
 
-upc-specs-1-2.tex
+upc-lang-spec.tex
 
 	Updated .tex mark up for the UPC Specification.
 	Changes were made to make the document eaisier
 	to maintain and to produce meaningful HTML output.
 
-upc-specs-1-2.tar.gz
+upc-lang-spec.tar.gz
 
 	gzip'd tar file containing all UPC specification source files,
 	build/make files, the generated .pdf file and the generated
