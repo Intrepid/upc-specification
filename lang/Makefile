@@ -3,12 +3,12 @@ TEXSRCS =
 USE_PDFLATEX = 1
 RMDIR = $(RM) -rf
 CLEAN_FILES += ${NAME:=.pdfsync}
+LATEX2HTML_FLAGS = -init_file latex2html.cfg
 
 $(NAME)_EXTRA_DIST_FILES = \
 	ChangeLog \
 	latex2html \
-	.latex2html-init \
-	latex2html.cfg.pl \
+	latex2html.cfg \
 	README.txt
 $(NAME)_EXTRA_DIST += $(NAME).pdf
 $(NAME)_EXTRA_DIST += $(NAME).html_dir

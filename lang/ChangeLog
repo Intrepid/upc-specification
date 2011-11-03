@@ -1,5 +1,16 @@
 2011-11-03  Gary Funck <gary@intrepid.com>
 
+	Simplify the latex2html make infrastructure.
+	* latex2html.cfg: Rename from .latex2html-init.
+	* README.txt: Delete reference to latex2html.cfg.pl
+	and adjust for latex2html.cfg.
+	* latex2html.cfg.pl: Delete symlink.
+	* Makefile (LATEX2HTML_FLAGS): New.  Specify -init
+	switch to refer to latex2html.cfg.  Adjust the "extra dist"
+	file list to reflect changes above.
+
+2011-11-03  Gary Funck <gary@intrepid.com>
+
 	* Makefile: Fix clean-html make target so that it correctly
 	refers to the generated .html_dir directory.
 	* upc-lang-spec.tex: Clean up escaped line endings.

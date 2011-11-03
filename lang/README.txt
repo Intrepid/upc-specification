@@ -5,12 +5,7 @@ latex2html
 	an unmatched HTML tag is encountered.  This is not
 	necessary, but does help debug problems with generated HTML.
 
-latex2html.cfg.pl -> .latex2html-init
-
-	This is a symlink to the "dot file" .latex2html-init in order
-	to make the file more visible and easier to find.
-
-.latex2html-init
+latex2html.cfg
 
 	A configuration/customization file for latex2html.
 
