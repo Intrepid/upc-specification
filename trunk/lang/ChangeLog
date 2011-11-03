@@ -1,3 +1,12 @@
+2011-11-03  Gary Funck <gary@intrepid.com>
+
+	* Makefile: Fix clean-html make target so that it correctly
+	refers to the generated .html_dir directory.
+	* upc-lang-spec.tex: Clean up escaped line endings.
+	Re-instate a commented out \addcontentsline directive.
+	Delete let/def that dealt with the TOC;  it should be no longer
+	needed now that \makeindex is used.
+
 2011-11-02  Gary Funck <gary@intrepid.com>
 
 	Remove specification version number from source file names.

@@ -23,7 +23,7 @@ include $(LATEX_MK_DIR)/latex.gmk
 
 .PHONY: clean-html
 clean-html: html
-	@$(RM) -f $</WARNINGS
-	@$(RMDIR) $</TMP
+	@$(RM) -f $(NAME).html_dir/WARNINGS
+	@$(RMDIR) $(NAME).html_dir/TMP
 
 $(NAME).html_dir: clean-html
