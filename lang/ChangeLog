@@ -1,5 +1,10 @@
 2011-11-02  Gary Funck <gary@intrepid.com>
 
+	* upc-specs-1-2.tex: Use makeidx package to generate the index, and to
+	avoid initial inclusion of non-existent upc-specs-1-2.ind file.
+
+2011-11-02  Gary Funck <gary@intrepid.com>
+
 	* Makefile: Add definitions for $(RMDIR) and $(CLEAN_FILES)
 	to fully implement the 'clean' target.  This works around some
 	shortcomings in the latex-mk Makefile template.
