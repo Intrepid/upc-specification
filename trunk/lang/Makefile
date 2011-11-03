@@ -1,4 +1,4 @@
-NAME = upc-specs-1-2
+NAME = upc-lang-spec
 TEXSRCS =
 USE_PDFLATEX = 1
 RMDIR = $(RM) -rf

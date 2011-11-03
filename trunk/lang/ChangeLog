@@ -1,8 +1,17 @@
 2011-11-02  Gary Funck <gary@intrepid.com>
 
+	Remove specification version number from source file names.
+	Introduce 'lang' into the name of the language specification files.
+	* upc-lang-spec.tex: Rename from upc-specs-1-2.tex.
+	* upc-lang-spec.tar.gz: Rename from upc-specs-1-2.tar.gz.
+	* Makefile: Adjust file name references.
+	* README.txt: Ditto.
+
+2011-11-02  Gary Funck <gary@intrepid.com>
+
 	* Makefile: Add generated .pdf and .html_dir to list
 	of files to be included in the distribution tar ball.
-	Also, add ChangeLog, README, and various other files
+	Also, add ChangeLog, README.txt, and various other files
 	that are part of the full source distribution.
 	Build the 'dist' target by default.
 	* upc-specs-1-2.tar.gz: New (binary file).  This is the
