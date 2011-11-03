@@ -30,4 +30,10 @@ upc-specs-1-2.tex
 	Changes were made to make the document eaisier
 	to maintain and to produce meaningful HTML output.
 
+upc-specs-1-2.tar.gz
+
+	gzip'd tar file containing all UPC specification source files,
+	build/make files, the generated .pdf file and the generated
+	.html_dir directory containing the HTML formatted specification.
+
                             -- end --
