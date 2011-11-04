@@ -75,7 +75,7 @@ BEGIN {
   if($ENV{'LATEX2HTMLDIR'}) {
     $LATEX2HTMLDIR = $ENV{'LATEX2HTMLDIR'};
   } else {
-    $ENV{'LATEX2HTMLDIR'} = $LATEX2HTMLDIR = '/usr/local/share/lib/latex2html';
+    $ENV{'LATEX2HTMLDIR'} = $LATEX2HTMLDIR = '/usr/share/latex2html';
   }
 
   if($ENV{'LATEX2HTMLPLATDIR'}) {
