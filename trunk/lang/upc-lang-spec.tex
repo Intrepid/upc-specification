@@ -42,18 +42,18 @@
 
 \newcommand{\npf}{\setcounter{parnum}{0}\np}
 
-\newcommand{\sterm}[1]{
-\subsection{\html{#1}}
+\newcommand{\sterm}[2]{
+\subsection*{#2\html{#1}}
 \index{#1}
 \npf {\bf #1}\\}
 
-\newcommand{\ssterm}[1]{
-\subsubsection{\html{#1}}
+\newcommand{\ssterm}[2]{
+\subsubsection*{#2\html{#1}}
 \index{#1}
 \npf {\bf #1}\\}
 
-\newcommand{\pterm}[1]{
-\paragraph{\html{#1}}
+\newcommand{\pterm}[2]{
+\paragraph*{#2\html{#1}}\ \\
 \index{#1}
 \npf {\bf #1}\\}
 
@@ -192,61 +192,65 @@ may be joined.  Comments on these specifications are always welcome.
     italic} type or on the left hand side of a syntactical rule.
 
 
-\sterm{thread} an instance of execution initiated by the execution
+\sterm{thread}{3.1} an instance of execution initiated by the execution
   environment at program startup.
 
-\sterm{object} region of data storage in the execution environment
+\sterm{object}{3.2} region of data storage in the execution environment
   which can represent values.
 
-\ssterm{shared object} an object allocated using a shared-qualified
+\ssterm{shared object}{3.2.1} an object allocated using a shared-qualified
   declarator or by a library function defined to create shared objects.
     
 \np NOTE \hspace{5pt}  All threads may access shared 
    objects.\footnote{The file scope declaration
    {\tt shared int x;} creates a single object which any thread may access.}
    
-\ssterm{private object} any object which is not a shared object.
+\ssterm{private object}{3.2.2} any object which is not a shared object.
 
 \np NOTE \hspace{5pt} Each thread declares and creates its own 
     private objects which no other thread can access.
     \footnote{The file scope declaration
     {\tt int y;} creates a separate object for each thread to access.}
 
-\ssterm{shared array} an array with elements that have shared qualified type.
+\ssterm{shared array}{3.2.3} an array with elements that have shared qualified type.
   
-\sterm{affinity} logical association between shared
+\sterm{affinity}{3.3} logical association between shared
   objects and threads.  Each element of data storage that contains
   shared objects has affinity to exactly one thread.
  
-\sterm{pointer-to-shared} a pointer whose referenced type is shared-qualified.
+\sterm{pointer-to-shared}{3.4} a pointer whose referenced type is shared-qualified.
 
-\sterm{pointer-to-local} a pointer whose referenced type is not
+\sterm{pointer-to-local}{3.5} a pointer whose referenced type is not
   shared-qualified.
 
 \label{def-access}
-\sterm{access} $<$execution-time action$>$ to read or
+\sterm{access}{3.6} $<$execution-time action$>$ to read or
   modify the value of an object by a thread.
 
-\ssterm{shared access} an access using an expression whose type
+\ssterm{shared access}{3.6.1} an access using an expression whose type
   is shared-qualified.
 
-\pterm{strict shared read} a shared read access which is determined to be
-  strict according to section \ref{type_qualifiers} of this specification.
+\pterm{strict shared read}{3.6.1.1} a shared read access which is
+  determined to be strict according to section \ref{type_qualifiers} of
+  this specification.
 
-\pterm{strict shared write} a shared modify access which is determined to be
-  strict according to section \ref{type_qualifiers} of this specification.
+\pterm{strict shared write}{3.6.1.2} a shared modify access which is
+  determined to be strict according to section \ref{type_qualifiers} of
+  this specification.
 
-\pterm{relaxed shared read} a shared read access which is determined to be
-  relaxed according to section \ref{type_qualifiers} of this specification.
+\pterm{relaxed shared read}{3.6.1.3} a shared read access which is
+  determined to be relaxed according to section \ref{type_qualifiers} of
+  this specification.
 
-\pterm{relaxed shared write} a shared modify access which is determined to be
-  relaxed according to section \ref{type_qualifiers} of this specification.
+\pterm{relaxed shared write}{3.6.1.4} a shared modify access which is
+  determined to be relaxed according to section \ref{type_qualifiers} of
+  this specification.
 
-\ssterm{local access} an access using an expression whose type
+\ssterm{local access}{3.6.2} an access using an expression whose type
   is not shared-qualified.
 
 \index{synchronization}
-\sterm{collective} constraint placed on some language 
+\sterm{collective}{3.7} constraint placed on some language 
   operations which requires evaluation of such operations to be
   matched\footnote{A collective operation need not provide any
   actual synchronization between threads, unless otherwise noted.
@@ -259,11 +263,11 @@ may be joined.  Comments on these specifications are always welcome.
   The behavior of collective operations is undefined unless all threads
   execute the same sequence of collective operations.
 
-\ssterm{single-valued} an operand to a collective operation, which has
+\ssterm{single-valued}{3.7.1} an operand to a collective operation, which has
   the same value on every thread.  The behavior of the operation
   is otherwise undefined.
 
-\ssterm{phase} an unsigned integer value associated with a
+\ssterm{phase}{3.7.2} an unsigned integer value associated with a
  pointer-to-shared which indicates the element-offset within an
  affinity block; used in pointer-to-shared arithmetic
  to determine affinity boundaries.

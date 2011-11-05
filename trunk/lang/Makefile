@@ -3,7 +3,7 @@ TEXSRCS =
 USE_PDFLATEX = 1
 RMDIR = $(RM) -rf
 CLEAN_FILES += ${NAME:=.pdfsync}
-LATEX2HTML_FLAGS = -init_file latex2html.cfg
+#LATEX2HTML_FLAGS = -init_file latex2html.cfg
 
 $(NAME)_EXTRA_DIST_FILES = \
 	ChangeLog \
