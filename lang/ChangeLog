@@ -1,3 +1,15 @@
+2011-11-05  Bill Carlson  <wwc@uuuuc.us>
+
+	Remove reference to "local" latex2html, now works (for me) with
+	default install for latex2html-2008.
+	* Makefile: comment out reference to latex2html.cfg
+	
+	Typesetting tweakes
+	* upc-lang-spec.tex: More-or-less fix typesetting of section 3.
+	This has always used some fairly crufty stuff to achieve the
+	desired effects.  There is probably a more elegant way to do this,
+	but it seems to work fairly well
+	
 2011-11-04  Bill Carlson  <wwc@uuuuc.us>
 
 	* README.txt: How to setup tex environment
