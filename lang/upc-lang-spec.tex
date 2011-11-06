@@ -1,6 +1,11 @@
-\documentclass[12pt,titlepage]{article}
+\documentclass[12pt,titlepage, 
+               bookmarks,bookmarksopen=false,
+               bookmarksnumbered=true,pdfpagemode=UseOutlines,
+               colorlinks=true]{article}
 
+\usepackage[noindentafter]{titlesec}
 \usepackage[all]{xy}
+\usepackage{html}
 
 % The special comments below are processed by latex2html.
 % Everything between them will be skipped by latex2html.
@@ -8,20 +13,20 @@
   \usepackage{ifpdf}
   \ifpdf
     \usepackage{pdfsync}
-    % The 'html' package will re-define
-    % 'hyperref' and complain, if we don't load it first.
-    \usepackage[
-      bookmarks,
-      bookmarksopen=false,
-      bookmarksnumbered=true,
-      pdfpagemode=UseOutlines,
-      colorlinks=true]{hyperref}
+    \usepackage{hyperref}
   \fi
 %end{latexonly}
-\usepackage{html}
 \usepackage{makeidx}
 
 \setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+\hypersetup{bookmarksdepth=4}
+
+% Make paragraphs behave like subsubsections
+% See: http://www.charlietanksley.net/philtex/\
+%      modifying-section-commands-with-the-titlesec-package/
+\titleformat{\paragraph}[hang]{\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}{0pt}{1.25ex plus 0.5ex minus 0.25 ex}{0.5ex}
 
 \newcounter{parnum}
 \makeatletter
@@ -33,29 +38,18 @@
 
 % Not really a tab, but something like it for HTML
 % output.  If we want real tabs, we'll probably need to use CSS.
-\newcommand{\tab}{\textt{~~~~~~}}
-\newcommand{\np}{
-  \addtocounter{parnum}{1}
-  \latex{\hspace{-2em}\makebox[2em][l]{\arabic{parnum}}}
-  \html{{\bf {\arabic{parnum}}}\tab}}
+\newcommand{\tab}{\texttt{~~~~~~}}
 
+\newcommand{\np}{%
+\addtocounter{parnum}{1}%
+\latex{\hspace{-2em}\makebox[2em][l]{\arabic{parnum}}}%
+\html{{\bf {\arabic{parnum}}}\tab}}
 
 \newcommand{\npf}{\setcounter{parnum}{0}\np}
 
-\newcommand{\sterm}[2]{
-\subsection*{#2\html{#1}}
-\index{#1}
-\npf {\bf #1}\\}
-
-\newcommand{\ssterm}[2]{
-\subsubsection*{#2\html{#1}}
-\index{#1}
-\npf {\bf #1}\\}
-
-\newcommand{\pterm}[2]{
-\paragraph*{#2\html{#1}}\ \\
-\index{#1}
-\npf {\bf #1}\\}
+\newcommand{\sterm}[1]{\subsection{#1}\index{#1}}
+\newcommand{\ssterm}[1]{\subsubsection{#1}\index{#1}}
+\newcommand{\pterm}[1]{\paragraph{#1}\index{#1}}
 
 \setlength{\parindent}{0pt}
 \setlength {\parskip}{1.3ex}
@@ -172,8 +166,8 @@ may be joined.  Comments on these specifications are always welcome.
 
 \section{Normative references}
 
-\np The following document and its identified normative
-    references constitute provisions of these UPC specifications.
+\npf The following document and its identified normative
+     references constitute provisions of these UPC specifications.
 
 \index{ISO C}
 \np ISO/IEC 9899: 1999(E), Programming languages - C
@@ -183,107 +177,140 @@ may be joined.  Comments on these specifications are always welcome.
     the C Standard [ISO/IEC00] and that used in this document is given
     in Appendix C and noted at the beginning of each corresponding section.
 
-\hypersetup{bookmarksdepth=2}  % Disable bookmarks below section level
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
+
 \section{Terms, definitions and symbols}
+
 \npf For the purpose of these specifications the following
     definitions apply.
 
 \np Other terms are defined where they appear in {\em
     italic} type or on the left hand side of a syntactical rule.
 
+\sterm{thread}
 
-\sterm{thread}{3.1} an instance of execution initiated by the execution
-  environment at program startup.
+\npf an instance of execution initiated by the execution
+     environment at program startup.
 
-\sterm{object}{3.2} region of data storage in the execution environment
-  which can represent values.
+\sterm{object}
 
-\ssterm{shared object}{3.2.1} an object allocated using a shared-qualified
-  declarator or by a library function defined to create shared objects.
+\npf region of data storage in the execution environment
+     which can represent values.
+
+\ssterm{shared object}
+
+\npf an object allocated using a shared-qualified
+     declarator or by a library function defined to create shared objects.
     
-\np NOTE \hspace{5pt}  All threads may access shared 
-   objects.\footnote{The file scope declaration
-   {\tt shared int x;} creates a single object which any thread may access.}
+\np  NOTE \hspace{5pt}  All threads may access shared 
+     objects.\footnote{The file scope declaration
+     {\tt shared int x;} creates a single object which any thread may access.}
    
-\ssterm{private object}{3.2.2} any object which is not a shared object.
+\ssterm{private object}
 
-\np NOTE \hspace{5pt} Each thread declares and creates its own 
-    private objects which no other thread can access.
-    \footnote{The file scope declaration
-    {\tt int y;} creates a separate object for each thread to access.}
+\npf any object which is not a shared object.
 
-\ssterm{shared array}{3.2.3} an array with elements that have shared qualified type.
+\np  NOTE \hspace{5pt} Each thread declares and creates its own 
+     private objects which no other thread can access.
+     \footnote{The file scope declaration
+     {\tt int y;} creates a separate object for each thread to access.}
+
+\ssterm{shared array}
+
+\npf an array with elements that have shared qualified type.
   
-\sterm{affinity}{3.3} logical association between shared
-  objects and threads.  Each element of data storage that contains
-  shared objects has affinity to exactly one thread.
- 
-\sterm{pointer-to-shared}{3.4} a pointer whose referenced type is shared-qualified.
+\sterm{affinity}
 
-\sterm{pointer-to-local}{3.5} a pointer whose referenced type is not
-  shared-qualified.
+\npf logical association between shared
+     objects and threads.  Each element of data storage that contains
+     shared objects has affinity to exactly one thread.
+ 
+\sterm{pointer-to-shared}
+
+\npf a pointer whose referenced type is shared-qualified.
+
+\sterm{pointer-to-local}
+
+\npf a pointer whose referenced type is not
+     shared-qualified.
 
 \label{def-access}
-\sterm{access}{3.6} $<$execution-time action$>$ to read or
-  modify the value of an object by a thread.
+\sterm{access}
 
-\ssterm{shared access}{3.6.1} an access using an expression whose type
-  is shared-qualified.
+\npf $<$execution-time action$>$ to read or
+     modify the value of an object by a thread.
 
-\pterm{strict shared read}{3.6.1.1} a shared read access which is
-  determined to be strict according to section \ref{type_qualifiers} of
-  this specification.
+\ssterm{shared access}
 
-\pterm{strict shared write}{3.6.1.2} a shared modify access which is
-  determined to be strict according to section \ref{type_qualifiers} of
-  this specification.
+\npf an access using an expression whose type
+     is shared-qualified.
 
-\pterm{relaxed shared read}{3.6.1.3} a shared read access which is
-  determined to be relaxed according to section \ref{type_qualifiers} of
-  this specification.
+\pterm{strict shared read}
 
-\pterm{relaxed shared write}{3.6.1.4} a shared modify access which is
-  determined to be relaxed according to section \ref{type_qualifiers} of
-  this specification.
+\npf a shared read access which is determined to be
+     strict according to section \ref{type_qualifiers} of this specification.
 
-\ssterm{local access}{3.6.2} an access using an expression whose type
-  is not shared-qualified.
+\pterm{strict shared write}
+
+\npf a shared modify access which is determined to be
+     strict according to section \ref{type_qualifiers} of this specification.
+
+\pterm{relaxed shared read}
+
+\npf a shared read access which is determined to be
+     relaxed according to section \ref{type_qualifiers} of this specification.
+
+\pterm{relaxed shared write}
+
+\npf a shared modify access which is determined to be
+     relaxed according to section \ref{type_qualifiers} of this specification.
+
+\ssterm{local access}
+
+\npf an access using an expression whose type
+     is not shared-qualified.
 
 \index{synchronization}
-\sterm{collective}{3.7} constraint placed on some language 
-  operations which requires evaluation of such operations to be
-  matched\footnote{A collective operation need not provide any
-  actual synchronization between threads, unless otherwise noted.
-  The collective requirement simply states a relative ordering property
-  of calls to collective operations that must be maintained in the
-  parallel execution trace for all executions of any legal program.
-  Some implementations may include unspecified synchronization between
-  threads within collective operations, but programs must not rely upon
-  such unspecified synchronization for correctness.} across all threads.
-  The behavior of collective operations is undefined unless all threads
-  execute the same sequence of collective operations.
+\sterm{collective}
 
-\ssterm{single-valued}{3.7.1} an operand to a collective operation, which has
-  the same value on every thread.  The behavior of the operation
-  is otherwise undefined.
+\npf constraint placed on some language 
+     operations which requires evaluation of such operations to be
+     matched\footnote{A collective operation need not provide any
+     actual synchronization between threads, unless otherwise noted.
+     The collective requirement simply states a relative ordering property
+     of calls to collective operations that must be maintained in the
+     parallel execution trace for all executions of any legal program.
+     Some implementations may include unspecified synchronization between
+     threads within collective operations, but programs must not rely upon
+     such unspecified synchronization for correctness.} across all threads.
+     The behavior of collective operations is undefined unless all threads
+     execute the same sequence of collective operations.
 
-\ssterm{phase}{3.7.2} an unsigned integer value associated with a
- pointer-to-shared which indicates the element-offset within an
- affinity block; used in pointer-to-shared arithmetic
- to determine affinity boundaries.
+\ssterm{single-valued}
 
-\hypersetup{bookmarksdepth=4}  % Re-enable bookmarks to the sub-section level
+\npf an operand to a collective operation, which has
+     the same value on every thread.  The behavior of the operation
+     is otherwise undefined.
+
+\ssterm{phase}
+
+\npf an unsigned integer value associated with a
+     pointer-to-shared which indicates the element-offset within an
+     affinity block; used in pointer-to-shared arithmetic
+     to determine affinity boundaries.
+
+\addtocontents{toc}{\protect\setcounter{tocdepth}{4}}
 
 \section{Conformance}
 
-\np In this document, ``shall'' is to be interpreted as a
-   requirement on a UPC implementation; conversely, ``shall not'' is to
-   be interpreted as a prohibition.
+\npf In this document, ``shall'' is to be interpreted as a
+     requirement on a UPC implementation; conversely, ``shall not'' is to
+     be interpreted as a prohibition.
 
-\np If a ``shall'' or ``shall not'' requirement 
-   is violated, the behavior is undefined. Undefined behavior is
-   indicated by ``undefined behavior'' or by the omission of any
-   explicit definition of behavior from the UPC specification.
+\np  If a ``shall'' or ``shall not'' requirement 
+     is violated, the behavior is undefined. Undefined behavior is
+     indicated by ``undefined behavior'' or by the omission of any
+     explicit definition of behavior from the UPC specification.
 
 \pagebreak
 \section{Environment}
@@ -291,7 +318,7 @@ may be joined.  Comments on these specifications are always welcome.
 \subsection{Conceptual models}
 \subsubsection{Translation environment}
 
-\paragraph{Threads environment}\ \\
+\paragraph{Threads environment}
 \index{static THREADS environment}
 \index{dynamic THREADS environment}
 \npf A UPC program is translated under either a {\em static
@@ -323,7 +350,7 @@ may be joined.  Comments on these specifications are always welcome.
 
        {\bf Forward references:} {\tt upc\_barrier} (\ref{upc_barrier}).  
 
-\paragraph{Program startup}\ \\
+\paragraph{Program startup}
 
 \index{program startup}
 \index{main}
@@ -333,7 +360,7 @@ may be joined.  Comments on these specifications are always welcome.
       function\footnote {e.g., in the program {\tt main()\{
       printf("hello"); \} }, each thread prints {\tt hello}.}.
 
-\paragraph{Program termination}\ \\
+\paragraph{Program termination}
 
 \index{program termination}
 \index{upc\_global\_exit}
@@ -353,7 +380,7 @@ may be joined.  Comments on these specifications are always welcome.
 
      {\bf Forward references:} {\tt upc\_global\_exit} (\ref{upc_global_exit}).  
 
-\paragraph{Program execution}\ \\
+\paragraph{Program execution}
 \label{strict_relaxed}
 
 \index{memory consistency}
@@ -560,7 +587,7 @@ as keywords and shall not be otherwise used.
 \hspace{3em}{\tt {\bf upc\_elemsizeof} ( {\em type-name} )}
 
 
-\paragraph{The {\tt\bf sizeof} operator}\ \\
+\paragraph{The {\tt\bf sizeof} operator}
 
 {\bf Semantics} 
 
@@ -570,7 +597,7 @@ as keywords and shall not be otherwise used.
     applied to a definitely blocked shared array under
     the {\em dynamic THREADS} environment.
 
-\paragraph{The {\tt\bf upc\_localsizeof} operator}\ \\
+\paragraph{The {\tt\bf upc\_localsizeof} operator}
  
 {\bf Constraints} 
 
@@ -594,7 +621,7 @@ as keywords and shall not be otherwise used.
 \np If the the operand is an expression, that expression
      is not evaluated.
 
-\paragraph{The {\tt\bf upc\_blocksizeof} operator}\ \\
+\paragraph{The {\tt\bf upc\_blocksizeof} operator}
  
 
 {\bf Constraints} 
@@ -624,7 +651,7 @@ as keywords and shall not be otherwise used.
       {\bf Forward references:} indefinite block size (\ref{indefinite_block_size}).  
       
 
-\paragraph{The {\tt\bf upc\_elemsizeof} operator}\ \\
+\paragraph{The {\tt\bf upc\_elemsizeof} operator}
 
 {\bf Constraints} 
 
@@ -877,7 +904,7 @@ as keywords and shall not be otherwise used.
 
 \hspace{3em}{\em reference-type-qualifier}
 
-\paragraph{The shared and reference type qualifiers}\ \\
+\paragraph{The shared and reference type qualifiers}
 \label{type_qualifiers}
 \label{indefinite_block_size}
 
@@ -1070,7 +1097,7 @@ assignment-expression }{\bf ]}
 \np All shared objects created by non-array static declarators have
     affinity with thread zero.
 
-\paragraph{Array declarators}\ \\
+\paragraph{Array declarators}
 \label{shared_array}
 \index{shared declarations, array}
 \index{dynamic THREADS environment}
@@ -1610,7 +1637,7 @@ The integer constant as defined in section \ref{threads} in the
     to the start of the allocated space.  If the space cannot be allocated, a null
     pointer-to-shared is returned.
     
-\paragraph{The {\tt upc\_global\_alloc} function}\ \\
+\paragraph{The {\tt upc\_global\_alloc} function}
 
 {\bf Synopsis} 
 
@@ -1635,7 +1662,7 @@ The integer constant as defined in section \ref{threads} in the
     all threads which make the call get different allocations.
     If {\tt nblocks*nbytes} is zero, the result is a null pointer-to-shared.
     
-\paragraph{The {\tt upc\_all\_alloc} function}\ \\
+\paragraph{The {\tt upc\_all\_alloc} function}
 
 {\bf Synopsis} 
 \index{upc\_all\_alloc}
@@ -1666,7 +1693,7 @@ The integer constant as defined in section \ref{threads} in the
    the time any thread completes the call to {\tt upc\_all\_alloc}
    until any thread has deallocated the object.
 
-\paragraph{The {\tt upc\_alloc} function}\ \\
+\paragraph{The {\tt upc\_alloc} function}
 
 {\bf Synopsis} 
 \index{upc\_alloc}
@@ -1686,7 +1713,7 @@ The integer constant as defined in section \ref{threads} in the
     returns a pointer-to-shared value. It is not a {\em collective} function.
     If {\tt nbytes} is zero, the result is a null pointer-to-shared.
 
-\paragraph{The {\tt upc\_local\_alloc} function {\em deprecated}}\ \\
+\paragraph{The {\tt upc\_local\_alloc} function {\em deprecated}}
 
 {\bf Synopsis} 
 \index{upc\_local\_alloc}
@@ -1710,7 +1737,7 @@ The integer constant as defined in section \ref{threads} in the
 \np {\tt upc\_local\_alloc} is similar to malloc() except that it
     returns a pointer-to-shared value. It is not a {\em collective} function.
 
-\paragraph{The {\tt upc\_free} function}\ \\
+\paragraph{The {\tt upc\_free} function}
 
 {\bf Synopsis} 
 \index{upc\_free}
@@ -1734,7 +1761,7 @@ The integer constant as defined in section \ref{threads} in the
 
 \subsubsection{Pointer-to-shared manipulation functions}
 
-\paragraph{The {\tt upc\_threadof} function}\ \\
+\paragraph{The {\tt upc\_threadof} function}
 \label{upc_threadof}
 
 {\bf Synopsis} 
@@ -1757,7 +1784,7 @@ The integer constant as defined in section \ref{threads} in the
 \np If {\tt ptr} is a null pointer-to-shared, the function returns 0.
 
 
-\paragraph{The {\tt upc\_phaseof} function}\ \\
+\paragraph{The {\tt upc\_phaseof} function}
 \label{upc_phaseof}
 
 {\bf Synopsis} 
@@ -1780,7 +1807,7 @@ The integer constant as defined in section \ref{threads} in the
     
 \np If {\tt ptr} is a null pointer-to-shared, the function returns 0.
 
-\paragraph{The {\tt upc\_resetphase} function}\ \\
+\paragraph{The {\tt upc\_resetphase} function}
 
 {\bf Synopsis} 
 \index{upc\_resetphase}
@@ -1797,7 +1824,7 @@ The integer constant as defined in section \ref{threads} in the
 \np The {\tt upc\_resetphase} function returns a pointer-to-shared
     which is identical to its input except that it has zero phase. 
 
-\paragraph{The {\tt upc\_addrfield} function}\ \\
+\paragraph{The {\tt upc\_addrfield} function}
 \label{upc_addrfield}
 
 {\bf Synopsis} 
@@ -1819,7 +1846,7 @@ The integer constant as defined in section \ref{threads} in the
    arithmetic in Section \ref{pointer-arithmetic}}
 
    
-\paragraph{The {\tt upc\_affinitysize} function}\ \\
+\paragraph{The {\tt upc\_affinitysize} function}
 
 {\bf Synopsis} 
 \index{upc\_affinitysize}
@@ -1863,7 +1890,7 @@ The integer constant as defined in section \ref{threads} in the
 \index{synchronization}
 \index{mutual exclusion}
 
-\paragraph{Type}\ \\
+\paragraph{Type}
 
 \npf The type declared is 
 \index{upc\_lock\_t}
@@ -1882,7 +1909,7 @@ The integer constant as defined in section \ref{threads} in the
     compare as equal.  The results of applying {\tt upc\_phaseof()},
      {\tt upc\_threadof()}, and {\tt upc\_addrfield()} to such pointers
      are undefined.
-\paragraph{The {\tt upc\_global\_lock\_alloc} function}\ \\
+\paragraph{The {\tt upc\_global\_lock\_alloc} function}
 
 {\bf Synopsis} 
 \index{upc\_global\_lock\_alloc}
@@ -1903,7 +1930,7 @@ The integer constant as defined in section \ref{threads} in the
     collective} function. If called by multiple threads,
     all threads which make the call get different allocations.
     
-\paragraph{The {\tt upc\_all\_lock\_alloc} function}\ \\
+\paragraph{The {\tt upc\_all\_lock\_alloc} function}
 
 {\bf Synopsis} 
 \index{upc\_all\_lock\_alloc}
@@ -1924,7 +1951,7 @@ The integer constant as defined in section \ref{threads} in the
     function.  The return value on every thread points to the same
     lock object.
 
-\paragraph{The {\tt upc\_lock\_free} function}\ \\
+\paragraph{The {\tt upc\_lock\_free} function}
 
 {\bf Synopsis} 
 \index{upc\_lock\_free}
@@ -1955,7 +1982,7 @@ The integer constant as defined in section \ref{threads} in the
     thread using {\tt ptr} have undefined effects. This also
     applies to any thread currently calling {\tt upc\_lock}.
 
-\paragraph{The {\tt upc\_lock} function}\ \\
+\paragraph{The {\tt upc\_lock} function}
 
 {\bf Synopsis} 
 \index{upc\_lock}
@@ -1985,7 +2012,7 @@ The integer constant as defined in section \ref{threads} in the
 \np A null strict access is implied after a call to {\tt
     upc\_lock()}.
 
-\paragraph{The {\tt upc\_lock\_attempt} function}\ \\
+\paragraph{The {\tt upc\_lock\_attempt} function}
 
 {\bf Synopsis} 
 \index{upc\_lock\_attempt}
@@ -2012,7 +2039,7 @@ The integer constant as defined in section \ref{threads} in the
 \np A null strict access is implied after a call to {\tt
     upc\_lock\_attempt()} that returns 1.
 
-\paragraph{The {\tt upc\_unlock} function}\ \\
+\paragraph{The {\tt upc\_unlock} function}
 
 {\bf Synopsis} 
 \index{upc\_unlock}
@@ -2038,7 +2065,7 @@ The integer constant as defined in section \ref{threads} in the
 \index{shared object, copying}
 \index{memory copy}
 
-\paragraph{The {\tt upc\_memcpy} function}\ \\
+\paragraph{The {\tt upc\_memcpy} function}
 
 {\bf Synopsis} 
 \index{upc\_memcpy}
@@ -2067,7 +2094,7 @@ The integer constant as defined in section \ref{threads} in the
    shared array object with this type (the {\tt src} array) to another shared
    array object with this type (the {\tt dst} array).
 
-\paragraph{The {\tt upc\_memget} function}\ \\
+\paragraph{The {\tt upc\_memget} function}
 
 {\bf Synopsis} 
 \index{upc\_memget}
@@ -2099,7 +2126,7 @@ The integer constant as defined in section \ref{threads} in the
     char[n] 
 \end{verbatim}
 
-\paragraph{The {\tt upc\_memput} function}\ \\
+\paragraph{The {\tt upc\_memput} function}
 
 {\bf Synopsis} 
 \index{upc\_memput}
@@ -2131,7 +2158,7 @@ The integer constant as defined in section \ref{threads} in the
     shared [] char[n] 
 \end{verbatim}
 
-\paragraph{The {\tt upc\_memset} function}\ \\
+\paragraph{The {\tt upc\_memset} function}
 
 {\bf Synopsis}
 \index{upc\_memset}
@@ -2263,7 +2290,7 @@ and the corresponding {\tt upc\_wait}.
 
 \subsubsection{Relocalization Operations}
 
-\paragraph{The {\tt upc\_all\_broadcast} function}\ \\
+\paragraph{The {\tt upc\_all\_broadcast} function}
 \index{upc\_all\_broadcast}
 \index{broadcast}
 
@@ -2348,7 +2375,7 @@ thread 0.
   upc_barrier;
 \end{verbatim}
 
-\paragraph{The {\tt upc\_all\_scatter} function}\ \\
+\paragraph{The {\tt upc\_all\_scatter} function}
 
 {\bf Synopsis} 
 \index{upc\_all\_scatter}
@@ -2435,7 +2462,7 @@ translation environment.
                    UPC_IN_ALLSYNC | UPC_OUT_ALLSYNC );
 \end{verbatim}
 
-\paragraph{The {\tt upc\_all\_gather} function}\ \\
+\paragraph{The {\tt upc\_all\_gather} function}
 
 {\bf Synopsis} 
 \index{upc\_all\_gather}
@@ -2515,7 +2542,7 @@ translation environment.
   upc_barrier;
 \end{verbatim}
 
-\paragraph{The {\tt upc\_all\_gather\_all} function}\ \\
+\paragraph{The {\tt upc\_all\_gather\_all} function}
 
 {\bf Synopsis} 
 \index{upc\_all\_gather\_all}
@@ -2604,7 +2631,7 @@ translation environment.
                       UPC_IN_ALLSYNC | UPC_OUT_ALLSYNC );
 \end{verbatim}
 
-\paragraph{The {\tt upc\_all\_exchange} function}\ \\
+\paragraph{The {\tt upc\_all\_exchange} function}
 \index{upc\_all\_exchange}
 \index{exchange}
 
@@ -2693,7 +2720,7 @@ translation environment.
                     UPC_IN_ALLSYNC | UPC_OUT_ALLSYNC );
 \end{verbatim}
 
-\paragraph{The {\tt upc\_all\_permute} function}\ \\
+\paragraph{The {\tt upc\_all\_permute} function}
 \index{upc\_all\_permute}
 \index{permute}
 
@@ -2818,7 +2845,7 @@ the order of the operands will have undefined results.
 
 {\bf Forward references:} reduction, prefix reduction (\ref{reduction}).
 
-\paragraph{The {\tt upc\_all\_reduce} and {\tt upc\_all\_prefix\_reduce} functions}\ \\
+\paragraph{The {\tt upc\_all\_reduce} and {\tt upc\_all\_prefix\_reduce} functions}
 \label{reduction}
 
 {\bf Synopsis} 
@@ -2946,7 +2973,7 @@ phase of the {\tt src} and {\tt dst} pointers to match -- ie.
   upc_barrier;
 \end{verbatim}
 
-%\paragraph{The {\tt upc\_all\_prefix\_reduce} function}\ \\
+%\paragraph{The {\tt upc\_all\_prefix\_reduce} function}
 %\label{prefix-reduction}
 %
 % {\bf Synopsis} 
@@ -3207,7 +3234,7 @@ guaranteed to work properly with {\tt errno} values generated by UPC-IO.
 
 \subsubsection{Background}
 
-\paragraph{File Accessing and File Pointers}\ \\
+\paragraph{File Accessing and File Pointers}
 
 %\begin{figure}[h]
 %\includegraphics[bb=0 0 620 339, width=1\textwidth]{figure1.eps}
@@ -3286,7 +3313,7 @@ upc_all_fread_shared( fd, buffer, upc_blocksizeof(buffer),
 %\caption{Collective read into a blocked shared buffer can provide a partitioned file-view}
 %\end{figure}
 
-\paragraph{Synchronous and Asynchronous I/O}\ \\
+\paragraph{Synchronous and Asynchronous I/O}
 
 \index{asynchronous I/O}
 \npf I/O operations can be synchronous (blocking) or asynchronous (non-blocking).
@@ -3312,7 +3339,7 @@ similar to the restriction MPI-IO [MPI2] has on split-collective I/O functions:
 only one split collective operation can be outstanding on an MPI-IO file
 handle at any time.
 
-\paragraph{Consistency and Atomicity Semantics}\ \\
+\paragraph{Consistency and Atomicity Semantics}
 
 \index{file consistency}
 \index{file atomicity}
@@ -3427,7 +3454,7 @@ a separate function to write each contiguous portion, there would be six
 write functions, two from each thread, and the atomicity would be at the
 granularity of the write operation specified by each of those functions.
 
-\paragraph{File Interoperability}\ \\
+\paragraph{File Interoperability}
 
 \index{file interoperability}
 \npf UPC-IO does not specify how an implementation may store the data in a file
@@ -3530,7 +3557,7 @@ will be aligned with that common file pointer.
 operation is pending on the file handle, except where otherwise noted.
 % it is otherwise noted for upc_all_fcntl
 
-\paragraph{The {\tt upc\_all\_fopen} function}\ \\
+\paragraph{The {\tt upc\_all\_fopen} function}
 \label{io-func-open}
 
 {\bf Synopsis}
@@ -3718,7 +3745,7 @@ used to perform other operations on the file.
 function returns {\tt NULL} on ALL threads, and sets {\tt errno} appropriately
 to the same value on all threads.
 
-\paragraph{The {\tt upc\_all\_fclose} function}\ \\
+\paragraph{The {\tt upc\_all\_fclose} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fclose}
@@ -3747,7 +3774,7 @@ to the same value on all threads.
 is allowed to be
 opened and the data in it can be accessed by using regular C/POSIX I/O calls.
 
-\paragraph{The {\tt upc\_all\_fsync} function}\ \\
+\paragraph{The {\tt upc\_all\_fsync} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fsync}
@@ -3773,7 +3800,7 @@ yet been overwritten).
 \np The function returns 0 on success. On error, it returns --1 and sets {\tt errno}
 appropriately.
 
-\paragraph{The {\tt upc\_all\_fseek} function}\ \\
+\paragraph{The {\tt upc\_all\_fseek} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fseek}
@@ -3819,7 +3846,7 @@ beginning of Section \ref{upc-io-common} for more details.
 \np On success, the function returns the current location of the file pointer
 in bytes. If there is an error, it returns --1 and sets {\tt errno} appropriately.
 
-\paragraph{The {\tt upc\_all\_fset\_size} function}\ \\
+\paragraph{The {\tt upc\_all\_fset\_size} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fset\_size}
@@ -3864,7 +3891,7 @@ Use {\tt upc\_all\_fpreallocate} to force file space to be reserved on the stora
 \np The function returns 0 on success. On error, it returns --1 and sets {\tt errno}
 appropriately.
 
-\paragraph{The {\tt upc\_all\_fget\_size} function}\ \\
+\paragraph{The {\tt upc\_all\_fget\_size} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fget\_size}
@@ -3884,7 +3911,7 @@ appropriately.
 associated with {\tt fd} on success. On error, it returns --1 and sets {\tt errno}
 appropriately.
 
-\paragraph{The {\tt upc\_all\_fpreallocate} function}\ \\
+\paragraph{The {\tt upc\_all\_fpreallocate} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fpreallocate}
@@ -3916,7 +3943,7 @@ is unchanged.
 \np The function returns 0 on success. On error, it returns --1 and sets {\tt errno}
 appropriately.
 
-\paragraph{The {\tt upc\_all\_fcntl} function}\ \\
+\paragraph{The {\tt upc\_all\_fcntl} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fcntl}
@@ -4049,7 +4076,7 @@ outstanding).
 \npf No function in this section \ref{io-func-read} may be called while an asynchronous
 operation is pending on the file handle.
 
-\paragraph{The {\tt upc\_all\_fread\_local} function}\ \\
+\paragraph{The {\tt upc\_all\_fread\_local} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fread\_local}
@@ -4084,7 +4111,7 @@ buffer of the calling thread, and the individual file pointer of the thread is
 incremented by that amount. On error, it returns --1 and sets {\tt errno}
 appropriately.
 
-\paragraph{The {\tt upc\_all\_fread\_shared} function}\ \\
+\paragraph{The {\tt upc\_all\_fread\_shared} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fread\_shared}
@@ -4145,7 +4172,7 @@ the {\tt UPC\_STRONG\_CA} flag or not (see Section \ref{io-func-open}).
 \npf No function in this section \ref{io-func-write} may be called while an asynchronous
 operation is pending on the file handle.
 
-\paragraph{The {\tt upc\_all\_fwrite\_local} function}\ \\
+\paragraph{The {\tt upc\_all\_fwrite\_local} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fwrite\_local}
@@ -4183,7 +4210,7 @@ effect for {\tt fd} (see \ref{io-func-open}).
 calling thread, and the individual file pointer of the thread is incremented by
 that amount. On error, it returns --1 and sets {\tt errno} appropriately.
 
-\paragraph{The {\tt upc\_all\_fwrite\_shared} function}\ \\
+\paragraph{The {\tt upc\_all\_fwrite\_shared} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fwrite\_shared}
@@ -4364,7 +4391,7 @@ upc_all_fread_list_local( fd, 2, &memvec, 2, &filevec,
 
 
 
-\paragraph{The {\tt upc\_all\_fread\_list\_local} function}\ \\
+\paragraph{The {\tt upc\_all\_fread\_list\_local} function}
 
 {\bf Synopsis}
 \index{file reading}
@@ -4400,7 +4427,7 @@ equal the total amount of data specified by {\tt filevec}.
 calling
 thread. On error, it returns --1 and sets {\tt errno} appropriately.
 
-\paragraph{The {\tt upc\_all\_fread\_list\_shared} function}\ \\
+\paragraph{The {\tt upc\_all\_fread\_list\_shared} function}
 
 {\bf Synopsis}
 \index{file reading}
@@ -4439,7 +4466,7 @@ semantics mode in effect for {\tt fd} (see Section \ref{io-func-open}).
 \np On success, the function returns the number of bytes read by the calling
 thread. On error, it returns --1 and sets {\tt errno} appropriately.
 
-\paragraph{The {\tt upc\_all\_fwrite\_list\_local} function}\ \\
+\paragraph{The {\tt upc\_all\_fwrite\_list\_local} function}
 
 {\bf Synopsis}
 \index{file writing}
@@ -4477,7 +4504,7 @@ semantics mode in effect for {\tt fd} (see Section \ref{io-func-open}).
 \np On success, the function returns the number of bytes written by the
 calling thread. On error, it returns --1 and sets {\tt errno} appropriately.
 
-\paragraph{The {\tt upc\_all\_fwrite\_list\_shared} function}\ \\
+\paragraph{The {\tt upc\_all\_fwrite\_list\_shared} function}
 
 {\bf Synopsis}
 \index{file writing}
@@ -4556,7 +4583,7 @@ after the asynchronous I/O operation has been initiated.
     which govern an asynchronous operation are passed to the library
     during the asynchronous initiation call.
 
-\paragraph{The {\tt upc\_all\_fread\_local\_async} function}\ \\
+\paragraph{The {\tt upc\_all\_fread\_local\_async} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fread\_local\_async}
@@ -4580,7 +4607,7 @@ blocking function, {\tt upc\_all\_fread\_local}.
 \np The status of the initiated asynchronous I/O operation can be retrieved by calling
 {\tt upc\_all\_ftest\_async} or {\tt upc\_all\_fwait\_async}.
 
-\paragraph{The {\tt upc\_all\_fread\_shared\_async} function}\ \\
+\paragraph{The {\tt upc\_all\_fread\_shared\_async} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fread\_shared\_async}
@@ -4605,7 +4632,7 @@ blocking function, {\tt upc\_all\_fread\_shared}.
 \np The status of the initiated asynchronous I/O operation can be retrieved by calling
 {\tt upc\_all\_ftest\_async} or {\tt upc\_all\_fwait\_async}.
 
-\paragraph{The {\tt upc\_all\_fwrite\_local\_async} function}\ \\
+\paragraph{The {\tt upc\_all\_fwrite\_local\_async} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fwrite\_local\_async}
@@ -4629,7 +4656,7 @@ blocking function, {\tt upc\_all\_fwrite\_local}.
 \np The status of the initiated asynchronous I/O operation can be retrieved by calling
 {\tt upc\_all\_ftest\_async} or {\tt upc\_all\_fwait\_async}.
 
-\paragraph{The {\tt upc\_all\_fwrite\_shared\_async} function}\ \\
+\paragraph{The {\tt upc\_all\_fwrite\_shared\_async} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fwrite\_shared\_async}
@@ -4655,7 +4682,7 @@ blocking function, {\tt upc\_all\_fwrite\_shared}.
 \np The status of the initiated asynchronous I/O operation can be retrieved by calling
 {\tt upc\_all\_ftest\_async} or {\tt upc\_all\_fwait\_async}.
 
-\paragraph{The {\tt upc\_all\_fread\_list\_local\_async} function}\ \\
+\paragraph{The {\tt upc\_all\_fread\_list\_local\_async} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fread\_list\_local\_async}
@@ -4681,7 +4708,7 @@ blocking function, {\tt upc\_all\_fread\_list\_local}.
 \np The status of the initiated asynchronous I/O operation can be retrieved by calling
 {\tt upc\_all\_ftest\_async} or {\tt upc\_all\_fwait\_async}.
 
-\paragraph{The {\tt upc\_all\_fread\_list\_shared\_async} function}\ \\
+\paragraph{The {\tt upc\_all\_fread\_list\_shared\_async} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fread\_list\_shared\_async}
@@ -4707,7 +4734,7 @@ blocking function, {\tt upc\_all\_fread\_list\_shared}.
 \np The status of the initiated asynchronous I/O operation can be retrieved by calling
 {\tt upc\_all\_ftest\_async} or {\tt upc\_all\_fwait\_async}.
 
-\paragraph{The {\tt upc\_all\_fwrite\_list\_local\_async} function}\ \\
+\paragraph{The {\tt upc\_all\_fwrite\_list\_local\_async} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fwrite\_list\_local\_async}
@@ -4733,7 +4760,7 @@ blocking function, {\tt upc\_all\_fwrite\_list\_local}.
 \np The status of the initiated asynchronous I/O operation can be retrieved by calling
 {\tt upc\_all\_ftest\_async} or {\tt upc\_all\_fwait\_async}.
 
-\paragraph{The {\tt upc\_all\_fwrite\_list\_shared\_async} function}\ \\
+\paragraph{The {\tt upc\_all\_fwrite\_list\_shared\_async} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fwrite\_list\_shared\_async}
@@ -4759,7 +4786,7 @@ blocking function, {\tt upc\_all\_fwrite\_list\_shared}.
 \np The status of the initiated asynchronous I/O operation can be retrieved by calling
 {\tt upc\_all\_ftest\_async} or {\tt upc\_all\_fwait\_async}.
 
-\paragraph{The {\tt upc\_all\_fwait\_async} function}\ \\
+\paragraph{The {\tt upc\_all\_fwait\_async} function}
 
 {\bf Synopsis}
 \index{upc\_all\_fwait\_async}
@@ -4785,7 +4812,7 @@ function used to initiate the asynchronous operation. On error, it returns
 --1 and sets {\tt errno} appropriately, and the outstanding asynchronous operation
 (if any) becomes no longer outstanding.
 
-\paragraph{The {\tt upc\_all\_ftest\_async} function}\ \\
+\paragraph{The {\tt upc\_all\_ftest\_async} function}
 
 {\bf Synopsis}
 \index{upc\_all\_ftest\_async}
@@ -5123,7 +5150,7 @@ implied by UPC standard library functions, in the absence of any explicit
 consistency specification for the given function (which would always take
 precedence in the case of conflict).
 
-\paragraph{Non-Collective Standard Library Calls}\ \\
+\paragraph{Non-Collective Standard Library Calls}
 \index{memory consistency, non-collective library}
 
 \npf  For {\it non-collective} functions in the UPC standard library (e.g. $upc\_mem\{put,get,cpy\}$),
@@ -5199,7 +5226,7 @@ ensuring ordering with respect to surrounding relaxed operations issued by the
 calling thread, in cases where such ordering guarantees are required
 for program correctness.
 
-\paragraph{Collective Standard Library Calls}\ \\
+\paragraph{Collective Standard Library Calls}
 \index{memory consistency, collective library}
 
 \npf For {\it collective} functions in the UPC standard library, any implied data
