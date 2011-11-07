@@ -1,5 +1,9 @@
 2011-11-06  Gary Funck <gary@intrepid.com>
 
+	* upc-lang-spec.tex: Fix typos.
+
+2011-11-06  Gary Funck <gary@intrepid.com>
+
 	* check_l2h_cfg: New. Script that checks for latex2html config. errors.
 	* latex2html: Delete.  The small modifications made to this script
 	weren't worth the complications of potential installation
