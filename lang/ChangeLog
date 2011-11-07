@@ -1,3 +1,8 @@
+2011-11-07  Bill Carlson  <wwc@uuuuc.us>
+
+	* upc-lang-spec.tex: Adjusted tocdepth to 3 to match current spec
+	and ansi-iso c99.
+
 2011-11-06  Gary Funck <gary@intrepid.com>
 
 	* upc-lang-spec.tex: Fix typos.
