@@ -1,3 +1,14 @@
+2011-11-08  Gary Funck <gary@intrepid.com>
+
+	* Makefile: Only build the HTML formatted specification if
+	BUILD_HTML is asserted.  When building HTML, first invoke
+	`check_l2h_cfg' to verify that the installed latex2html
+	tool paths are valid.
+	* check_l2h_cfg: Find latex2html via environment variable
+	or use default location.  Print the location of the installed
+	l2hconf.pm configuration package.
+	* README.txt: Document the BUILD_HTML make variable.
+
 2011-11-07  Bill Carlson  <wwc@uuuuc.us>
 
 	* upc-lang-spec.tex: Adjusted tocdepth to 3 to match current spec
