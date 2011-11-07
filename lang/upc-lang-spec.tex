@@ -618,7 +618,7 @@ as keywords and shall not be otherwise used.
 
 \np The type of the result is {\tt size\_t}. 
 
-\np If the the operand is an expression, that expression
+\np If the operand is an expression, that expression
      is not evaluated.
 
 \paragraph{The {\tt\bf upc\_blocksizeof} operator}
@@ -645,7 +645,7 @@ as keywords and shall not be otherwise used.
 
 \np The type of the result is {\tt size\_t}. 
 
-\np If the the operand is an expression, that expression
+\np If the operand is an expression, that expression
      is not evaluated.
 
       {\bf Forward references:} indefinite block size (\ref{indefinite_block_size}).  
@@ -669,7 +669,7 @@ as keywords and shall not be otherwise used.
 
 \np The type of the result is {\tt size\_t}. 
 
-\np If the the operand is an expression, that expression
+\np If the operand is an expression, that expression
      is not evaluated.
 
 \subsubsection{Pointer-to-shared arithmetic}
@@ -2951,6 +2951,7 @@ referencing array elements, as specified above.
 \np {\tt upc\_all\_prefix\_reduce{\em T}} requires the affinity and
 phase of the {\tt src} and {\tt dst} pointers to match -- ie. 
 {\tt upc\_threadof(src) == upc\_threadof(dst) \&\& upc\_phaseof(src) == upc\_phaseof(dst)}.
+
 \np {\tt upc\_all\_reduce{\em T}} treats the {\tt dst} pointer as having type:
 
 \begin{verbatim}
