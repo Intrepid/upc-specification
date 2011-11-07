@@ -1,11 +1,21 @@
 2011-11-06  Gary Funck <gary@intrepid.com>
 
+	* check_l2h_cfg: New. Script that checks for latex2html config. errors.
+	* latex2html: Delete.  The small modifications made to this script
+	weren't worth the complications of potential installation
+	configuration differences.
+	* README.txt: Document check_l2h_cfg and remove latex2html description.
+	* Makefile: Re-instate LATEX2HTML_FLAGS.  Remove latex2html from
+	the "dist files" list.  Add check_l2h_cfg to the "dist files" list.
+
+2011-11-06  Gary Funck <gary@intrepid.com>
+
 	* upc-lnag-spec.tex: Use titlesec package to
 	redefine paragraph level heading to behave like
 	subsection.  Use this to auto-number section 3 (Terms)
 	and to remove "\ \\" idiom previously used after \paregraph{}.
 	Move \usepackage{html} before \usepackege{hyperref} per
-	html package recommendation.  Thie necessitates moving
+	html package recommendation.  This necessitates moving
 	the bookmark and other hyperref options into the initial
 	\documentclass directive.
 	(tab): fix \texttt{} typo.

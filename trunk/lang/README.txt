@@ -10,20 +10,18 @@ Setting up the Tex environment:
 
    Under OS/X you may use the 'ports' package to get these packages.
 
-   Alternatively, you may install latex2html (available from CTAN) and
+   Alternatively, you may install latex2html (available from CTAN
+   at http://www.ctan.org/tex-archive/support/latex2html/) and
    latex-mk (available at http://latex-mk.sourceforge.net/) manually.
    You then will need to set environment variables, something like:
 
        export LATEX_MK_DIR=/usr/local/share/latex-mk/
        export TEXINPUTS=.:/usr/local/share/lib/latex2html/texinputs/:
 
+check_l2h_cfg
 
-latex2html
-
-	A slightly modified version of the installed latex2html
-	script that provides an improved error diagnostic when
-	an unmatched HTML tag is encountered.  This is not
-	necessary, but does help debug problems with generated HTML.
+	A Perl script that checks that latex2html has been configured
+	correctly.
 
 latex2html.cfg
 
@@ -39,7 +37,7 @@ Makefile
 upc-lang-spec.tex
 
 	Updated .tex mark up for the UPC Specification.
-	Changes were made to make the document eaisier
+	Changes were made to make the document easier
 	to maintain and to produce meaningful HTML output.
 
 upc-lang-spec.tar.gz
