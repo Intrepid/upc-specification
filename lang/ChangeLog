@@ -1,5 +1,13 @@
 2011-11-08  Gary Funck <gary@intrepid.com>
 
+	* upc-lang-spec.tex(sterm, ssterm, pterm): Adjust definition
+	and use of the term/definition related macros, to address
+	issue #1.  To avoid the introduction of an extra space at
+	the beginning of the definition, it is necessary to end
+	each introducing term macro invocation with a %-sign.
+
+2011-11-07  Gary Funck <gary@intrepid.com>
+
 	* Makefile: Only build the HTML formatted specification if
 	BUILD_HTML is asserted.  When building HTML, first invoke
 	`check_l2h_cfg' to verify that the installed latex2html

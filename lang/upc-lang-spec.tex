@@ -47,9 +47,17 @@
 
 \newcommand{\npf}{\setcounter{parnum}{0}\np}
 
-\newcommand{\sterm}[1]{\subsection{#1}\index{#1}}
-\newcommand{\ssterm}[1]{\subsubsection{#1}\index{#1}}
-\newcommand{\pterm}[1]{\paragraph{#1}\index{#1}}
+\newcommand{\sterm}[1]{\subsection{\html{#1}}
+\npf \latex{{\bf #1}\\}
+\index{#1}}
+
+\newcommand{\ssterm}[1]{\subsubsection{\html{#1}}
+\npf \latex{{\bf #1}\\}
+\index{#1}}
+
+\newcommand{\pterm}[1]{\paragraph{\html{#1}}
+\npf \latex{{\bf #1}\\}
+\index{#1}}
 
 \setlength{\parindent}{0pt}
 \setlength {\parskip}{1.3ex}
@@ -179,6 +187,13 @@ may be joined.  Comments on these specifications are always welcome.
 
 \addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 
+% To avoid the introduction of an extra space at the beginning of
+% a definition, it is necessary to end each introducing term macro
+% invocation below with a %-sign.  This is the LaTeX comment symbol;
+% LaTeX will "eat" the newline and subsequent initial white space
+% on the next line; this is the desired behavior, necessary to avoid
+% the introduction of a spurious white space character.
+
 \section{Terms, definitions and symbols}
 
 \npf For the purpose of these specifications the following
@@ -187,93 +202,76 @@ may be joined.  Comments on these specifications are always welcome.
 \np Other terms are defined where they appear in {\em
     italic} type or on the left hand side of a syntactical rule.
 
-\sterm{thread}
-
-\npf an instance of execution initiated by the execution
+\sterm{thread}% 
+     an instance of execution initiated by the execution
      environment at program startup.
 
-\sterm{object}
-
-\npf region of data storage in the execution environment
+\sterm{object}%
+     region of data storage in the execution environment
      which can represent values.
 
-\ssterm{shared object}
-
-\npf an object allocated using a shared-qualified
-     declarator or by a library function defined to create shared objects.
+\ssterm{shared object}%
+    an object allocated using a shared-qualified
+    declarator or by a library function defined to create shared objects.
     
 \np  NOTE \hspace{5pt}  All threads may access shared 
      objects.\footnote{The file scope declaration
      {\tt shared int x;} creates a single object which any thread may access.}
    
-\ssterm{private object}
-
-\npf any object which is not a shared object.
+\ssterm{private object}%
+     any object which is not a shared object.
 
 \np  NOTE \hspace{5pt} Each thread declares and creates its own 
      private objects which no other thread can access.
      \footnote{The file scope declaration
      {\tt int y;} creates a separate object for each thread to access.}
 
-\ssterm{shared array}
-
-\npf an array with elements that have shared qualified type.
+\ssterm{shared array}%
+     an array with elements that have shared qualified type.
   
-\sterm{affinity}
-
-\npf logical association between shared
+\sterm{affinity}%
      objects and threads.  Each element of data storage that contains
      shared objects has affinity to exactly one thread.
  
-\sterm{pointer-to-shared}
+\sterm{pointer-to-shared}%
+     a pointer whose referenced type is shared-qualified.
 
-\npf a pointer whose referenced type is shared-qualified.
-
-\sterm{pointer-to-local}
-
-\npf a pointer whose referenced type is not
+\sterm{pointer-to-local}%
+     a pointer whose referenced type is not
      shared-qualified.
 
 \label{def-access}
-\sterm{access}
-
-\npf $<$execution-time action$>$ to read or
+\sterm{access}%
+     $<$execution-time action$>$ to read or
      modify the value of an object by a thread.
 
-\ssterm{shared access}
-
-\npf an access using an expression whose type
+\ssterm{shared access}%
+     an access using an expression whose type
      is shared-qualified.
 
-\pterm{strict shared read}
-
-\npf a shared read access which is determined to be
+\pterm{strict shared read}%
+     a shared read access which is determined to be
      strict according to section \ref{type_qualifiers} of this specification.
 
-\pterm{strict shared write}
-
-\npf a shared modify access which is determined to be
+\pterm{strict shared write}%
+     a shared modify access which is determined to be
      strict according to section \ref{type_qualifiers} of this specification.
 
-\pterm{relaxed shared read}
-
-\npf a shared read access which is determined to be
+\pterm{relaxed shared read}%
+     a shared read access which is determined to be
      relaxed according to section \ref{type_qualifiers} of this specification.
 
-\pterm{relaxed shared write}
-
-\npf a shared modify access which is determined to be
+\pterm{relaxed shared write}%
+     a shared modify access which is determined to be
      relaxed according to section \ref{type_qualifiers} of this specification.
 
-\ssterm{local access}
-
-\npf an access using an expression whose type
+\ssterm{local access}%
+     an access using an expression whose type
      is not shared-qualified.
 
 \index{synchronization}
-\sterm{collective}
-
-\npf constraint placed on some language 
+\sterm{collective}%
+     constraint placed on some language 
      operations which requires evaluation of such operations to be
      matched\footnote{A collective operation need not provide any
      actual synchronization between threads, unless otherwise noted.
@@ -286,15 +284,13 @@ may be joined.  Comments on these specifications are always welcome.
      The behavior of collective operations is undefined unless all threads
      execute the same sequence of collective operations.
 
-\ssterm{single-valued}
-
-\npf an operand to a collective operation, which has
+\sterm{single-valued}%
+     an operand to a collective operation, which has
      the same value on every thread.  The behavior of the operation
      is otherwise undefined.
 
-\ssterm{phase}
-
-\npf an unsigned integer value associated with a
+\sterm{phase}%
+     an unsigned integer value associated with a
      pointer-to-shared which indicates the element-offset within an
      affinity block; used in pointer-to-shared arithmetic
      to determine affinity boundaries.
