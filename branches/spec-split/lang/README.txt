@@ -31,25 +31,18 @@ Building the HTML Formatted Specification
 File Description
 ----------------
 
-check_l2h_cfg
-
-	A Perl script that checks that latex2html has been configured
-	correctly.
-
-latex2html.cfg
-
-	A configuration/customization file for latex2html.
-
 Makefile
 
 	Makefile which creates .pdf and (optionally) .html
 	from the specification .tex file.
+
+upc-language.tex
+
+	The UPC language specification main description.
 	
 upc-lang-spec.tex
 
-	Updated .tex mark up for the UPC Specification.
-	Changes were made to make the document easier
-	to maintain and to produce meaningful HTML output.
+	Driver file for the UPC Specification.
 
 upc-lang-spec.tar.gz
 
@@ -57,5 +50,13 @@ upc-lang-spec.tar.gz
 	build/make files, the generated .pdf file and
 	(optionally) the generated .html_dir directory
 	containing the HTML formatted specification.
+
+upc-mem-consistency-model.tex
+
+	The memory consistency model description.
+
+upc-vs-c-std-section-nums.tex
+
+	The UPC to ISO C standard section mapping description.
 
                             -- end --

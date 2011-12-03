@@ -5,30 +5,28 @@
 # HTML formatted specification:
 #     make BUILD_HTML=1
 #
-NAME = upc-lang-spec
+NAME = upc-lib-core-spec
 
 TEXSRCS =
 
 TEX_INC_SRCS = \
-	../common/upc-acknowledgments.tex \
-	../common/upc-introduction.tex \
-	upc-language.tex \
-	upc-mem-consistency-model.tex \
-	../common/upc-references.tex \
-	../common/upc-scope.tex \
-	../common/upc-spec-prolog.tex \
-	../common/upc-terms-and-defs.tex \
-	upc-vs-c-std-section-nums.tex
+	../../common/upc-acknowledgments.tex \
+	../../common/upc-introduction.tex \
+	upc-lib-core.tex \
+	../../common/upc-references.tex \
+	../../common/upc-scope.tex \
+	../../common/upc-spec-prolog.tex \
+	../../common/upc-terms-and-defs.tex
 
 USE_PDFLATEX = 1
 RMDIR = $(RM) -rf
 CLEAN_FILES += ${NAME:=.pdfsync}
 
-LATEX_ENV+= TEXINPUTS=.:../common:
-PDFLATEX_ENV+= TEXINPUTS=.:../common:
+LATEX_ENV+= TEXINPUTS=.:../../common:
+PDFLATEX_ENV+= TEXINPUTS=.:../../common:
 
-CHECK_L2H_CFG = ../common/check_l2h_cfg
-LATEX2HTML_CFG = ../common/latex2html.cfg
+CHECK_L2H_CFG = ../../common/check_l2h_cfg
+LATEX2HTML_CFG = ../../common/latex2html.cfg
 LATEX2HTML_FLAGS = -init_file $(LATEX2HTML_CFG)
 
 $(NAME)_EXTRA_DIST_FILES = \

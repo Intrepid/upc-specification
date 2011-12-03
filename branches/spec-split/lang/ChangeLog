@@ -1,3 +1,22 @@
+2011-12-02 Gary Funck <gary@intrepid.com>
+
+	Preliminary split of UPC Specification into language
+	and library parts.
+	* check_l2h_cfg: Move to ../common.
+	* latex2html.cfg: Ditto.
+	* README.txt: Adjust for file changes.
+	* Makefile: Adjust for file name changes and move of files to
+	the ../common directory.
+	* upc-language.tex: New. Extract the UPC language specification
+	main description from the specification document.
+	* upc-lang-spec.tex: Include the various sub-parts of the
+	specification that were extracted from the previous
+	monolithic document.
+	* upc-mem-consistency-model.tex: New. Extract the memory consistency
+	model description from the specification document.
+	* upc-vs-c-std-section-nums.tex: New. Extract the UPC to C standard
+	section mapping description from the specification document.
+
 2011-11-08  Gary Funck <gary@intrepid.com>
 
 	* upc-lang-spec.tex(sterm, ssterm, pterm): Adjust definition
