@@ -10,14 +10,17 @@ NAME = upc-lang-spec
 TEXSRCS =
 
 TEX_INC_SRCS = \
-	../common/upc-acknowledgments.tex \
-	../common/upc-introduction.tex \
-	upc-language.tex \
-	upc-mem-consistency-model.tex \
-	../common/upc-references.tex \
-	../common/upc-scope.tex \
 	../common/upc-spec-prolog.tex \
-	../common/upc-terms-and-defs.tex \
+	upc-acknowledgments.tex \
+	upc-introduction.tex \
+	upc-language.tex \
+	upc-lang-extensions.tex \
+	upc-lib-core.tex \
+	upc-lib-mem-semantics.tex \
+	upc-mem-consistency-model.tex \
+	upc-references.tex \
+	upc-scope.tex \
+	upc-terms-and-defs.tex \
 	upc-vs-c-std-section-nums.tex
 
 USE_PDFLATEX = 1

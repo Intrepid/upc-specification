@@ -1,3 +1,30 @@
+2012-03-14  Gary Funck <gary@intrepid.com>
+
+	* top-level/Makefile: New.  Add top-level recursive Makefile.
+	* top-level/lib/Makefile: New.  Add top-level library recursive Makefile.
+
+2012-03-14  Gary Funck <gary@intrepid.com>
+
+	* upc-lib-extensions.tex: New. Extract library extensions
+	guidelines from the core library document, into its own file.
+
+2012-03-14  Gary Funck <gary@intrepid.com>
+
+	Move these files back into the 'lang' directory.
+	* upc-acknowledgments.tex: Move from ../common.
+	* upc-introduction.tex: Ditto.
+	* upc-lib-mem-semantics.tex: Ditto.
+	* upc-references.tex: Ditto.
+	* upc-scope.tex: Ditto.
+	* upc-terms-and-defs.tex: Ditto.
+
+2012-03-09 Gary Funck <gary@intrepid.com>
+
+	Move core library back into spec.
+	* upc-lang-spec.tex: Bump rev. number to 1.3 and 
+	revision date to March 9, 2012
+	* upc-lib-core.tex: Move from ../lib/core
+
 2011-12-02 Gary Funck <gary@intrepid.com>
 
 	Preliminary split of UPC Specification into language

@@ -51,6 +51,42 @@ upc-lang-spec.tar.gz
 	(optionally) the generated .html_dir directory
 	containing the HTML formatted specification.
 
+upc-lib-core.tex
+
+	The UPC core library description.
+
+upc-acknowledgments.tex
+
+	The "Acknowledgments" section of the UPC language specification.
+
+
+upc-introduction.tex
+
+	The "Introduction" section of the UPC language specification.
+
+upc-lang-extensions.tex
+
+	The UPC library extensions guidelines of the UPC language
+	specification.
+
+upc-lib-mem-semantics.tex
+
+	The UPC library memory semantics section of the UPC language
+	specification.
+
+upc-references.tex
+
+	The "References" section of the UPC language specification.
+
+upc-scope.tex
+
+	The "Scope" section of the UPC language specification.
+
+upc-terms-and-defs.tex
+
+	The "Terms, definitions and symbols" section of the UPC language
+	specification.
+	
 upc-mem-consistency-model.tex
 
 	The memory consistency model description.

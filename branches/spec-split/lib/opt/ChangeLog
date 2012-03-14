@@ -1,3 +1,13 @@
+2011-03-14 Gary Funck <gary@intrepid.com>
+
+	Remove references to specification boilerplate files.
+	* Makefile: Remove references to top-level/common files
+	that were moved back into top-level/lang.
+	* upc-lib-optional-spec.tex: Force section number to
+	start at 7.4.
+	* upc-lib-io.tex: Move top-level Library heading into
+	upc-lib-optional-spec.tex
+
 2011-12-02 Gary Funck <gary@intrepid.com>
 
 	Preliminary split of UPC Specification into language

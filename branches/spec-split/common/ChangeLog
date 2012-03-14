@@ -1,3 +1,13 @@
+2012-03-14  Gary Funck <gary@intrepid.com>
+
+	Move these files back into the 'lang' directory.
+	* upc-acknowledgments.tex: Move to ../lang
+	* upc-introduction.tex: Ditto.
+	* upc-lib-mem-semantics.tex: Ditto.
+	* upc-references.tex: Ditto.
+	* upc-scope.tex: Ditto.
+	* upc-terms-and-defs.tex: Ditto.
+
 2011-12-02  Gary Funck <gary@intrepid.com>
 
 	Preliminary split of UPC Specification into language

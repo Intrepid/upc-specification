@@ -1,0 +1,57 @@
+\section{Proposed Additions and Extensions}
+\index{proposed extensions}
+
+\np This section contains proposed additions and extensions to the UPC
+    specification.  Such proposals are included when stable enough for
+    developers to implement and for users to study and experiment with
+    them.  However, their presence does not suggest long term support.
+    When fully stable and tested, they will be moved to the main body of
+    the specification.
+
+\np This section also describes the process used to add new items to the
+    specification, which starts with inclusion in this section.  Requirements
+    for inclusion are:\footnote{These requirements ensure that most of
+    the semantic issues that arise during initial implementation have
+    been addressed and prevents the accumulation of interfaces that no
+    one commits to implement. Nothing prevents the circulation of more
+    informal {\em what if} interface proposals from circulating in the
+    community before an extension reaches this point.}
+
+\begin{enumerate}
+\item A documented API which shall use the format and conventions of
+    this specification and [ISO/IEC00].
+
+\item Either a complete, publicly available, implementation of the API
+    or a set of publicly available example programs which demonstrate
+    the interface.
+    
+\item The concurrence of the UPC consortium that its inclusion would be
+    in the best interest of the language.    
+\end{enumerate}
+
+\np If all implementations drop support for an extension and/or all interested parties
+    no longer believe the extension is worth pursuing, then it may simply be dropped.
+    Otherwise, the requirements for inclusion of an extension in the main body of the
+    specification are:
+
+\begin{enumerate}
+\item Six months residence in this section.
+
+\item The existence of either one (or more) publicly available "reference" implementation 
+written in standard UPC OR at least two independent implementations (possibly specific 
+to a given UPC implementation).
+
+\item The existence of a significant base of experimental user experience
+   which demonstrates positive results with a substantial portion of the
+   proposed API.
+
+\item The concurrence of the UPC consortium that its inclusion would be
+    in the best interest of the language.
+\end{enumerate}
+
+\index{feature macros}
+\np For each extension, there shall be a predefined {\em feature macro}
+   beginning with {\tt \_\_UPC} which will be defined by an implementation
+   to be the interface version of the extension if it is supported, otherwise
+   undefined.
+

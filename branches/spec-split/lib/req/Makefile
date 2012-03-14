@@ -10,13 +10,8 @@ NAME = upc-lib-required-spec
 TEXSRCS =
 
 TEX_INC_SRCS = \
-	../../common/upc-acknowledgments.tex \
-	../../common/upc-introduction.tex \
-	upc-lib-collectives.tex \
-	../../common/upc-references.tex \
-	../../common/upc-scope.tex \
 	../../common/upc-spec-prolog.tex \
-	../../common/upc-terms-and-defs.tex
+	upc-lib-collectives.tex
 
 USE_PDFLATEX = 1
 RMDIR = $(RM) -rf
