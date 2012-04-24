@@ -1,7 +1,15 @@
+2012-04-24  Gary Funck <gary@intrepid.com>
+
+	* upc-lang-spec.tex: Re-introduce appendices beginning
+	  at "Proposed Additions and Extensions".
+	* upc-lang-extensions.tex: Add a page break at the
+	  beginning of the appendix.
+
 2012-03-14  Gary Funck <gary@intrepid.com>
 
 	* top-level/Makefile: New.  Add top-level recursive Makefile.
-	* top-level/lib/Makefile: New.  Add top-level library recursive Makefile.
+	* top-level/lib/Makefile: New.  Add top-level library recursive
+	Makefile.
 
 2012-03-14  Gary Funck <gary@intrepid.com>
 
@@ -21,7 +29,7 @@
 2012-03-09 Gary Funck <gary@intrepid.com>
 
 	Move core library back into spec.
-	* upc-lang-spec.tex: Bump rev. number to 1.3 and 
+	* upc-lang-spec.tex: Bump rev. number to 1.3 and
 	revision date to March 9, 2012
 	* upc-lib-core.tex: Move from ../lib/core
 
@@ -201,6 +209,6 @@
 	Note: svn use of symlinks are not supported on Windows client.
 	* latex2html: New. local copy of the latex2html script.
 	* README.txt: New. Describe files in this directory.
-	* Makefile: New.  Makefile.  Requires installation of 
+	* Makefile: New.  Makefile.  Requires installation of
 	the 'latex-mk' package, and setting of the 'LATEX_MK_DIR'
 	environment variable via /etc/profile.d/latex-mk.sh.
