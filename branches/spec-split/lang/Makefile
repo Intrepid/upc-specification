@@ -27,8 +27,8 @@ USE_PDFLATEX = 1
 RMDIR = $(RM) -rf
 CLEAN_FILES += ${NAME:=.pdfsync}
 
-LATEX_ENV+= TEXINPUTS=.:../common:
-PDFLATEX_ENV+= TEXINPUTS=.:../common:
+LATEX_ENV+= TEXINPUTS=.:../common:$(TEXINPUTS)
+PDFLATEX_ENV+= TEXINPUTS=.:../common:$(TEXINPUTS)
 
 CHECK_L2H_CFG = ../common/check_l2h_cfg
 LATEX2HTML_CFG = ../common/latex2html.cfg
@@ -54,6 +54,10 @@ ALL += dist
 
 .PHONY: make-default
 make-default: $(ALL)
+
+.PHONY: distclean
+distclean: clean
+	@$(RM) -f $(NAME).tar.gz
 
 .PHONY: clean-html
 clean-html: html
