@@ -1,6 +1,9 @@
+TARGETS=clean distclean make-default
 
-.PHONY: all clean
+.PHONY: $(TARGETS)
 
-all clean distclean:
+all: make-default
+
+$(TARGETS):
 	$(MAKE) -C req $@
 	$(MAKE) -C opt $@
