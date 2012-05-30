@@ -21,6 +21,30 @@ Setting up the Tex Environment
        export LATEX_MK_DIR=/usr/local/share/latex-mk/
        export TEXINPUTS=.:/usr/local/share/lib/latex2html/texinputs/:
 
+Building the Language Specification on RHEL 6
+---------------------------------------------
+
+We have determined that in addition to the texlive-2007 package
+you will need to install a few extra packages.  Those
+packages are not available in the default Redhat
+RPM repository.
+
+We have uploaded a .zip file that contains RHEL-6
+RPM's with the necessary additional packages.
+http://upc-specification.googlecode.com/files/upc-spec-rhel6-rpms.zip
+
+The zip file contains:
+
+    latex2html-2008-4.el6.noarch.rpm
+    latex-mk-2.1-1.el6.noarch.rpm
+    texinfo-tex-4.13a-8.el6.x86_64.rpm
+
+You can also download and install the packages locally, but if
+you have the ability to install RPM's this should save some time.
+
+After installing the latex-mk RPM, you'll need to logout
+and login again to pick up the necessary environment variable setting.
+
 Building the HTML Formatted Specification
 -----------------------------------------
 

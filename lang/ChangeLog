@@ -1,3 +1,10 @@
+2012-05-30  Gary Funck <gary@intrepid.com>
+
+	* lang/README.txt: Add description of additional packages
+	required to build the specification on an RHEL-6 based system.
+	Add reference to a zip file containing the necessary
+	three additional RPM's needed to build the specification.
+
 2012-05-18  Gary Funck <gary@intrepid.com>
 
 	Merge spec-split branch with trunk.
