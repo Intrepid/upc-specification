@@ -25,7 +25,6 @@ LATEX2HTML_CFG = ../../common/latex2html.cfg
 LATEX2HTML_FLAGS = -init_file $(LATEX2HTML_CFG)
 
 $(NAME)_EXTRA_DIST_FILES = \
-	ChangeLog \
 	$(TEX_INC_SRCS) \
 	README.txt
 $(NAME)_EXTRA_DIST += $(NAME).pdf
