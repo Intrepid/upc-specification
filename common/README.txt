@@ -17,7 +17,7 @@ latex.gmk
 
 latex-mk
 
-	A perl script that will run the latex utility repetitively in
+	A shell script that will run the latex utility repetitively in
 	order to create the desired output.  This script is defined
 	by the latex-mk package.  If the latex-mk package is not
 	installed on the system, this copy of the script is used
