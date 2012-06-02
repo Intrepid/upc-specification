@@ -1,5 +1,9 @@
-PATH := $(PATH):$(COMMON)
-TEXINPUTS := .:$(COMMON):$(TEXINPUTS)
+LATEX_MK_DIR ?= $(abspath $(COMMON))
+BIN_DIR = $(abspath $(COMMON))
+LATEX_DIR = $(abspath $(COMMON)/latex)
+
+PATH := $(PATH):$(BIN_DIR)
+TEXINPUTS := .:$(COMMON):$(TEXINPUTS):$(LATEX_DIR)
 
 LATEX_MK ?= latex-mk
 
