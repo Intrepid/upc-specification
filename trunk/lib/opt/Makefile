@@ -7,57 +7,12 @@
 #
 NAME = upc-lib-optional-spec
 
+COMMON = ../../common
+
 TEXSRCS =
 
 TEX_INC_SRCS = \
-	../../common/upc-spec-prolog.tex \
+	$(COMMON)/upc-spec-prolog.tex \
 	upc-lib-io.tex
 
-USE_PDFLATEX = 1
-RMDIR = $(RM) -rf
-CLEAN_FILES += ${NAME:=.pdfsync}
-
-LATEX_ENV+= TEXINPUTS=.:../../common:$(TEXINPUTS)
-PDFLATEX_ENV+= TEXINPUTS=.:../../common:$(TEXINPUTS)
-
-CHECK_L2H_CFG = ../../common/check_l2h_cfg
-LATEX2HTML_CFG = ../../common/latex2html.cfg
-LATEX2HTML_FLAGS = -init_file $(LATEX2HTML_CFG)
-
-$(NAME)_EXTRA_DIST_FILES = \
-	$(TEX_INC_SRCS) \
-	README.txt
-$(NAME)_EXTRA_DIST += $(NAME).pdf
-ifdef BUILD_HTML
-$(NAME)_EXTRA_DIST += $(NAME).html_dir
-endif
-$(NAME)_EXTRA_DIST += $($(NAME)_EXTRA_DIST_FILES)
-
-ALL = pdf
-ifdef BUILD_HTML
-ALL += check-l2h html
-else
-ALL += $(NAME)_rm_html_dir
-endif
-
-.PHONY: make-default
-make-default: $(ALL)
-
-.PHONY: clean-html
-clean-html: html
-	@$(RM) -f $(NAME).html_dir/WARNINGS
-	@$(RMDIR) $(NAME).html_dir/TMP
-
-$(NAME).html_dir: clean-html
-
-.PHONY: $(NAME)_rm_html_dir
-$(NAME)_rm_html_dir:
-	@$(RMDIR) $(NAME).html_dir
-
-.PHONY: check-l2h
-check-l2h:
-	@echo "Checking that latex2html has been installed ..."
-	@which $(LATEX2HTML)
-	@env LATEX2HTML='$(LATEX2HTML)' $(CHECK_L2H_CFG)
-
-include $(LATEX_MK_DIR)/latex.gmk
+include $(COMMON)/Makefile.in
