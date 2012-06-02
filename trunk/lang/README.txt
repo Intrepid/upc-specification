@@ -68,13 +68,6 @@ upc-lang-spec.tex
 
 	Driver file for the UPC Specification.
 
-upc-lang-spec.tar.gz
-
-	gzip'd tar file containing all UPC specification source files,
-	build/make files, the generated .pdf file and
-	(optionally) the generated .html_dir directory
-	containing the HTML formatted specification.
-
 upc-lib-core.tex
 
 	The UPC core library description.

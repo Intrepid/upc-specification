@@ -49,14 +49,9 @@ ALL += check-l2h html
 else
 ALL += $(NAME)_rm_html_dir
 endif
-ALL += dist
 
 .PHONY: make-default
 make-default: $(ALL)
-
-.PHONY: distclean
-distclean: clean
-	@$(RM) -f $(NAME).tar.gz
 
 .PHONY: clean-html
 clean-html: html
