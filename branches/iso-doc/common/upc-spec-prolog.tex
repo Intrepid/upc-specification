@@ -1,0 +1,68 @@
+\documentclass[12pt,titlepage, 
+               bookmarks,bookmarksopen=false,
+               bookmarksnumbered=true,pdfpagemode=UseOutlines,
+               colorlinks=true]{article}
+
+\usepackage[noindentafter]{titlesec}
+\usepackage[all]{xy}
+\usepackage{html}
+
+% DRAFT FOR NOW -- first page only
+\usepackage[firstpage]{draftwatermark}
+\SetWatermarkLightness{0.80}
+\SetWatermarkScale{4}
+
+% The special comments below are processed by latex2html.
+% Everything between them will be skipped by latex2html.
+%begin{latexonly}
+  \usepackage{ifpdf}
+  \ifpdf
+    \usepackage{pdfsync}
+    \usepackage{hyperref}
+  \fi
+%end{latexonly}
+\usepackage{makeidx}
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{3}
+\hypersetup{bookmarksdepth=4}
+
+% Make paragraphs behave like subsubsections
+% See: http://www.charlietanksley.net/philtex/\
+%      modifying-section-commands-with-the-titlesec-package/
+\titleformat{\paragraph}[hang]{\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}{0pt}{1.25ex plus 0.5ex minus 0.25 ex}{0.5ex}
+
+\newcounter{parnum}
+\makeatletter
+\@addtoreset{parnum}{section}
+\@addtoreset{parnum}{subsection}
+\@addtoreset{parnum}{subsubsection}
+\@addtoreset{parnum}{paragraph}
+\makeatother
+
+% Not really a tab, but something like it for HTML
+% output.  If we want real tabs, we'll probably need to use CSS.
+\newcommand{\tab}{\texttt{~~~~~~}}
+
+\newcommand{\np}{%
+\addtocounter{parnum}{1}%
+\latex{\hspace{-2em}\makebox[2em][l]{\arabic{parnum}}}%
+\html{{\bf {\arabic{parnum}}}\tab}}
+
+\newcommand{\npf}{\setcounter{parnum}{0}\np}
+
+\newcommand{\sterm}[1]{\subsection{\html{#1}}
+\npf \latex{{\bf #1}\\}
+\index{#1}}
+
+\newcommand{\ssterm}[1]{\subsubsection{\html{#1}}
+\npf \latex{{\bf #1}\\}
+\index{#1}}
+
+\newcommand{\pterm}[1]{\paragraph{\html{#1}}
+\npf \latex{{\bf #1}\\}
+\index{#1}}
+
+\setlength{\parindent}{0pt}
+\setlength {\parskip}{1.3ex}
