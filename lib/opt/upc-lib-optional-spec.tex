@@ -2,7 +2,7 @@
 
 \makeindex
 
-\title{UPC Language Required Library Specifications\\
+\title{UPC Optional Library Specifications\\
 V1.3 }
 
 \author{A publication of the UPC Consortium}
@@ -23,8 +23,11 @@ V1.3 }
 \setcounter{section}{6} % section starts at 7
 \section{Library}
 
-\npf This subsection provides the UPC parallel extensions of
-    [ISO/IEC00 Sec 7.1.2].
+\npf This section provides UPC parallel extensions of [ISO/IEC00 Sec 7.1.2]. Also see the UPC Required Library Specifications.
+
+\np The libraries specified in this document are optional -- conforming implementations of the UPC language may provide or 
+omit each library at the subsection level (e.g. Sec 7.4). 
+Any subsection which is provided must be implemented in its entirety and predefine the specified feature macro.
 
 \setcounter{subsection}{3} % subsection starts at 4
 \input{upc-lib-io}
