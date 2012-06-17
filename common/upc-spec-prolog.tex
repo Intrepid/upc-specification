@@ -1,4 +1,5 @@
-\documentclass[12pt,titlepage, 
+\documentclass[12pt,titlepage,
+               twoside,openright,
                bookmarks,bookmarksopen=false,
                bookmarksnumbered=true,pdfpagemode=UseOutlines,
                colorlinks=true]{article}
@@ -21,6 +22,30 @@
 % DRAFT FOR NOW -- first page only
 \usepackage[firstpage]{draftwatermark}
 \SetWatermarkLightness{0.80}
+
+% stabilize the margins for twoside
+\setlength{\oddsidemargin}{50pt}  
+\setlength{\evensidemargin}{50pt}  
+
+% Headers and footers, similar to ISO C99 spec
+\usepackage{ifthen}
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\renewcommand{\sectionmark}[1]{\markboth{\thesection}{#1}}
+\renewcommand{\subsectionmark}[1]{\markboth{\thesubsection}{#1}}
+\renewcommand{\subsubsectionmark}[1]{\markboth{\thesubsubsection}{#1}}
+\renewcommand{\paragraphmark}[1]{\markboth{\theparagraph}{#1}}
+\newcommand{\footersection}{\ifthenelse{\equal{\thesection}{0}}{}%  omit empty section numbers in front-matter
+      {\ifthenelse{\equal{\firstleftmark}{0}}{}
+       {\S\firstleftmark}}}
+\cfoot{\nouppercase{\firstrightmark}}
+\fancyfoot[LO,RE]{\footersection}
+\fancyfoot[RO,LE]{\thepage}
+\lhead{\mytitle}
+\rhead{\myversion}
 
 % The special comments below are processed by latex2html.
 % Everything between them will be skipped by latex2html.
