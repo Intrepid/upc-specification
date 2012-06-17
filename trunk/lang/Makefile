@@ -9,8 +9,6 @@ NAME = upc-lang-spec
 
 COMMON = ../common
 
-TEXSRCS =
-
 TEX_INC_SRCS = \
 	$(COMMON)/upc-spec-prolog.tex \
 	upc-acknowledgments.tex \

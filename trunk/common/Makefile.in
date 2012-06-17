@@ -18,6 +18,8 @@ CHECK_L2H_CFG ?= check_l2h_cfg
 LATEX2HTML_CFG = $(COMMON)/latex2html.cfg
 LATEX2HTML_FLAGS = -init_file $(LATEX2HTML_CFG)
 
+TEXSRCS = $(TEX_INC_SRCS)
+
 $(NAME)_EXTRA_DIST_FILES = \
 	$(TEX_INC_SRCS) \
 	README.txt

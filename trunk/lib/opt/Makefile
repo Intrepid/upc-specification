@@ -9,8 +9,6 @@ NAME = upc-lib-optional-spec
 
 COMMON = ../../common
 
-TEXSRCS =
-
 TEX_INC_SRCS = \
 	$(COMMON)/upc-spec-prolog.tex \
 	upc-lib-io.tex

@@ -41,7 +41,7 @@
 \newcommand{\footersection}{\ifthenelse{\equal{\thesection}{0}}{}%  omit empty section numbers in front-matter
       {\ifthenelse{\equal{\firstleftmark}{0}}{}
        {\S\firstleftmark}}}
-\cfoot{\nouppercase{\firstrightmark}}
+\cfoot{\parbox{0.75\textwidth}{\centering\nouppercase{\firstrightmark}}}
 \fancyfoot[LO,RE]{\footersection}
 \fancyfoot[RO,LE]{\thepage}
 \lhead{\mytitle}
