@@ -3,6 +3,17 @@
                bookmarksnumbered=true,pdfpagemode=UseOutlines,
                colorlinks=true]{article}
 
+% Make text searchable (avoid ligatures in words like affinity)
+% by loading the 'cmap' package.
+\usepackage{cmap}
+
+% Choose a font that is available as T1, specify encoding
+% and load symbol definitions.
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+
 \usepackage[noindentafter]{titlesec}
 \usepackage[all]{xy}
 \usepackage{html}
@@ -10,7 +21,6 @@
 % DRAFT FOR NOW -- first page only
 \usepackage[firstpage]{draftwatermark}
 \SetWatermarkLightness{0.80}
-\SetWatermarkScale{4}
 
 % The special comments below are processed by latex2html.
 % Everything between them will be skipped by latex2html.
@@ -21,6 +31,7 @@
     \usepackage{hyperref}
   \fi
 %end{latexonly}
+
 \usepackage{makeidx}
 
 \setcounter{secnumdepth}{4}
