@@ -55,7 +55,6 @@
 \rhead{\myversion}
 
 \usepackage{makeidx}
-\usepackage[totoc]{idxlayout} % include the index in the toc and make it look nice
 
 \setcounter{secnumdepth}{4}
 \setcounter{tocdepth}{3}
@@ -82,12 +81,22 @@
 }
 
 \newcommand{\dotoc}{
+\renewcommand{\thispagestyle}[1]{} % hack: make sure no pages after the title revert to plain style (ie \makeindex)
 \newpage
 \setlength {\parskip}{0ex}
 \phantomsection
 \addcontentsline{toc}{section}{Contents}
 \tableofcontents
 \setlength {\parskip}{1.3ex}
+\newpage
+}
+
+\newcommand{\doindex}{
+\newpage
+\phantomsection % ensure correct hyperref
+\renewcommand{\firstleftmark}{0} % Hack: suppress the bogus section mark inserted by makeindex
+\addcontentsline{toc}{section}{Index}
+\printindex
 \newpage
 }
 
@@ -127,7 +136,10 @@
     \hypersetup{bookmarksdepth=4,
                 pdftitle={\mytitle,\ \myversion}, % set the title in the pdf file properties
 		pdfauthor={UPC Consortium},
-                pageanchor=true}
+                pageanchor=true,
+		pdfpagemode=UseOutlines, % default view on open
+		pdfview=Fit  % view after clicking a link
+		}
   \fi
 %end{latexonly}
  
