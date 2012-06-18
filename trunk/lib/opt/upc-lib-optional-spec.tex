@@ -16,11 +16,7 @@
 \maketitle
 
 \setcounter{page}{2}
-\newpage
-\setlength {\parskip}{0ex}
-\tableofcontents                                             
-\setlength {\parskip}{1.3ex}
-\newpage
+\dotoc
 
 \setcounter{section}{6} % section starts at 7
 \section{Library}
@@ -35,6 +31,6 @@ Any subsection which is provided must be implemented in its entirety and predefi
 \input{upc-lib-io}
 
 \pagebreak
-\setcounter{section}{0}
+\phantomsection % ensure correct hyperref
 \printindex
 \end {document}

@@ -42,30 +42,23 @@
 \renewcommand{\subsectionmark}[1]{\markboth{\thesubsection}{#1}}
 \renewcommand{\subsubsectionmark}[1]{\markboth{\thesubsubsection}{#1}}
 \renewcommand{\paragraphmark}[1]{\markboth{\theparagraph}{#1}}
-\newcommand{\footersection}{\ifthenelse{\equal{\thesection}{0}}{}%  omit empty section numbers in front-matter
-      {\ifthenelse{\equal{\firstleftmark}{0}}{}
-       {\S\firstleftmark}}}
+\newcommand{\footersection}{ 
+   \ifthenelse{\equal{\thesection}{0} 
+           \OR \equal{\firstleftmark}{0} 
+           \OR \equal{\firstleftmark}{INDEX} 
+	       } {} %  omit empty section numbers in front-matter
+       {\S\firstleftmark}}
 \cfoot{\parbox{0.75\textwidth}{\centering\nouppercase{\firstrightmark}}}
 \fancyfoot[LO,RE]{\footersection}
 \fancyfoot[RO,LE]{\thepage}
 \lhead{\mytitle}
 \rhead{\myversion}
 
-% The special comments below are processed by latex2html.
-% Everything between them will be skipped by latex2html.
-%begin{latexonly}
-  \usepackage{ifpdf}
-  \ifpdf
-    \usepackage{pdfsync}
-    \usepackage{hyperref}
-  \fi
-%end{latexonly}
-
 \usepackage{makeidx}
+\usepackage[totoc]{idxlayout} % include the index in the toc and make it look nice
 
 \setcounter{secnumdepth}{4}
 \setcounter{tocdepth}{3}
-\hypersetup{bookmarksdepth=4}
 
 % Make paragraphs behave like subsubsections
 % See: http://www.charlietanksley.net/philtex/\
@@ -80,6 +73,23 @@
 \@addtoreset{parnum}{subsubsection}
 \@addtoreset{parnum}{paragraph}
 \makeatother
+
+\newcommand{\sectionstar}[1]{ % unnumbered section that will play nicely with toc, hyperref and footers
+\phantomsection
+\section*{#1}
+\addcontentsline{toc}{section}{#1}
+\markboth{0}{#1}
+}
+
+\newcommand{\dotoc}{
+\newpage
+\setlength {\parskip}{0ex}
+\phantomsection
+\addcontentsline{toc}{section}{Contents}
+\tableofcontents
+\setlength {\parskip}{1.3ex}
+\newpage
+}
 
 % Not really a tab, but something like it for HTML
 % output.  If we want real tabs, we'll probably need to use CSS.
@@ -106,3 +116,19 @@
 
 \setlength{\parindent}{0pt}
 \setlength {\parskip}{1.3ex}
+
+% The special comments below are processed by latex2html.
+% Everything between them will be skipped by latex2html.
+%begin{latexonly}
+  \usepackage{ifpdf}
+  \ifpdf
+    \usepackage{pdfsync}
+    \usepackage{hyperref}
+    \hypersetup{bookmarksdepth=4,
+                pdftitle={\mytitle,\ \myversion}, % set the title in the pdf file properties
+		pdfauthor={UPC Consortium},
+                pageanchor=true}
+  \fi
+%end{latexonly}
+ 
+% DO NOT PLACE ANY OTHER PACKAGES HERE - hyperref must come last!
