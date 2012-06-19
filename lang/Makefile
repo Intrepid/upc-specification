@@ -10,7 +10,7 @@ NAME = upc-lang-spec
 COMMON = ../common
 
 TEX_INC_SRCS = \
-	$(COMMON)/upc-spec-prolog.tex \
+	$(COMMON)/upc-spec-preamble.tex \
 	upc-acknowledgments.tex \
 	upc-introduction.tex \
 	upc-language.tex \

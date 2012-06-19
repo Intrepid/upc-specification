@@ -33,9 +33,9 @@ Makefile.in
 	Makefile in each build sub-directory.  Requires 'latex-mk'
 	Makefile infrastructure.
 
-upc-spec-prolog.tex
+upc-spec-preamble.tex
 
-	The LaTeX prolog, to be included (via \input) from each
+	The LaTeX preamble, to be included (via \input) from each
 	sub-part of the UPC specification.
 
                             -- end --
