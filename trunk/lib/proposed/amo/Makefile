@@ -10,7 +10,7 @@ NAME = upc-lib-atomic-ops-spec
 COMMON = ../../../common
 
 TEX_INC_SRCS = \
-	$(COMMON)/upc-spec-prolog.tex \
+	$(COMMON)/upc-spec-preamble.tex \
 	upc-lib-atomic-ops.tex
 
 include $(COMMON)/Makefile.in
