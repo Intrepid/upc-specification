@@ -7,3 +7,4 @@ all: make-default
 $(TARGETS):
 	$(MAKE) -C req $@
 	$(MAKE) -C opt $@
+	$(MAKE) -C proposed $@
