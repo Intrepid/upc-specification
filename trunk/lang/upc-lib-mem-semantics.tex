@@ -9,17 +9,17 @@
 \index{UPC\_IN\_NOSYNC}
 \index{upc\_flag\_t}
 
-\npf {\tt upc\_flag\_t} is an integral type defined in {\tt<upc.h>} which is used to
+\npf{\tt upc\_flag\_t} is an integral type defined in {\tt<upc.h>} which is used to
     control the data synchronization semantics of certain collective
     UPC library functions.  Values of function arguments
     having type {\tt upc\_flag\_t} are formed by or-ing together a
     constant of the form {\tt UPC\_IN\_{\em X}SYNC} and a constant of
-    the form {\tt UPC\_OUT\_{\em Y}SYNC}, where {\tt {\em X}} and {\tt
+    the form {\tt UPC\_OUT\_{\em Y}SYNC}, where {\tt{\em X}} and {\tt
     {\em Y}} may be {\tt NO}, {\tt MY}, or {\tt ALL}.
 
 \np If an argument of type {\tt upc\_flag\_t} has value
     {\tt (UPC\_IN\_{\em X}SYNC}$\;|\;${\tt UPC\_OUT\_{\em Y}SYNC)},
-    then if {\tt {\em X}} is
+    then if {\tt{\em X}} is
 
 \begin{description}
     \item[{\tt NO}] the function may begin to read or write
@@ -37,7 +37,7 @@
     threads will read the same values of the input data.}
 \end{description}
 
-\np and if {\tt {\em Y}} is
+\np and if {\tt{\em Y}} is
 
 \begin{description}
     \item[{\tt NO}] the function may read and write data until
@@ -68,7 +68,7 @@
    {\tt (UPC\_IN\_ALLSYNC}$\;|\;${\tt UPC\_OUT\_{\em X}SYNC)},
    and passing 0 has the same effect as
    {\tt (UPC\_IN\_ALLSYNC}$\;|\;${\tt UPC\_OUT\_ALLSYNC)},
-   where {\tt {\em X}} is {\tt NO}, {\tt MY}, or {\tt ALL}.
+   where {\tt{\em X}} is {\tt NO}, {\tt MY}, or {\tt ALL}.
    
 \np Each of the six flags {\tt UPC\_\{IN,OUT\}\_\{NO,MY,ALL\}SYNC} are
    macros which expand to integer constant expressions.  The expressions

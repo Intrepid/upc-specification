@@ -340,16 +340,16 @@ be performed on the file.
 \index{upc\_off\_t}
 \npf The following types are defined in {\tt <upc\_io.h>}
 
-\np {\tt upc\_off\_t} is a signed integral type that is capable of representing the size of the largest
+\np{\tt upc\_off\_t} is a signed integral type that is capable of representing the size of the largest
 file supported by the implementation.
 
 \index{upc\_file\_t}
-\np {\tt upc\_file\_t} is an opaque shared data type of incomplete type (as defined in [ISO/IEC00 Sec 6.2.5]) that represents an open file handle.
+\np{\tt upc\_file\_t} is an opaque shared data type of incomplete type (as defined in [ISO/IEC00 Sec 6.2.5]) that represents an open file handle.
 
-\np {\tt upc\_file\_t} objects are always manipulated via a pointer (that is,
+\np{\tt upc\_file\_t} objects are always manipulated via a pointer (that is,
 {\tt upc\_file\_t *}).
 
-\np {\tt upc\_file\_t} is a shared data type. It is allowed to pass a ({\tt upc\_file\_t
+\np{\tt upc\_file\_t} is a shared data type. It is allowed to pass a ({\tt upc\_file\_t
 *}) across threads, and two pointers to {\tt upc\_file\_t} that reference the same
 logical file handle will always compare equal.
 
@@ -454,7 +454,7 @@ operation is pending on the file handle, except where otherwise noted.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fopen} opens the file identified by the filename {\tt fname} for
+\np{\tt upc\_all\_fopen} opens the file identified by the filename {\tt fname} for
 input/output operations.
 
 \np The flags parameter specifies the access mode. The valid flags and their
@@ -548,7 +548,7 @@ holds each element of the {\tt hints} array and contain at least the following i
     const char *value;
 \end{verbatim}
 
-\np {\tt upc\_all\_fopen} defines a number hints.
+\np{\tt upc\_all\_fopen} defines a number hints.
 An implementation is free to 
 support additional hints. An implementation is free to ignore any hint
 provided by the user. Implementations should \textit{silently} ignore any
@@ -610,7 +610,7 @@ threads, but they must all refer to the same logical UPC-IO file.
 \np On success, the function returns a pointer to a file handle that can be
 used to perform other operations on the file. 
 
-\np {\tt upc\_all\_fopen} provides single-valued errors - if an error occurs, the
+\np{\tt upc\_all\_fopen} provides single-valued errors - if an error occurs, the
 function returns {\tt NULL} on ALL threads, and sets {\tt errno} appropriately
 to the same value on all threads.
 
@@ -629,13 +629,13 @@ to the same value on all threads.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fclose} executes an implicit {\tt upc\_all\_fsync} on {\tt fd} and then closes
+\np{\tt upc\_all\_fclose} executes an implicit {\tt upc\_all\_fsync} on {\tt fd} and then closes
 the file associated with {\tt fd}.
 
 \np The function returns 0 on success. If {\tt fd} is not valid or if an outstanding
 asynchronous operation on {\tt fd} has not been completed, the function will return an error.
 
-\np {\tt upc\_all\_fclose} provides single-valued errors - if an error occurs, the
+\np{\tt upc\_all\_fclose} provides single-valued errors - if an error occurs, the
 function returns --1 on ALL threads, and sets {\tt errno} appropriately
 to the same value on all threads. 
 
@@ -658,7 +658,7 @@ opened and the data in it can be accessed by using regular C/POSIX I/O calls.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fsync} ensures that any data that has been written to the
+\np{\tt upc\_all\_fsync} ensures that any data that has been written to the
 file associated with {\tt fd} but not yet transferred to the storage device is
 transferred to the storage device. It also ensures that subsequent file
 reads from any thread will see any previously written values (that have not
@@ -686,7 +686,7 @@ appropriately.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fseek} sets the current position of the file pointer associated
+\np{\tt upc\_all\_fseek} sets the current position of the file pointer associated
 with {\tt fd}.
 
 \np This offset can be relative to the current position of the file pointer,
@@ -732,10 +732,10 @@ in bytes. If there is an error, it returns --1 and sets {\tt errno} appropriatel
 
 {\bf Description}
 
-\np {\tt upc\_all\_fset\_size} executes an implicit {\tt upc\_all\_fsync} on {\tt fd} and
+\np{\tt upc\_all\_fset\_size} executes an implicit {\tt upc\_all\_fsync} on {\tt fd} and
 resizes the file associated with {\tt fd}. The file handle must be open for writing.
 
-\np {\tt size} is measured in bytes from the beginning of the file.
+\np{\tt size} is measured in bytes from the beginning of the file.
 
 \np If {\tt size} is less than the current file size, the file is truncated at the
 position defined by {\tt size}. The implementation is free to deallocate file
@@ -776,7 +776,7 @@ appropriately.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fget\_size} returns the current size in bytes of the file
+\np{\tt upc\_all\_fget\_size} returns the current size in bytes of the file
 associated with {\tt fd} on success. On error, it returns --1 and sets {\tt errno}
 appropriately.
 
@@ -795,7 +795,7 @@ appropriately.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fpreallocate} ensures that storage space is allocated for the
+\np{\tt upc\_all\_fpreallocate} ensures that storage space is allocated for the
 first {\tt size} bytes of the file associated with {\tt fd}. The file handle must be open for
 writing.
 
@@ -826,7 +826,7 @@ appropriately.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fcntl} performs one of various miscellaneous operations related
+\np{\tt upc\_all\_fcntl} performs one of various miscellaneous operations related
 to the file specified by {\tt fd}, as determined by {\tt cmd}. The valid commands {\tt cmd}
 and their associated argument {\tt arg} are explained below.
 
@@ -960,13 +960,13 @@ operation is pending on the file handle.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fread\_local} reads data from a file into a local buffer on
+\np{\tt upc\_all\_fread\_local} reads data from a file into a local buffer on
 each thread\textit{.}
 
 \np This function can be called only if the current file pointer type is an
 individual file pointer, and the file handle is open for reading. 
 
-\np {\tt buffer} is a pointer to an array into which data will be read, and each
+\np{\tt buffer} is a pointer to an array into which data will be read, and each
 thread may pass a different value for {\tt buffer}.
 
 \np Each thread reads {\tt (size*nmemb)} bytes of data from the
@@ -996,14 +996,14 @@ appropriately.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fread\_shared} reads data from a file into a shared buffer in
+\np{\tt upc\_all\_fread\_shared} reads data from a file into a shared buffer in
 memory\textit{.}
 
 \np The function can be called when the current file pointer type is either a
 common file pointer or an individual file pointer. The file handle must be open
 for reading. 
 
-\np {\tt buffer} is a pointer to an array into which data will be read. It must be a
+\np{\tt buffer} is a pointer to an array into which data will be read. It must be a
 pointer to shared data and may have affinity to any thread. {\tt blocksize} is the
 block size of the shared buffer in elements (of {\tt size} bytes each). A {\tt
 blocksize} of 0 indicates an indefinite blocking factor.
@@ -1056,13 +1056,13 @@ operation is pending on the file handle.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fwrite\_local} writes data from a local buffer on each thread
+\np{\tt upc\_all\_fwrite\_local} writes data from a local buffer on each thread
 into a file\textit{.}
 
 \np This function can be called only if the current file pointer type is an
 individual file pointer, and the file handle is open for writing. 
 
-\np {\tt buffer} is a pointer to an array from which data will be written, and each
+\np{\tt buffer} is a pointer to an array from which data will be written, and each
 thread may pass a different value for {\tt buffer}.
 
 \np Each thread writes {\tt (size*nmemb)} bytes of data from the
@@ -1095,14 +1095,14 @@ that amount. On error, it returns --1 and sets {\tt errno} appropriately.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fwrite\_shared} writes data from a shared buffer in memory to a
+\np{\tt upc\_all\_fwrite\_shared} writes data from a shared buffer in memory to a
 file.
 
 \np The function can be called if the current file pointer type is either a
 common file pointer or an individual file pointer. The file handle must be open
 for writing. 
 
-\np {\tt buffer} is a pointer to an array from which data will be written. It must
+\np{\tt buffer} is a pointer to an array from which data will be written. It must
 be a pointer to shared data and may have affinity to any thread. {\tt blocksize}
 is the block size of the shared buffer in elements (of {\tt size} bytes each).
 A {\tt blocksize} of 0 indicates an indefinite blocking factor.
@@ -1279,10 +1279,10 @@ upc_all_fread_list_local( fd, 2, &memvec, 2, &filevec,
 
 {\bf Description}
 
-\np {\tt upc\_all\_fread\_list\_local} reads data from a file into local
+\np{\tt upc\_all\_fread\_list\_local} reads data from a file into local
 buffers in memory. The file handle must be open for reading.
 
-\np {\tt memvec\_entries} indicates the number of entries in the array {\tt memvec} and
+\np{\tt memvec\_entries} indicates the number of entries in the array {\tt memvec} and
 {\tt filevec\_entries} indicates the number of entries in the array {\tt filevec}. The
 values may be 0, in which case the {\tt memvec} or {\tt filevec} argument is ignored and
 no locations are specified for I/O.
@@ -1315,10 +1315,10 @@ thread. On error, it returns --1 and sets {\tt errno} appropriately.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fread\_list\_shared} reads data from a file
+\np{\tt upc\_all\_fread\_list\_shared} reads data from a file
 into various locations of a shared buffer in memory. The file handle must be open for reading.
 
-\np {\tt memvec\_entries} indicates the number of entries in the array {\tt memvec} and
+\np{\tt memvec\_entries} indicates the number of entries in the array {\tt memvec} and
 {\tt filevec\_entries} indicates the number of entries in the array {\tt filevec}. The
 values may be 0, in which case the {\tt memvec} or {\tt filevec} argument is ignored and
 no locations are specified for I/O.
@@ -1353,10 +1353,10 @@ thread. On error, it returns --1 and sets {\tt errno} appropriately.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fwrite\_list\_local} writes data from local buffers in memory to
+\np{\tt upc\_all\_fwrite\_list\_local} writes data from local buffers in memory to
 a file. The file handle must be open for writing.
 
-\np {\tt memvec\_entries} indicates the number of entries in the array {\tt memvec} and
+\np{\tt memvec\_entries} indicates the number of entries in the array {\tt memvec} and
 {\tt filevec\_entries} indicates the number of entries in the array {\tt filevec}. The
 values may be 0, in which case the {\tt memvec} or {\tt filevec} argument is ignored and
 no locations are specified for I/O.
@@ -1391,10 +1391,10 @@ calling thread. On error, it returns --1 and sets {\tt errno} appropriately.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fwrite\_list\_shared} writes data from various locations of a
+\np{\tt upc\_all\_fwrite\_list\_shared} writes data from various locations of a
 shared buffer in memory to a file. The file handle must be open for writing.
 
-\np {\tt memvec\_entries} indicates the number of entries in the array {\tt memvec} and
+\np{\tt memvec\_entries} indicates the number of entries in the array {\tt memvec} and
 {\tt filevec\_entries} indicates the number of entries in the array {\tt filevec}. The
 values may be 0, in which case the {\tt memvec} or {\tt filevec} argument is ignored and
 no locations are specified for I/O.
@@ -1467,7 +1467,7 @@ after the asynchronous I/O operation has been initiated.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fread\_local\_async} initiates an asynchronous read from a file
+\np{\tt upc\_all\_fread\_local\_async} initiates an asynchronous read from a file
 into a local buffer on each thread.
 
 \np The meaning of the parameters and restrictions are the same as for the
@@ -1492,7 +1492,7 @@ blocking function, {\tt upc\_all\_fread\_local}.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fread\_shared\_async} initiates an asynchronous read from a file
+\np{\tt upc\_all\_fread\_shared\_async} initiates an asynchronous read from a file
 into a shared buffer.
 
 \np The meaning of the parameters and restrictions are the same as for the
@@ -1516,7 +1516,7 @@ blocking function, {\tt upc\_all\_fread\_shared}.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fwrite\_local\_async} initiates an asynchronous write from a
+\np{\tt upc\_all\_fwrite\_local\_async} initiates an asynchronous write from a
 local buffer on each thread to a file.
 
 \np The meaning of the parameters and restrictions are the same as for the
@@ -1542,7 +1542,7 @@ blocking function, {\tt upc\_all\_fwrite\_local}.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fwrite\_shared\_async} initiates an asynchronous write from a
+\np{\tt upc\_all\_fwrite\_shared\_async} initiates an asynchronous write from a
 shared buffer to a file.
 
 \np The meaning of the parameters and restrictions are the same as for the
@@ -1568,7 +1568,7 @@ blocking function, {\tt upc\_all\_fwrite\_shared}.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fread\_list\_local\_async} initiates an asynchronous read of
+\np{\tt upc\_all\_fread\_list\_local\_async} initiates an asynchronous read of
 data from a file into local buffers in memory.
 
 \np The meaning of the parameters and restrictions are the same as for the
@@ -1594,7 +1594,7 @@ blocking function, {\tt upc\_all\_fread\_list\_local}.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fread\_list\_shared\_async} initiates an asynchronous read of data from a
+\np{\tt upc\_all\_fread\_list\_shared\_async} initiates an asynchronous read of data from a
 file into various locations of a shared buffer in memory.
 
 \np The meaning of the parameters and restrictions are the same as for the
@@ -1620,7 +1620,7 @@ blocking function, {\tt upc\_all\_fread\_list\_shared}.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fwrite\_list\_local\_async} initiates an asynchronous write of
+\np{\tt upc\_all\_fwrite\_list\_local\_async} initiates an asynchronous write of
 data from local buffers in memory to a file.
 
 \np The meaning of the parameters and restrictions are the same as for the
@@ -1646,7 +1646,7 @@ blocking function, {\tt upc\_all\_fwrite\_list\_local}.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fwrite\_list\_shared\_async} initiates an asynchronous write of
+\np{\tt upc\_all\_fwrite\_list\_shared\_async} initiates an asynchronous write of
 data from various locations of a shared buffer in memory to a file.
 
 \np The meaning of the parameters and restrictions are the same as for the
@@ -1669,7 +1669,7 @@ blocking function, {\tt upc\_all\_fwrite\_list\_shared}.
 
 {\bf Description}
 
-\np {\tt upc\_all\_fwait\_async} completes the previously issued asynchronous I/O
+\np{\tt upc\_all\_fwait\_async} completes the previously issued asynchronous I/O
 operation on the file handle {\tt fd}, blocking if necessary.
 
 \np It is erroneous to call this function if there is no outstanding
@@ -1696,7 +1696,7 @@ function used to initiate the asynchronous operation. On error, it returns
 
 {\bf Description}
 
-\np {\tt upc\_all\_ftest\_async} tests whether the outstanding asynchronous I/O
+\np{\tt upc\_all\_ftest\_async} tests whether the outstanding asynchronous I/O
 operation associated with {\tt fd} has completed.
 
 \np If the operation has completed, the function sets {\tt flag=1} and the

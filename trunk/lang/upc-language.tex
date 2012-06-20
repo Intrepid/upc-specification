@@ -19,7 +19,7 @@
     text, they are not italicized and words are separated by spaces
     instead of hyphens.
     
-\subsection {Keywords}
+\subsection{Keywords}
 
 \index{keywords}
 \index{tokens}
@@ -71,16 +71,16 @@ as keywords and shall not be otherwise used.
 \subsubsection{{\tt THREADS}}
 \label{threads}
 \index{THREADS}
-\npf {\tt THREADS} is an expression with a value of type int; it specifies the number of
+\npf{\tt THREADS} is an expression with a value of type int; it specifies the number of
      threads and has the same value on every
      thread.   Under the static THREADS translation environment, {\tt THREADS}
      is an integer constant suitable for use in {\tt \#if} preprocessing directives.
 
 \subsubsection{{\tt MYTHREAD}}
 \index{MYTHREAD}
-\npf {\tt MYTHREAD} is an expression with a value of type int; it specifies the
+\npf{\tt MYTHREAD} is an expression with a value of type int; it specifies the
      unique thread index. The range of possible values is {\tt
-     0..THREADS-1}\footnote {e.g., the program {\tt main()\{
+     0..THREADS-1}\footnote{e.g., the program {\tt main()\{
      printf("\%d ",MYTHREAD); \} }, prints the numbers 0 through
      THREADS-1, in some order.}.
 
@@ -88,7 +88,7 @@ as keywords and shall not be otherwise used.
 \label{max_block_size}
 \index{UPC\_MAX\_BLOCK\_SIZE}      
 \index{block size}
-\npf {\tt UPC\_MAX\_BLOCK\_SIZE} is a predefined integer
+\npf{\tt UPC\_MAX\_BLOCK\_SIZE} is a predefined integer
      constant value.  It indicates the maximum value\footnote{
      e.g. {\tt shared [UPC\_MAX\_BLOCK\_SIZE+1] char
      x[UPC\_MAX\_BLOCK\_SIZE+1]} and {\tt shared [*] char
@@ -110,21 +110,21 @@ as keywords and shall not be otherwise used.
 
 \hspace{3em}{\em ...}
 
-\hspace{3em}{\tt {\bf sizeof} {\em unary-expression}}
+\hspace{3em}{\tt{\bf sizeof} {\em unary-expression}}
 
-\hspace{3em}{\tt {\bf sizeof} ( {\em type-name} )}
+\hspace{3em}{\tt{\bf sizeof} ( {\em type-name} )}
 
-\hspace{3em}{\tt {\bf upc\_localsizeof} {\em unary-expression}}
+\hspace{3em}{\tt{\bf upc\_localsizeof} {\em unary-expression}}
 
-\hspace{3em}{\tt {\bf upc\_localsizeof} ( {\em type-name} )}
+\hspace{3em}{\tt{\bf upc\_localsizeof} ( {\em type-name} )}
 
-\hspace{3em}{\tt {\bf upc\_blocksizeof} {\em unary-expression}}
+\hspace{3em}{\tt{\bf upc\_blocksizeof} {\em unary-expression}}
 
-\hspace{3em}{\tt {\bf upc\_blocksizeof} ( {\em type-name} )}
+\hspace{3em}{\tt{\bf upc\_blocksizeof} ( {\em type-name} )}
 
-\hspace{3em}{\tt {\bf upc\_elemsizeof} {\em unary-expression}}
+\hspace{3em}{\tt{\bf upc\_elemsizeof} {\em unary-expression}}
 
-\hspace{3em}{\tt {\bf upc\_elemsizeof} ( {\em type-name} )}
+\hspace{3em}{\tt{\bf upc\_elemsizeof} ( {\em type-name} )}
 
 
 \paragraph{The {\tt\bf sizeof} operator}
@@ -395,7 +395,7 @@ as keywords and shall not be otherwise used.
     [ISO/IEC00 Sec. 6.7], repeated here for self-containment and
     clarity of the subsequent UPC extension specifications.
 
-\np {\em declaration:}
+\np{\em declaration:}
 
 \hspace{3em}{\em declaration-specifiers init-declarator-list$_{opt}$} {\bf ;}
 
@@ -409,13 +409,13 @@ as keywords and shall not be otherwise used.
 
 \hspace{3em}{\em function-specifier declaration-specifiers$_{opt}$}
 
-\np {\em init-declarator-list:}
+\np{\em init-declarator-list:}
 
 \hspace{3em}{\em init-declarator}
 
 \hspace{3em}{\em init-declarator-list {\bf ,} init-declarator}
 
-\np {\em init-declarator:}
+\np{\em init-declarator:}
 
 \hspace{3em}{\em declarator}
 
@@ -432,7 +432,7 @@ as keywords and shall not be otherwise used.
 
 {\bf Syntax} 
 
-\np {\em type-qualifier:} 
+\np{\em type-qualifier:} 
 
 \hspace{3em}{\bf const}
 
@@ -450,11 +450,11 @@ as keywords and shall not be otherwise used.
 
 {\bf Syntax} 
 
-\npf {\em shared-type-qualifier:}
+\npf{\em shared-type-qualifier:}
 
 \hspace{3em}{\bf shared} {\em layout-qualifier$_{opt}$}
 
-\np {\em reference-type-qualifier:}
+\np{\em reference-type-qualifier:}
 
 \hspace{3em}{\bf relaxed}
 
@@ -576,11 +576,11 @@ as keywords and shall not be otherwise used.
     [ISO/IEC00 Sec. 6.7.5], repeated here for self-containment and
     clarity of the subsequent UPC extension specifications.
 
-\np {\em declarator:}
+\np{\em declarator:}
 
 \hspace{3em}{\em pointer$_{opt}$ direct-declarator}
 
-\np {\em direct-declarator:}
+\np{\em direct-declarator:}
 
 \hspace{3em}{\em identifier }
 
@@ -602,11 +602,11 @@ assignment-expression }{\bf ]}
 
 \hspace{3em}{\em direct-declarator {\bf (} identifier-list$_{opt}$ {\bf )}}
 
-\np {\em pointer:}
+\np{\em pointer:}
 
-\hspace{3em}{\em {\bf *} type-qualifier-list$_{opt}$}
+\hspace{3em}{\em{\bf *} type-qualifier-list$_{opt}$}
 
-\hspace{3em}{\em {\bf *} type-qualifier-list$_{opt}$  pointer}
+\hspace{3em}{\em{\bf *} type-qualifier-list$_{opt}$  pointer}
 
 \np{\em type-qualifier-list:}
 
@@ -745,7 +745,7 @@ assignment-expression }{\bf ]}
 
 {\bf Syntax} 
 
-\np {\em statement:}
+\np{\em statement:}
 
 \hspace{3em}{\em labeled-statement}
 
@@ -766,7 +766,7 @@ assignment-expression }{\bf ]}
 
 {\bf Syntax} 
 
-\npf {\em synchronization-statement:}
+\npf{\em synchronization-statement:}
 
 \hspace{3em}{\bf upc\_notify} {\em expression$_{opt}$} {\bf ;}
 
@@ -778,7 +778,7 @@ assignment-expression }{\bf ]}
 
 {\bf Constraints} 
 
-\np {\em expression} shall have type {\tt int}. 
+\np{\em expression} shall have type {\tt int}. 
 
 
 {\bf Semantics} 
@@ -806,7 +806,7 @@ assignment-expression }{\bf ]}
 \np A {\tt upc\_wait} statement completes, and the
      thread enters the next synchronization phase, only after all
      threads have completed the {\tt upc\_notify} statement in the
-     current synchronization phase.\footnote {Therefore,
+     current synchronization phase.\footnote{Therefore,
      all threads are entering the same synchronization phase as they
      complete the {\tt upc\_wait} statement.}  {\tt upc\_wait}
      and {\tt upc\_notify} are {\em collective} operations.
@@ -845,7 +845,7 @@ assignment-expression }{\bf ]}
 %    a statement for which no expression is given.
 
 \np The {\tt upc\_barrier} statement is equivalent to the
-    compound statement\footnote {This equivalence is explicit with
+    compound statement\footnote{This equivalence is explicit with
     respect to matching expressions in semantic 7 and collective
     status in semantic 3.}:
 
@@ -880,7 +880,7 @@ assignment-expression }{\bf ]}
 
 {\bf Syntax} 
 
-\np {\em iteration-statement:}
+\np{\em iteration-statement:}
 
 \hspace{3em}{\bf while (} {\em expression} {\bf )} {\em statement}
 
@@ -904,7 +904,7 @@ expression$_{opt}${\bf ;}}\\
 \makebox[5.4in][r] {\em affinity$_{opt}${\bf )} statement}
                             
 
-\np {\em affinity:}
+\np{\em affinity:}
 
 \hspace{3em}{\em expression}
 
@@ -921,7 +921,7 @@ expression$_{opt}${\bf ;}}\\
 \index{continue}
 \index{work sharing}
 \index{parallel loop}
-\np {\tt upc\_forall} is a {\em collective} operation in which, for each
+\np{\tt upc\_forall} is a {\em collective} operation in which, for each
     execution of the loop body, the controlling expression and
     affinity expression are {\em single-valued}.\footnote{Note that
     single-valued implies that all thread agree on the total number
@@ -1076,7 +1076,7 @@ expression$_{opt}${\bf ;}}\\
     the semantics of [ISO/IEC00 Sec. 6.10.8] apply to the identifier MYTHREAD.}
 
 \begin{description}
-\item {\tt \_\_UPC\_\_} 
+\item{\tt \_\_UPC\_\_} 
 \index{\_\_UPC\_\_}
 The integer constant 1, indicating a conforming implementation.
 
@@ -1093,7 +1093,7 @@ The integer constant as defined in section \ref{max_block_size}.
     by the implementation:
 
 \begin{description}
-\item {\tt \_\_UPC\_DYNAMIC\_THREADS\_\_} 
+\item{\tt \_\_UPC\_DYNAMIC\_THREADS\_\_} 
 \index{\_\_UPC\_DYNAMIC\_THREADS\_\_} 
 \index{dynamic THREADS environment}
 The integer constant 1 in the {\em dynamic THREADS} translation environment,
