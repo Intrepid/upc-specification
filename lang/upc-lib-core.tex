@@ -49,7 +49,7 @@
 
 {\bf Description}
 
-\np {\tt upc\_global\_exit()} flushes all I/O, releases all
+\np{\tt upc\_global\_exit()} flushes all I/O, releases all
       storage, and terminates the execution for all active threads.
 
 \subsubsection{Shared memory allocation functions}
@@ -100,7 +100,7 @@
 
 {\bf Description}
 
-\np {\tt upc\_all\_alloc} is a {\em collective} function with
+\np{\tt upc\_all\_alloc} is a {\em collective} function with
     {\em single-valued} arguments.
 
 \np The {\tt upc\_all\_alloc} function allocates  shared 
@@ -134,7 +134,7 @@
 \np The {\tt upc\_alloc} function allocates shared space of at
     least {\tt nbytes} bytes with affinity to the calling thread. 
 
-\np {\tt upc\_alloc} is similar to malloc() except that it
+\np{\tt upc\_alloc} is similar to malloc() except that it
     returns a pointer-to-shared value. It is not a {\em collective} function.
     If {\tt nbytes} is zero, the result is a null pointer-to-shared.
 
@@ -159,7 +159,7 @@
     least {\tt nblocks * nbytes} bytes with affinity to the calling thread. 
     If {\tt nblocks*nbytes} is zero, the result is a null pointer-to-shared.
 
-\np {\tt upc\_local\_alloc} is similar to malloc() except that it
+\np{\tt upc\_local\_alloc} is similar to malloc() except that it
     returns a pointer-to-shared value. It is not a {\em collective} function.
 
 \paragraph{The {\tt upc\_free} function}
@@ -181,7 +181,7 @@
     not match a pointer earlier returned by the {\tt upc\_alloc, } 
     {\tt upc\_global\_alloc,}  {\tt upc\_all\_alloc,}  or {\tt upc\_local\_alloc,} function,
     or if the space has been deallocated by a previous call, by any 
-    thread,\footnote {i.e., only one thread may call {\tt upc\_free} for
+    thread,\footnote{i.e., only one thread may call {\tt upc\_free} for
      each allocation} to {\tt upc\_free,} the behavior is undefined.
 
 \subsubsection{Pointer-to-shared manipulation functions}
@@ -286,7 +286,7 @@
 
 {\bf Description}
 
-\np {\tt upc\_affinitysize} is a convenience function which 
+\np{\tt upc\_affinitysize} is a convenience function which 
     calculates the exact size of the local portion of the data in a 
     shared object with affinity to {\tt threadid}.
     
@@ -307,7 +307,7 @@
     {\tt nbytes} argument shall be {\tt b * sizeof (t)}.  If the block
     size is indefinite, {\tt nbytes} shall be 0.
         
-\np {\tt threadid} shall be a value in {\tt 0..(THREADS-1)}.
+\np{\tt threadid} shall be a value in {\tt 0..(THREADS-1)}.
 
 \subsubsection{Lock functions}
 \label{upc_lock}
@@ -399,7 +399,7 @@
     {i.e., only one thread may call {\tt upc\_lock\_free} for each
     allocation} the behavior is undefined.
 
-\np {\tt upc\_lock\_free} succeeds regardless of whether the
+\np{\tt upc\_lock\_free} succeeds regardless of whether the
     referenced lock is currently unlocked or currently locked (by any
     thread).
 

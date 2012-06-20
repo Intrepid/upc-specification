@@ -83,11 +83,11 @@
 \newcommand{\dotoc}{
 \renewcommand{\thispagestyle}[1]{} % hack: make sure no pages after the title revert to plain style (ie \makeindex)
 \newpage
-\setlength {\parskip}{0ex}
+\setlength{\parskip}{0ex}
 \phantomsection
 \addcontentsline{toc}{section}{Contents}
 \tableofcontents
-\setlength {\parskip}{1.3ex}
+\setlength{\parskip}{1.3ex}
 \newpage
 }
 
@@ -107,7 +107,7 @@
 \newcommand{\np}{%
 \addtocounter{parnum}{1}%
 \latex{\hspace{-2em}\makebox[2em][l]{\arabic{parnum}}}%
-\html{{\bf {\arabic{parnum}}}\tab}}
+\html{{\bf{\arabic{parnum}}}\tab}}
 
 \newcommand{\npf}{\setcounter{parnum}{0}\np}
 
@@ -124,7 +124,7 @@
 \index{#1}}
 
 \setlength{\parindent}{0pt}
-\setlength {\parskip}{1.3ex}
+\setlength{\parskip}{1.3ex}
 
 % The special comments below are processed by latex2html.
 % Everything between them will be skipped by latex2html.
