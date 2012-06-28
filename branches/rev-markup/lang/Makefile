@@ -11,10 +11,13 @@ COMMON = ../common
 
 TEX_INC_SRCS = \
 	$(COMMON)/upc-spec-preamble.tex \
+	$(COMMON)/upc-specification-issues.tex \
 	upc-acknowledgments.tex \
 	upc-introduction.tex \
 	upc-language.tex \
 	upc-lang-extensions.tex \
+	upc-lang-spec.tex \
+	upc-lang-spec-draft.tex \
 	upc-lib-core.tex \
 	upc-lib-mem-semantics.tex \
 	upc-mem-consistency-model.tex \

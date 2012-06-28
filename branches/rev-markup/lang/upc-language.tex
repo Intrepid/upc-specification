@@ -47,7 +47,9 @@
 {\tt\bf 
 \begin{tabular}{lll}
 MYTHREAD & upc\_barrier & upc\_localsizeof  \\
-relaxed & upc\_blocksizeof & UPC\_MAX\_BLOCKSIZE \\
+relaxed & upc\_blocksizeof &
+\xreplacedncb[id=GF]{55}
+{UPC\_MAX\_BLOCK\_SIZE}{UPC\_MAX\_BLOCKSIZE} \\
 shared &  upc\_elemsizeof & upc\_notify \\
 strict &   upc\_fence  & upc\_wait \\
 THREADS & upc\_forall  \\
@@ -55,6 +57,18 @@ THREADS & upc\_forall  \\
 }
 \end{center}
 
+\begin{changebar}
+\begin{em}
+Test: This change was made:
+\xreplaced[id=GF]{55}
+{UPC\_MAX\_BLOCK\_SIZE}{UPC\_MAX\_BLOCKSIZE}.
+Note that this change notice has a change bar,
+and a foot note, but the actual change to the table
+above does not, because changebars and footnotes don't
+work from within tables, captions, section headers and
+so on.
+\end{em}
+\end{changebar}
 
 {\bf Semantics}
 

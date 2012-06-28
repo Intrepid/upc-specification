@@ -11,6 +11,9 @@ COMMON = ../../../common
 
 TEX_INC_SRCS = \
 	$(COMMON)/upc-spec-preamble.tex \
+	$(COMMON)/upc-specification-issues.tex \
+	upc-lib-atomic-ops-spec.tex \
+	upc-lib-atomic-ops-spec-draft.tex \
 	upc-lib-atomic-ops.tex
 
 include $(COMMON)/Makefile.in

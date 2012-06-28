@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+use warnings;
+use strict;
+use LWP::Simple;
+use Text::CSV;
+my $csv = Text::CSV->new ( { binary => 1 } );
+my $html= get 'http://code.google.com/p/upc-specification/issues/'
+              . 'csv?can=1&q=&colspec=ID%20Modified%20Type%20Status'
+	      . '%20Milestone%20Owner%20Summary%20Milestone&sort=id';
+my $first_line = 1;
+my @cname;
+my @issues;
+for my $row (split "\n", $html) {
+  my $data = $csv->parse($row);
+  last unless $data;
+  my @F = $csv->fields;
+  if ($first_line) {
+    @cname = @F;
+    die "ID column not found\n"
+      unless grep /^ID/, @cname;
+    die "Summary column not found\n"
+      unless grep /^Summary/, @cname;
+    $first_line = 0;
+    next;
+  }
+  die 'expected ' . (scalar @cname) . ' columns'
+      . ' but have ' . (scalar @F) . " columns\n"
+      unless scalar @cname == scalar @F;
+  my %f = map {$cname[$_] => $F[$_]} 0..$#cname;
+  push @issues, [ $f{'ID'}, $f{'Summary'} ];
+}
+$csv->eof or $csv->error_diag();
+print "\\newcommand\{\\upcspecissue\}\[1\]{%\n";
+print "    \\ifcase#1\\relax\n";
+print "        \\empty\n";
+my $case = 0;
+for my $issue (@issues) {
+  my ($num, $s) = @$issue;
+  chomp $s;
+  $s =~ s/\s+$//;
+  $s =~ s/([_%\\{}])/\\$1/g;
+  while (++$case < $num) {
+      print "      \\or % issue #$case\n";
+      print "        \\empty\n";
+  }
+  print "      \\or % issue #$case\n";
+  print "        $s\n";
+}
+print "    \\else\n";
+print "        \\empty\n";
+print "    \\fi\n";
+print "}\n";

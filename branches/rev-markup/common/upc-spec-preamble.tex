@@ -1,8 +1,19 @@
-\documentclass[12pt,titlepage,
-               twoside,openright,
-               bookmarks,bookmarksopen=false,
-               bookmarksnumbered=true,pdfpagemode=UseOutlines,
-               colorlinks=true]{article}
+% By default create final copy
+\providecommand{\draftorfinal}{\setboolean{draft}{false}}
+% Set default document options for 'final' output.
+\providecommand{\docoptions}{
+   \documentclass[
+       12pt,
+       titlepage,
+       twoside,
+       openright,
+       bookmarks,
+       bookmarksopen=false,
+       bookmarksnumbered=true,
+       pdfpagemode=UseOutlines,
+       colorlinks=true]{article}}
+
+\docoptions
 
 % Make text searchable (avoid ligatures in words like affinity)
 % by loading the 'cmap' package.
@@ -16,12 +27,19 @@
 \usepackage{textcomp}
 
 \usepackage[noindentafter]{titlesec}
+\usepackage{xifthen}
 \usepackage[all]{xy}
 \usepackage{html}
 
-% DRAFT FOR NOW -- first page only
-\usepackage[firstpage]{draftwatermark}
-\SetWatermarkLightness{0.80}
+\newboolean{draft}
+\newcommand{\ifdraftspec}[2]{\ifthenelse{\boolean{draft}}{#1}{#2}}
+\draftorfinal
+
+\ifdraftspec{
+  % DRAFT FOR NOW -- first page only
+  \usepackage[firstpage]{draftwatermark}
+  \SetWatermarkLightness{0.80}
+}{}
 
 % stabilize the margins for twoside
 \setlength{\oddsidemargin}{50pt}  
@@ -32,7 +50,6 @@
 \renewcommand{\pagebreak}{\newpage}
 
 % Headers and footers, similar to ISO C99 spec
-\usepackage{ifthen}
 \usepackage{fancyhdr}
 \usepackage{extramarks}
 \pagestyle{fancy}
@@ -73,15 +90,33 @@
 \@addtoreset{parnum}{paragraph}
 \makeatother
 
-\newcommand{\sectionstar}[1]{ % unnumbered section that will play nicely with toc, hyperref and footers
+% unnumbered section that will play nicely with toc, hyperref and footers
+\newcommand{\sectionstar}[1]{
 \phantomsection
 \section*{#1}
 \addcontentsline{toc}{section}{#1}
 \markboth{0}{#1}
 }
 
+\newcommand{\doloc}{
+  \ifdraftspec{
+    % hack: make sure no pages after the title revert to plain style
+    % (ie \makeindex)
+    \renewcommand{\thispagestyle}[1]{}
+    \newpage
+    \setlength{\parskip}{0ex}
+    \phantomsection
+    \addcontentsline{toc}{section}{List of Changes}
+    \listofchanges
+    \setlength{\parskip}{1.3ex}
+    \newpage
+  }{}
+}
+
 \newcommand{\dotoc}{
-\renewcommand{\thispagestyle}[1]{} % hack: make sure no pages after the title revert to plain style (ie \makeindex)
+% hack: make sure no pages after the title revert to plain style
+% (ie \makeindex)
+\renewcommand{\thispagestyle}[1]{}
 \newpage
 \setlength{\parskip}{0ex}
 \phantomsection
@@ -93,8 +128,10 @@
 
 \newcommand{\doindex}{
 \newpage
-\phantomsection % ensure correct hyperref
-\renewcommand{\firstleftmark}{0} % Hack: suppress the bogus section mark inserted by makeindex
+% ensure correct hyperref
+\phantomsection
+% Hack: suppress the bogus section mark inserted by makeindex
+\renewcommand{\firstleftmark}{0}
 \addcontentsline{toc}{section}{Index}
 \printindex
 \newpage
@@ -126,6 +163,85 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{1.3ex}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% change/revision mark up.
+%
+% NOTE: the 'changes' annotations (\added, \changed, \deleted)
+% cannot span paragraphs.
+%
+% fixme can be used to add 'todo' notations
+\usepackage{fixme}
+
+\ifdraftspec{
+    % We extend the changes markup to include change bars.
+    % The 'ncb' forms of the commands should be used in 'fragile'
+    % contexts such as caption titles.
+    \usepackage{changes}
+    \usepackage[outerbars]{changebar}
+    \input{upc-specification-issues}
+    \definechangesauthor[name={Dan Bonachea}]{DB}
+    \definechangesauthor[name={Bill Carlson}]{WC}
+    \definechangesauthor[name={Gary Funck}]{GF}
+    \definechangesauthor[name={Nick Park}]{NP}
+    \definechangesauthor[name={Yili Zheng}]{YZ}
+    \setlength{\changebarwidth}{2pt}
+    \setcounter{changebargrey}{0}
+    \setaddedmarkup{\textcolor{blue}{#1}}
+    \setdeletedmarkup{\textcolor{red}{\sout{#1}}}
+    \newcommand{\specissueref}[1]{%
+      \ifthenelse{\isempty{#1}}%
+	{}%
+        {%
+	  \def\issuesummary{\upcspecissue{#1}}%
+	  \ifthenelse{\isempty{\issuesummary}}%
+	    {Issue \##1}%
+	    {%
+               \href{http://code.google.com/p/upc-specification/issues/%
+detail?id=#1}{Issue \##1: \issuesummary}%
+	    }%
+	}%
+    }
+    \newcommand{\xadded}[3][]{%
+      \cbstart%
+      \xaddedncb[{#1}]{#2}{#3}%
+      \cbend}
+    \newcommand{\xdeleted}[3][]{%
+      \cbstart%
+      \xdeletencb[{#1}]{#2}{#3}%
+      \cbend}
+    \newcommand{\xreplaced}[4][]{%
+      \cbstart%
+      \xreplacedncb[{#1}]{#2}{#3}{#4}%
+      \cbend}
+    % The following 'ncb' forms of the commands are for use
+    % in 'fragile' environments (such as figure captions)
+    % where change bars do not work.
+    \newcommand{\xaddedncb}[3][]{%
+      \ifthenelse{\isempty{#2}}%
+        {\added[{#1}]{#3}}%
+	{\added[remark={\protect\specissueref{#2}},{#1}]{#3}}%
+    }
+    \newcommand{\xdeletedncb}[3][]{%
+      \ifthenelse{\isempty{#2}}%
+        {\deleted[{#1}]{#3}}%
+	{\deleted[remark={\protect\specissueref{#2}},{#1}]{#3}}%
+    }
+    \newcommand{\xreplacedncb}[4][]{%
+      \ifthenelse{\isempty{#2}}%
+        {\replaced[{#1}]{#3}{#4}}%
+	{\replaced[remark={\protect\specissueref{#2}},{#1}]{#3}{#4}}%
+    }
+  }
+  {
+    \newcommand{\xadded}[3][]{#3}
+    \newcommand{\xdeleted}[3][]{#3}
+    \newcommand{\xreplaced}[4][]{#3}
+    \newcommand{\xaddedncb}[3][]{#3}
+    \newcommand{\xdeletedncb}[3][]{}
+    \newcommand{\xreplacedncb}[4][]{#3}
+  }
+
 % The special comments below are processed by latex2html.
 % Everything between them will be skipped by latex2html.
 %begin{latexonly}
@@ -134,11 +250,14 @@
     \usepackage{pdfsync}
     \usepackage{hyperref}
     \hypersetup{bookmarksdepth=4,
-                pdftitle={\mytitle,\ \myversion}, % set the title in the pdf file properties
+		% set the title in the pdf file properties
+                pdftitle={\mytitle,\ \myversion},
 		pdfauthor={UPC Consortium},
                 pageanchor=true,
-		pdfpagemode=UseOutlines, % default view on open
-		pdfview=Fit  % view after clicking a link
+		% default view on open
+		pdfpagemode=UseOutlines,
+		% view after clicking a link
+		pdfview=Fit
 		}
   \fi
 %end{latexonly}
