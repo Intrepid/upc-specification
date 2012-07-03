@@ -1,4 +1,4 @@
-TARGETS=clean distclean make-default
+TARGETS=clean distclean draft final make-default
 
 SUBDIRS=$(dir $(wildcard */Makefile))
 

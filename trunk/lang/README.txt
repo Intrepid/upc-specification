@@ -68,6 +68,11 @@ upc-lang-spec.tex
 
 	Driver file for the UPC Specification.
 
+upc-lang-spec-draft.tex
+
+	Driver file for the draft version of the UPC Specification.
+	This driver sets the draft flag and reads upc-lang-spec.tex.
+
 upc-lib-core.tex
 
 	The UPC core library description.

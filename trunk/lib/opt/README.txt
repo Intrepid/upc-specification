@@ -10,3 +10,9 @@ upc-lib-io.tex
 upc-lib-optional-spec.tex
 
 	The UPC optional library specification driver file.
+
+upc-lib-optional-draft-spec.tex
+
+	The UPC optional library specification draft version driver file.
+	This driver sets the draft flag and then includes the main driver.
+
