@@ -3,13 +3,19 @@ BIN_DIR = $(abspath $(COMMON))
 LATEX_DIR = $(abspath $(COMMON)/latex)
 
 PATH := $(PATH):$(BIN_DIR)
-TEXINPUTS := .:$(COMMON):$(TEXINPUTS):$(LATEX_DIR)
+TEXINPUTS := .:$(COMMON):${LATEX_DIR}:$(TEXINPUTS)
 
 LATEX_MK ?= latex-mk
 
 USE_PDFLATEX = 1
 RMDIR = $(RM) -rf
-CLEAN_FILES += ${NAME:=.pdfsync}
+
+ifndef BUILD_FINAL
+TEX_INC_SRCS += $(NAME:=.tex)
+NAME := $(NAME:=-draft)
+endif
+
+CLEAN_FILES += $(NAME:=.pdfsync) $(NAME:=.cb) $(NAME:=.cb2) $(NAME:=.loc)
 
 LATEX_ENV+= TEXINPUTS="$(TEXINPUTS)"
 PDFLATEX_ENV+= TEXINPUTS="$(TEXINPUTS)"
@@ -36,8 +42,17 @@ else
 ALL += $(NAME)_rm_html_dir
 endif
 
+
 .PHONY: make-default
 make-default: $(ALL)
+
+.PHONY: draft
+draft:
+	$(MAKE)
+
+.PHONY: final
+final:
+	$(MAKE) BUILD_FINAL=1
 
 .PHONY: clean-html
 clean-html: html
@@ -55,5 +70,10 @@ check-l2h:
 	@echo "Checking that latex2html has been installed ..."
 	@which $(LATEX2HTML)
 	@env LATEX2HTML='$(LATEX2HTML)' $(CHECK_L2H_CFG)
+
+ifndef BUILD_FINAL
+clean::
+	$(MAKE) BUILD_FINAL=1 clean
+endif
 
 include $(LATEX_MK_DIR)/latex.gmk
