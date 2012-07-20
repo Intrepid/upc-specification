@@ -1,8 +1,8 @@
-\subsection{Castability Functions {\tt <upc.h>}}
+\subsection{Castability Functions {\tt <upc\_castable.h>}}
 \label{upc-castable}
 \index{privatizability}
 \index{castability}
-\index{upc.h}
+\index{upc\_castable.h}
 
 \np A UPC implementation may map the shared address space of another
 thread into the local address space of the current thread.  The
@@ -16,7 +16,7 @@ with affinity to other threads.  This capability, sometimes called
 
 \np The standard header is
 
-{\tt <upc.h>}
+{\tt <upc\_castable.h>}
 
 \subsection{Castability Functions}
 
@@ -28,7 +28,7 @@ with affinity to other threads.  This capability, sometimes called
 
 \npf\vspace{-2.5em}
 \begin{verbatim}
-    #include <upc.h>
+    #include <upc_castable.h>
     void *upc_cast(shared void *ptr);
 \end{verbatim}
 
@@ -63,7 +63,7 @@ return value.
 
 \npf\vspace{-2.5em}
 \begin{verbatim}
-    #include <upc.h>
+    #include <upc_castable.h>
     int upc_castable(shared void *ptr);
 \end{verbatim}
 
@@ -89,7 +89,7 @@ Calls to {\tt upc\_cast} are not required to be preceded by calls to
 
 \npf\vspace{-2.5em}
 \begin{verbatim}
-    #include <upc.h>
+    #include <upc_castable.h>
     int upc_thread_castable(unsigned int threadnum);
 \end{verbatim}
 
