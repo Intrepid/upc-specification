@@ -1,11 +1,665 @@
+\def \memcpy  {{\tt upc\_memcpy}}
+\def \memget  {{\tt upc\_memget}}
+\def \memput  {{\tt upc\_memput}}
+\def \memset  {{\tt upc\_memset}}
+
+\def \memall  {{\tt upc\_mem\{put, get, cpy\}}}
+\def \memstar {{\tt upc\_mem*}}
+
+\def \gsync  {{\tt upc\_gsync[\_attempt]}}
+\def \gsynci {{\tt upc\_gsynci[\_attempt]}}
+\def \lsync  {{\tt upc\_lsync[\_attempt]}}
+\def \lsynci {{\tt upc\_lsynci[\_attempt]}}
+
+\def \complete {{\tt UPC\_COMPLETE\_HANDLE}}
+
 \subsection{UPC Non-Blocking Memory Copy Operations
             \texttt{<}upc\_nb\_mem.h\texttt{>}}
 \index{\_\_UPC\_NB\_MEM\_\_}
 \index{upc\_nb\_mem.h}
 
-\npf This subsection provides the UPC parallel extensions of [ISO/IEC00 
-    Sec 7.19].  All the characteristics of library functions described
-    in [ISO/IEC00 Sec 7.1.4] apply to these as well.  Implementations
-    that support this interface shall predefine the feature macro {\tt
-    \_\_UPC\_NB\_MEM\_\_} to the value 1.
+\npf This subsection provides the UPC parallel extensions of [ISO/IEC00 Sec
+7.19].  All the characteristics of library functions described in [ISO/IEC00 Sec
+7.1.4] apply to these as well.  Implementations that support this interface
+shall predefine the feature macro {\tt \_\_UPC\_NB\_MEM\_\_} to the value 1.
 
+\np A non-blocking copy function returns as soon as possible after initiating
+the copy and may return prior to the effects of the copy being either locally or
+globally visible.
+
+\np Each \memstar{} function has non-blocking variations ending with suffixes
+\_nb and \_nbi.
+
+\np The \_nb variation returns a handle that gives the programmer explicit
+control and responsibility to manage completion of the copy.  The handle can be
+passed to a \lsync{} or a \gsync{} function to ensure local or global visibility
+of the associated copy.
+
+\np Checking an \_nb handle for local visibility is optional, but successfully
+checking the handle for global visibility is required~\footnote{Recall that
+global visibility implies local visibility.} so that an implementation can free
+any resources that may be associated with the handle.
+
+\np A successful \gsync{} call prior to the next fence (strict access) causes
+the copy to become globally visible.  If there is no such call prior to the next
+fence, then the copy becomes globally visible at the fence; in this case, the
+call is still required after the fence to give the implementation the
+opportunity to free resources.
+
+\np The \_nbi variation allows the programmer to optionally manage completion of
+a single, implicit group of copies that becomes globally visible at the next
+fence.  Checking either local or global visibility is optional for the group of
+\_nbi copies.
+
+\np A successful \gsync{} or \gsynci{} call has ``half-fence'' semantics such
+that a relaxed access issued before it may be observed after it, but no relaxed
+access issued after it may be observed before it.  The former allows multiple
+\_nb operations to overlap even if one of them is synchronized and the latter
+allows a relaxed access to be used for completion notification.
+
+\np A successful \lsync{} or \lsynci{} call has no effect on the observation of
+accesses, but local accesses to the source and destination buffers are
+prohibited prior to the call.
+
+\subsection{Memory Copy Handle Constraints}
+\setcounter{secnumdepth}{4}
+
+\npf An implementation shall define the following type and value:
+
+\begin{verbatim}
+type  upc_handle_t
+value UPC_COMPLETE_HANDLE
+\end{verbatim}
+
+\np \complete{} shall have type upc\_handle\_t.  All of its bits shall be 0.
+
+\np A handle is valid only on the thread which originally obtained it from an
+\_nb call.  It is an error to use the handle for any purpose on a different
+thread.
+
+\np A handle shall be passed to a successful \gsync{} call.  It is an error to
+discard a handle and never globally synchronize it unless the handle has value
+\complete{}. 
+
+\np A handle is {\em not} required to be passed to a successful \lsync{} call.
+
+\np Once a handle is globally synchronized, it becomes invalid and shall not be
+used for any purpose.
+
+\newpage
+\subsection{upc\_memcpy\_nb}
+\def\function{{\tt upc\_memcpy\_nb}}
+
+\subsubsection{Synopsis}
+
+\begin{verbatim}
+upc_handle_t upc_memcpy_nb( shared void * restrict dst,
+                            shared const void * restrict src, size_t n );
+\end{verbatim}
+
+\subsubsection{Description}
+
+\npf The parameters shall be treated identically to the parameters of
+\memcpy{}.
+
+\np The \function{} function shall have the same effects as \memcpy{}.
+If the returned handle == \complete{}, then these effects shall be globally
+visible immediately; otherwise, the effects shall become globally visible after
+passing the returned handle to a successful \gsync{} call or upon executing a
+fence (strict access).
+
+\np A successful \gsync{} call shall be made using the returned handle,
+unless the returned handle == \complete{}.  The call is required even if it is
+preceded by a fence (strict access).
+
+\np The effects of the copy are locally visible after passing the
+returned handle to a successful \lsync{} call.  It is an error to access the
+memory pointed to by dst or src until the copy is locally visible.
+
+\np An implementation shall choose whether to return \complete{} or to
+perform an asynchronous copy.  For example, an implementation might choose to
+perform a synchronous copy if upc\_threadof(~dst~) == upc\_threadof(~src~) ==
+MYTHREAD.  Implementations are encouraged to perform asynchronous copies and
+return quickly whenever a synchronous copy would take significant time.
+
+\np The following two code sequences show the relationship between
+\memcpy{} and \function{}:
+
+\begin{verbatim}
+upc_memcpy( dst, src, n ); // effects are locally visible after return
+...                        // code that may access targets of dst and src
+upc_fence;                 
+...                        // effects are globally visible, but also all
+                           //   prior accesses are globally visible
+
+
+upc_handle_t handle = upc_memcpy_nb( dst, src, n );
+...                   // code that may not access targets of dst and src
+upc_lsync( &handle ); // effects are locally visible after return (optional call)
+...                   // code that may access targets of dst and src (requires lsync)
+upc_gsync( &handle ); // effects are globally visible after return (required call
+                      //     prior to fence unless handle == UPC_COMPLETE_HANDLE)
+upc_fence;
+...                   // all prior accesses are globally visible
+\end{verbatim}
+
+\newpage
+\subsection{upc\_memget\_nb}
+\def\function{{\tt upc\_memget\_nb}}
+
+\subsubsection{Synopsis}
+
+\begin{verbatim}
+upc_handle_t upc_memget_nb( void * restrict dst,
+                            shared const void * restrict src, size_t n );
+\end{verbatim}
+
+\subsubsection{Description}
+
+\npf The parameters shall be treated identically to the parameters of
+\memget{}.
+
+\np The \function{} function shall have the same effects as \memget{}.
+If the returned handle == \complete{}, then these effects shall be globally
+visible immediately; otherwise, the effects shall become globally visible after
+passing the returned handle to a successful \gsync{} call or upon executing a
+fence (strict access).
+
+\np A successful \gsync{} call shall be made using the returned handle,
+unless the returned handle == \complete{}.  The call is required even if it is
+preceded by a fence (strict access).
+
+\np The effects of the copy are locally visible after passing the
+returned handle to a successful \lsync{} call.  It is an error to access the
+memory pointed to by dst or src until the copy is locally visible.
+
+\np An implementation shall choose whether to return \complete{} or to
+perform an asynchronous copy.  For example, an implementation might choose to
+perform a synchronous copy if upc\_threadof(~src~) == MYTHREAD.  Implementations
+are encouraged to perform asynchronous copies and return quickly whenever a
+synchronous copy would take significant time.
+
+\np The following two code sequences show the relationship between
+\memget{} and \function{}:
+
+\begin{verbatim}
+upc_memget( dst, src, n ); // effects are locally visible after return
+...                        // code that may access targets of dst and src
+upc_fence;                 
+...                        // effects are globally visible, but also all
+                           //   prior accesses are globally visible
+
+
+upc_handle_t handle = upc_memget_nb( dst, src, n );
+...                   // code that may not access targets of dst and src
+upc_lsync( &handle ); // effects are locally visible after return (optional call)
+...                   // code that may access targets of dst and src (requires lsync)
+upc_gsync( &handle ); // effects are globally visible after return (required call
+                      //     prior to fence unless handle == UPC_COMPLETE_HANDLE)
+upc_fence;
+...                   // all prior accesses are globally visible
+\end{verbatim}
+
+\newpage
+\subsection{upc\_memput\_nb}
+\def\function{{\tt upc\_memput\_nb}}
+
+\subsubsection{Synopsis}
+
+\begin{verbatim}
+upc_handle_t upc_memput_nb( shared void * restrict dst,
+                            const void * restrict src, size_t n );
+\end{verbatim}
+
+\subsubsection{Description}
+
+\npf The parameters shall be treated identically to the parameters of
+\memput{}.
+
+\np The \function{} function shall have the same effects as \memput{}.
+If the returned handle == \complete{}, then these effects shall be globally
+visible immediately; otherwise, the effects shall become globally visible after
+passing the returned handle to a successful \gsync{} call or upon executing a
+fence (strict access).
+
+\np A successful \gsync{} call shall be made using the returned handle,
+unless the returned handle == \complete{}.  The call is required even if it is
+preceded by a fence (strict access).
+
+\np The effects of the copy are locally visible after passing the
+returned handle to a successful \lsync{} call.  It is an error to access the
+memory pointed to by dst or src until the copy is locally visible.
+
+\np An implementation shall choose whether to return \complete{} or to
+perform an asynchronous copy.  For example, an implementation might choose to
+perform a synchronous copy if upc\_threadof(~dst~) == MYTHREAD.  Implementations
+are encouraged to perform asynchronous copies and return quickly whenever a
+synchronous copy would take significant time.
+
+\np The following two code sequences show the relationship between
+\memput{} and \function{}:
+
+\begin{verbatim}
+upc_memput( dst, src, n ); // effects are locally visible after return
+...                        // code that may access targets of dst and src
+upc_fence;                 
+...                        // effects are globally visible, but also all
+                           //   prior accesses are globally visible
+
+
+upc_handle_t handle = upc_memput_nb( dst, src, n );
+...                   // code that may not access targets of dst and src
+upc_lsync( &handle ); // effects are locally visible after return (optional call)
+...                   // code that may access targets of dst and src (requires lsync)
+upc_gsync( &handle ); // effects are globally visible after return (required call
+                      //     prior to fence unless handle == UPC_COMPLETE_HANDLE)
+upc_fence;
+...                   // all prior accesses are globally visible
+\end{verbatim}
+
+\newpage
+\subsection{upc\_memset\_nb}
+\def\function{{\tt upc\_memset\_nb}}
+
+\subsubsection{Synopsis}
+
+\begin{verbatim}
+upc_handle_t upc_memset_nb( shared void *dst, int c, size_t n );
+\end{verbatim}
+
+\subsubsection{Description}
+
+\npf The parameters shall be treated identically to the parameters of
+\memset{}.
+
+\np The \function{} function shall have the same effects as \memset{}.
+If the returned handle == \complete{}, then these effects shall be globally
+visible immediately; otherwise, the effects shall become globally visible after
+passing the returned handle to a successful \gsync{} call or upon executing a
+fence (strict access).
+
+\np A successful \gsync{} call shall be made using the returned handle,
+unless the returned handle == \complete{}.  The call is required even if it is
+preceded by a fence (strict access).
+
+\np The effects of the copy are locally visible after passing the
+returned handle to a successful \lsync{} call.  It is an error to access the
+memory pointed to by dst until the copy is locally visible.
+
+\np An implementation shall choose whether to return \complete{} or to
+perform an asynchronous copy.  For example, an implementation might choose to
+perform a synchronous copy if upc\_threadof(~dst~) == MYTHREAD.  Implementations
+are encouraged to perform asynchronous copies and return quickly whenever a
+synchronous copy would take significant time.
+
+\np The following two code sequences show the relationship between
+\memset{} and \function{}:
+
+\begin{verbatim}
+upc_memset( dst, c, n );   // effects are locally visible after return
+...                        // code that may access target of dst
+upc_fence;                 
+...                        // effects are globally visible, but also all
+                           //   prior accesses are globally visible
+
+
+upc_handle_t handle = upc_memset_nb( dst, c, n );
+...                   // code that may not access targets of dst
+upc_lsync( &handle ); // effects are locally visible after return (optional call)
+...                   // code that may access target of dst (requires lsync)
+upc_gsync( &handle ); // effects are globally visible after return (required call
+                      //     prior to fence unless handle == UPC_COMPLETE_HANDLE)
+upc_fence;
+...                   // all prior accesses are globally visible
+\end{verbatim}
+
+\newpage
+\subsection{upc\_memcpy\_nbi}
+\def\function{{\tt upc\_memcpy\_nbi}}
+
+\subsubsection{Synopsis}
+
+\begin{verbatim}
+void upc_memcpy_nbi( shared void * restrict dst,
+                     shared const void * restrict src, size_t n );
+\end{verbatim}
+
+\subsubsection{Description}
+
+\npf The parameters shall be treated identically to the parameters of
+\memcpy{}.
+
+\np The \function{} function shall have the same effects as \memcpy{}.
+The effects of all prior \function{} calls shall become globally visible after
+either a successful \gsynci{} call or upon executing a fence (strict access).
+
+\np The effects of all prior \function{} calls shall become locally
+visible after a successful \lsynci{} call.  It is an error to access the memory
+pointed to by dst or src until the copy is locally visible.
+
+\np The following two code sequences show the relationship between
+\memcpy{} and \function{}:
+
+\begin{verbatim}
+upc_memcpy( dst, src, n ); // effects are locally visible after return
+...                        // code that may access targets of dst and src
+upc_fence;                 
+...                        // effects are globally visible, but also all
+                           //   prior accesses are globally visible
+
+
+upc_memcpy_nbi( dst1, src1, n );
+upc_memcpy_nbi( dst2, src2, n );
+...           // code that may not access targets of dst1, dst2, src1, and src2
+upc_lsynci(); // effects are locally visible after return (optional call)
+...           // code that may access targets of dst1, dst2, src1, and src2 (requires lsynci)
+upc_gsynci(); // effects are globally visible after return (optional call)
+...
+upc_fence;
+...           // all prior accesses are globally visible
+\end{verbatim}
+
+\newpage
+\subsection{upc\_memget\_nbi}
+\def\function{{\tt upc\_memget\_nbi}}
+
+\subsubsection{Synopsis}
+
+\begin{verbatim}
+void upc_memget_nbi( void *dst, shared const void *src, size_t n );
+\end{verbatim}
+
+\subsubsection{Description}
+
+\npf The parameters shall be treated identically to the parameters of
+\memget{}.
+
+\np The \function{} function shall have the same effects as \memget{}.
+The effects of all prior \function{} calls shall become globally visible after 
+either a successful \gsynci{} call or upon executing a fence (strict access).
+
+\np The effects of all prior \function{} calls shall become locally 
+visible after a successful \lsynci{} call.  It is an error to access the memory
+pointed to by dst or src until the copy is locally visible.
+
+\np The following two code sequences show the relationship between
+\memget{} and \function{}:
+
+\begin{verbatim}
+upc_memget( dst, src, n ); // effects are locally visible after return
+...                        // code that may access targets of dst and src
+upc_fence;                 
+...                        // effects are globally visible, but also all
+                           //   prior accesses are globally visible
+
+
+upc_memget_nbi( dst1, src1, n );
+upc_memget_nbi( dst2, src2, n );
+...           // code that may not access targets of dst1, dst2, src1, and src2
+upc_lsynci(); // effects are locally visible after return (optional call)
+...           // code that may access targets of dst1, dst2, src1, and src2 (requires lsynci)
+upc_gsynci(); // effects are globally visible after return (optional call)
+...
+upc_fence;
+...           // all prior accesses are globally visible
+\end{verbatim}
+
+\newpage
+\subsection{upc\_memput\_nbi}
+\def\function{{\tt upc\_memput\_nbi}}
+
+\subsubsection{Synopsis}
+
+\begin{verbatim}
+void upc_memput_nbi( shared void *dst, const void *src, size_t n );
+\end{verbatim}
+
+\subsubsection{Description}
+
+\npf The parameters shall be treated identically to the parameters of
+\memput{}.
+
+\np The \function{} function shall have the same effects as \memput{}.
+The effects of all prior \function{} calls shall become globally visible after 
+either a successful \gsynci{} call or upon executing a fence (strict access).
+
+\np The effects of all prior \function{} calls shall become locally 
+visible after a successful \lsynci{} call.  It is an error to access the memory
+pointed to by dst or src until the copy is locally visible.
+
+\np The following two code sequences show the relationship between
+\memput{} and \function{}:
+
+\begin{verbatim} 
+upc_memput( dst, src, n ); // effects are locally visible after return
+...                        // code that may access targets of dst and src
+upc_fence;                 
+...                        // effects are globally visible, but also all
+                           //   prior accesses are globally visible
+
+
+upc_memput_nbi( dst1, src1, n );
+upc_memput_nbi( dst2, src2, n );
+...           // code that may not access targets of dst1, dst2, src1, and src2
+upc_lsynci(); // effects are locally visible after return (optional call)
+...           // code that may access targets of dst1, dst2, src1, and src2 (requires lsynci)
+upc_gsynci(); // effects are globally visible after return (optional call)
+...
+upc_fence;
+...           // all prior accesses are globally visible
+\end{verbatim}
+
+\newpage
+\subsection{upc\_memset\_nbi}
+\def\function{{\tt upc\_memset\_nbi}}
+
+\subsubsection{Synopsis}
+
+\begin{verbatim}
+void upc_memset_nbi( shared void *dst, int c, size_t n );
+\end{verbatim}
+
+\subsubsection{Description}
+
+\npf The parameters shall be treated identically to the parameters of
+\memset{}.
+
+\np The \function{} function shall have the same effects as \memset{}.
+The effects of all prior \function{} calls shall become globally visible after 
+either a successful \gsynci{} call or upon executing a fence (strict access).
+
+\np The effects of all prior \function{} calls shall become locally 
+visible after a successful \lsynci{} call.  It is an error to access the memory
+pointed to by dst or src until the copy is locally visible.
+
+\np The following two code sequences show the relationship between
+\memset{} and \function{}:
+
+\begin{verbatim} 
+upc_memset( dst, c, n );   // effects are locally visible after return
+...                        // code that may access target of dst
+upc_fence;                 
+...                        // effects are globally visible, but also all
+                           //   prior accesses are globally visible
+
+
+upc_memset_nbi( dst1, c, n );
+upc_memset_nbi( dst2, c, n );
+...           // code that may not access targets of dst1 and dst2
+upc_lsynci(); // effects are locally visible after return (optional call)
+...           // code that may access targets of dst1 and dst2 (requires lsynci)
+upc_gsynci(); // effects are globally visible after return (optional call)
+...
+upc_fence;
+...           // all prior accesses are globally visible
+\end{verbatim}
+
+\newpage
+\subsection{upc\_lsync\_attempt}
+\def\function{{\tt upc\_lsync\_attempt}}
+
+\subsubsection{Synopsis}
+
+\begin{verbatim}
+int upc_lsync_attempt( upc_handle_t* handle ); 
+\end{verbatim}
+
+\subsubsection{Description}
+
+\npf The handle argument shall point to a valid handle or the value
+\complete{}.
+
+\np The \function{} function returns 1 if the copy associated with the
+handle is locally visible, or 0 otherwise.  If in addition to being locally
+visible the copy is globally visible, the \function{} function sets *handle to
+\complete{}; otherwise, it leaves *handle unchanged.
+
+\np The \function{} function returns 1 if *handle == \complete{}.
+
+\np The \function{} function does not have any fence-like behavior.
+
+\subsection{upc\_lsync}
+\def\function{{\tt upc\_lsync}}
+
+\subsubsection{Synopsis}
+
+\begin{verbatim}
+void upc_lsync( upc_handle_t* handle );
+\end{verbatim}
+
+\subsubsection{Description}
+
+\npf The handle argument shall point to a valid handle or the value
+\complete{}.
+
+\np The \function{} function does not return until the copy associated
+with the handle is locally visible.  If in addition to being locally visible the
+copy is globally visible, the \function{} function sets *handle to \complete{};
+otherwise, it leaves *handle unchanged.
+
+\np The \function{} function returns 1 if *handle == \complete{}.
+
+\np The \function{} function does not have any fence-like behavior.
+
+\newpage
+\subsection{upc\_lsynci\_attempt}
+\def\function{{\tt upc\_lsynci\_attempt}}
+
+\subsubsection{Synopsis}
+
+\begin{verbatim}
+int upc_lsynci_attempt( void );
+\end{verbatim}
+
+\subsubsection{Description}
+
+\npf The \function{} function returns 1 if all \_nbi copies are
+locally visible, or 0 otherwise.
+
+\np The \function{} function does not have any fence-like behavior.
+
+\subsection{upc\_lsynci}
+\def\function{{\tt upc\_lsynci}}
+
+\subsubsection{Synopsis}
+
+\begin{verbatim}
+void upc_lsynci( void );
+\end{verbatim}
+
+\subsubsection{Description}
+
+\npf The \function{} function does not return until all \_nbi copies
+are locally visible.
+
+\np The \function{} function does not have any fence-like behavior.
+
+\newpage
+\subsection{upc\_gsync\_attempt}
+\def\function{{\tt upc\_gsync\_attempt}}
+
+\subsubsection{Synopsis}
+
+\begin{verbatim}
+int upc_gsync_attempt( upc_handle_t* handle ); 
+\end{verbatim}
+
+\subsubsection{Description}
+
+\npf The handle argument shall point to a valid handle or the value
+\complete{}.
+
+\np The \function{} function returns 1 and sets *handle to \complete{}
+if the copy associated with the handle is globally visible, or returns 0 and
+leaves *handle unchanged otherwise.
+
+\np The \function{} function returns 1 if *handle == \complete{}.
+
+\np If the \function{} function returns 1, then it is a half-fence in the
+upward direction.  A relaxed access issued before the successful \function{} call
+may become visible after the call, but a relaxed access issued after the
+successful \function{} call may not become visible before the call.
+
+\subsection{upc\_gsync}
+\def\function{{\tt upc\_gsync}}
+
+\subsubsection{Synopsis}
+
+\begin{verbatim}
+void upc_gsync( upc_handle_t* handle );
+\end{verbatim}
+
+\subsubsection{Description}
+
+\npf The handle argument shall point to a valid handle or the value
+\complete{}.
+
+\np The \function{} function does not return until the copy associated
+with the handle is globally visible.  It sets *handle to \complete{}.
+
+\np The \function{} function returns immediately if *handle ==
+\complete{}.
+
+\np The \function{} function is a half-fence in the upward direction.
+A relaxed access issued before a \function{} call may become visible after the
+call, but a relaxed access issued after a \function{} call may not become
+visible before the call.
+
+\newpage
+\subsection{upc\_gsynci\_attempt}
+\def\function{{\tt upc\_gsynci\_attempt}}
+
+\subsubsection{Synopsis}
+
+\begin{verbatim}
+int upc_gsynci_attempt( void );
+\end{verbatim}
+
+\subsubsection{Description}
+
+\npf The \function{} function returns 1 if all \_nbi copies are
+globally visible, or 0 otherwise.
+
+\np If the \function{} function returns 1, then it is a half-fence in the
+upward direction.  A relaxed access issued before the successful \function{} call
+may become visible after the call, but a relaxed access issued after the
+successful \function{} call may not become visible before the call.
+
+\subsection{upc\_gsynci}
+\def\function{{\tt upc\_gsynci}}
+
+\subsubsection{Synopsis}
+
+\begin{verbatim}
+void upc_gsynci( void );
+\end{verbatim}
+
+\subsubsection{Description}
+
+\npf The \function{} function does not return until all \_nbi copies
+are globally visible.
+
+\np The \function{} function is a half-fence in the upward direction.  A
+relaxed access issued before a \function{} call may become visible after the call,
+but a relaxed access issued after a \function{} call may not become visible before
+the call.
