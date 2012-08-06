@@ -14,7 +14,7 @@ The following process will be used to review proposed changes to the UPC standar
 
  # A formal proposal that identifies all changes to the specification must be made publicly accessible through the UPC specification website.
  # An email announcement must be made to the UPC specification group.
- # Following the announcement of the formal proposal, a one monty public comment period will be observed.
+ # Following the announcement of the formal proposal, a one month public comment period will be observed.
  # Following the two week public comment period, a specification group meeting will be held to discuss the proposal and community feedback.
 
 If consensus is reached at the end of this process, the proposal will be accepted in the standard.  If consensus is not reached, the process must be restarted. 
