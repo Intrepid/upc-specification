@@ -2,7 +2,7 @@
 
 = Introduction =
 
-We define the procedures that will be followed during the UPC standardization process.  This process is intended to be inclusive within the UPC community and driven by consensus.  These guidelines are not meant to contravene the UPC Specification 1.2 description a process largely designed for new libraries.  Instead it is to be used for changes to the specification that are more granular in scope.
+We define the procedures that will be followed during the UPC standardization process.  This process is intended to be inclusive within the UPC community and driven by consensus.  These guidelines are not intended to contravene the UPC Specification 1.2 process largely for new libraries.  Instead it is to be used for changes to the specification that are more granular in scope.  All of these procedures should be documented in the 1.3 version of the UPC Specification.
 
 = Membership =
 
