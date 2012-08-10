@@ -520,7 +520,6 @@ $m_1 <_t m_2$ are represented by $m_1 \rightarrow m_2$.\\
 Arcs that are implied by transitivity are omitted.  Assume
 all variables are initialized to 0.
 
-
 \np EXAMPLE 1: \textbf{Allowed behavior} 
 that would not be allowed under
 sequential consistency.  There are only relaxed operations,
@@ -729,7 +728,9 @@ T1's operations on x do not conflict because they are both reads,
 and hence may appear relatively reordered in $<_1$. 
 One other $<_1$ ordering is possible.}
 
-\bigskip
+% DOB: dirty hack to fix an ugly page break
+\pagebreak
+%\bigskip
 %--------------------------------------------------------------------------
 \np EXAMPLE 7: \textbf{Disallowed behavior} 
 similar to the previous example, but in this case
@@ -781,8 +782,9 @@ absent from $<_0$, this behavior would be allowed.
 $T0$: \> RW(x,1); \> RW(x,2)\\
 $T1$: \> SR(x,2); \> SR(x,1)\\
 \end{tabbing}
-
-\bigskip
+% DOB: dirty hack to fix an ugly page break
+\pagebreak
+%\bigskip
 $<_{Strict}$:\hspace{0.25in}
 \xymatrix{
 \\
@@ -842,8 +844,9 @@ regardless of location accessed.
 $T0$: \> RW(x,1); \> SW(y,1)\\
 $T1$: \> RR(y,1); \> RR(x,1); \> RR(x,0)\\
 \end{tabbing}
-
-\bigskip
+% DOB: dirty hack to fix an ugly page break
+\pagebreak
+%\bigskip
 $<_{Strict}$:\hspace{0.25in}
 \xymatrix{
 RW(x,1) \ar@{=>}[r] & SW(y,1) 
