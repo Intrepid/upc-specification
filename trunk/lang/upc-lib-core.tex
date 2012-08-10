@@ -330,7 +330,7 @@
     upc\_lock\_t} may therefore only be manipulated through pointers.
     Such objects have two states called {\em locked} and {\em unlocked}.
 
-\np Two pointers to that reference the same lock object will
+\np Two pointers to {\tt upc\_lock\_t} that reference the same lock object will
     compare as equal.  The results of applying {\tt upc\_phaseof()},
      {\tt upc\_threadof()}, and {\tt upc\_addrfield()} to such pointers
      are undefined.
