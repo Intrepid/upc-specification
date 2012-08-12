@@ -596,21 +596,21 @@ the order of the operands will have undefined results.
 void upc_all_reduce_<<T>>(
         shared void * restrict dst,
         void shared const void * restrict src,
-	upc_op_t op,
-	size_t nelems,
+        upc_op_t op,
+        size_t nelems,
         void size_t blk_size,
-	<<TYPE>>(*func)(<<TYPE>>, <<TYPE>>),
+        <<TYPE>>(*func)(<<TYPE>>, <<TYPE>>),
         void upc_flag_t flags);
 void upc_all_prefix_reduce<<T>>(
         shared void * restrict dst,
         void  shared const void * restrict src,
-	upc_op_t op,
-	size_t nelems,
+        upc_op_t op,
+        size_t nelems,
         void size_t blk_size,
-	<<TYPE>>(*func)(<<TYPE>>, <<TYPE>>),
+        <<TYPE>>(*func)(<<TYPE>>, <<TYPE>>),
         void upc_flag_t flags);
 \end{verbatim}
-        
+
 {\bf Description} 
 
 \np The function prototypes above represents the 22 variations of the
