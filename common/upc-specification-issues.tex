@@ -20,7 +20,7 @@
       \or % issue #9
         Library: High-Performance Wall-Clock Timers
       \or % issue #10
-        UPC header files organization
+        Clarification: Should upc\_flag\_t be defined in upc\_collectives.h or somewhere else?
       \or % issue #11
         UPC pointers-to-shared arithmetics
       \or % issue #12
@@ -121,6 +121,52 @@
         The affinity test on integer values in a upc\_forall statement is undefined for negative values
       \or % issue #60
         Clarification: the use of a non- shared qualified operand of upc\_blocksize (and related operators) is erroneous
+      \or % issue #61
+        Clarification: data tearing and read/write ordering
+      \or % issue #62
+        Add an "Informative Warnings" Annex
+      \or % issue #63
+        Provide a "UPC Implementer's Guide" document
+      \or % issue #64
+        Barrier statement optional expression type is an integer type, not just 'int'
+      \or % issue #65
+        Define a null pointer-to-shared in terms of C99's "null pointer constant"
+      \or % issue #66
+        Clarification: each collection of related library functions should have its own associated header file
+      \or % issue #67
+        Add a kitchen sink upc\_all.h header file?
+      \or % issue #68
+        Clarification: the re-specification of a same-valued layout qualifer is allowed
+      \or % issue #69
+        Clarification: how is an empty layout qualfier, or a qualifier of [1] handled when present in a series of qualifiers, or via a typedef chain?
+      \or % issue #70
+        Clarification: how is type compatibility defined when one/both pointer-to-shared target types are incomplete?
+      \or % issue #71
+        Clarification: can the [*] layout qualifier be applied to a scalar type?
+      \or % issue #72
+        Clarification: are layout qualifiers allowed in shared scalar declarations?
+      \or % issue #73
+        Proposal: pointer-to-shared comparion should ignore phase
+      \or % issue #74
+        Clarification: cast of (shared <type> * shared) is an error
+      \or % issue #75
+        Clarification: a cast from non-shared to shared is an error
+      \or % issue #76
+        Enhancement: fully anonymous barrier
+      \or % issue #77
+        disallow & applied to shared bitfields
+      \or % issue #78
+        Clarification: shared array initialization
+      \or % issue #79
+        should not hardcode path of makeindex
+      \or % issue #80
+        Library for signalling put and point-to-point synchronization
+      \or % issue #81
+        Unintentional wording regressions relative to 1.2
+      \or % issue #82
+        Remove the deprecated upc\_local\_alloc function
+      \or % issue #83
+        Strengthen the "default" pragma from "implementation-defined" to "relaxed"
     \else
         \empty
     \fi
