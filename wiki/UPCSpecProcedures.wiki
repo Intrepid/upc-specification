@@ -2,7 +2,9 @@
 
 = Introduction =
 
-We define the procedures that will be followed during the UPC standardization process.  This process is intended to be inclusive within the UPC community and driven by consensus.  These guidelines are not intended to contravene the UPC Specification 1.2 process largely for new libraries.  Instead it is to be used for changes to the specification that are more granular in scope.  All of these procedures should be documented in the 1.3 version of the UPC Specification.
+We define the internal procedures that will be followed during the construction of the UPC draft standard.  These guidelines are intended to allow the group to more efficiently construct an updated draft of the UPC standard; they do not contravene the procedures outlined in the current UPC specification.  The procedures outlined in the current UPC specification must ultimately be followed to ratify the revised standard.
+
+This process is intended to be inclusive within the UPC community and driven by consensus.  Therefore, these rules focus on accepting changes that have reached consensus within the UPC specification group.
 
 = Membership =
 
@@ -10,11 +12,11 @@ Anyone who wishes may participate in the standardization process.  No official m
 
 = Making Changes to the Standard =
 
-The following process will be used to review proposed changes to the UPC standard:
+The following process will be used to review proposed changes to the UPC draft standard:
 
  # A formal proposal that identifies all changes to the specification must be made publicly accessible through the UPC specification website.
  # An email announcement must be made to the UPC specification group.
  # Following the announcement of the formal proposal, a one month public comment period will be observed.
- # Following the two week public comment period, a specification group meeting will be held to discuss the proposal and community feedback.
+ # Following the one month public comment period, a specification group meeting will be held to discuss the proposal and community feedback.
 
-If consensus is reached at the end of this process, the proposal will be accepted in the standard.  If consensus is not reached, the process must be restarted. 
+If consensus is reached at the end of this process, the proposal will be accepted into the draft standard.  If consensus is not reached, the process must be restarted.
