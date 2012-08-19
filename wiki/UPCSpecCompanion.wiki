@@ -17,15 +17,15 @@ This document is intended as a companion to the UPC Specification. It provides n
 
 This document is intended to accompany the following documents:
 
-  * [UPCSpec]       The UPC Language Specification version 1.2, ratified May 2005
-  * [UPCSpecDraft]  The UPC Language and Core Library Specification version 1.3, currently in draft
-  * [UPCLibOptDraft]  The UPC Optional Libraries specification version 1.3, currently in draft
-  * [UPCLibReqDraft]  The UPC Optional Libraries specification version 1.3, currently in draft
-  * [C99]           ISO/IEC 9899: 1999(E), Programming languages - C
+  * [http://upc-specification.googlecode.com/files/upc_specs_1.2.pdf [UPCSpec]]       The UPC Language Specification version 1.2, ratified May 2005
+  * [[UPCSpecDraft]]  The UPC Language and Core Library Specification version 1.3, currently in draft
+  * [[UPCLibOptDraft]]  The UPC Optional Libraries specification version 1.3, currently in draft
+  * [[UPCLibReqDraft]]  The UPC Optional Libraries specification version 1.3, currently in draft
+  * [http://www.iso-9899.info/wiki/The_Standard [C99]]           ISO/IEC 9899: 1999(E), Programming languages - C
 
 = Authority =
 
-It should be noted that in all cases this is NOT an authoritative document. The formally ratified [UPCSpec] is the sole authoritative source on all matters UPC, and if this document makes any statements or implications that differ (through error or version drift), then it is this document that is incorrect. Any clarifications, examples or expanded descriptions stated herein are also not authoritative - the UPC intentionally leaves some matters underspecified to allow implementation freedom, and any statement herein does not further constrain the implementation behavior required by [UPCSpec].
+It should be noted that in all cases this is NOT an authoritative document. The formally ratified [[UPCSpec]] is the sole authoritative source on all matters UPC, and if this document makes any statements or implications that differ (through error or version drift), then it is this document that is incorrect. Any clarifications, examples or expanded descriptions stated herein are also not authoritative - the UPC intentionally leaves some matters underspecified to allow implementation freedom, and any statement herein does not further constrain the implementation behavior required by [UPCSpec].
 
 = General Rationale =
 
