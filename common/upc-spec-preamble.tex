@@ -40,6 +40,29 @@
   \SetWatermarkLightness{0.80}
 }{}
 
+\ifdraftspec{
+  \newcommand{\draftnote}{\\
+  \vspace{1in}
+  \fbox{
+  \parbox{\textwidth}{
+  {\bf Draft Note:}\\
+  \small
+  This draft of the specification reflects a high-level reorganization of the
+  UPC specification into three separate documents: the main language and core
+  library spec, the required libraries spec, and the optional libraries spec.
+  The versioning and release of these documents will become decoupled starting
+  with the ratification of the 1.3 spec. This draft is otherwise believed to be
+  semantically identical in every detail to UPC language specification version
+  1.2 (ratified May 2005), and will serve as the baseline for change comparison
+  in future drafts.\\ \\
+  To learn more about planned changes or participate in the UPC specification
+  revision process, please visit: 
+  {\tt http://code.google.com/p/upc-specification/}
+  }} }
+}{
+  \newcommand{\draftnote}{}
+}
+
 % stabilize the margins for twoside
 \setlength{\oddsidemargin}{50pt}  
 \setlength{\evensidemargin}{50pt}  
