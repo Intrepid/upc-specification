@@ -34,6 +34,19 @@
 \newcommand{\ifdraftspec}[2]{\ifthenelse{\boolean{draft}}{#1}{#2}}
 \draftorfinal
 
+% The spec. file will define \myspecversion and \mydraftversion.
+%
+% NOTE: \specversion must evaluate to a string without
+% embedded \if's due to the fragile nature of its use
+% within \title and \hypersetup.  Thus, \ifdraftspec cannot be used
+% inside the \newcommand definition below.
+%
+\ifdraftspec{
+  \newcommand{\specversion}{\myspecversion~\mydraftversion}
+}{
+  \newcommand{\specversion}{\myspecversion}
+}
+
 \ifdraftspec{
   % DRAFT FOR NOW -- first page only
   \usepackage[firstpage]{draftwatermark}
