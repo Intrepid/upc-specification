@@ -1,0 +1,175 @@
+\newcommand{\upcspecissue}[1]{%
+    \ifcase#1\relax
+        \empty
+      \or % issue #1
+        Typesetting of section 3
+      \or % issue #2
+        Layout specifier '[*]' interpretation in typedef
+      \or % issue #3
+        Is a pointer to an array-of-shared a pointer-to-shared or a pointer-to-local?
+      \or % issue #4
+        Progress guarantee of upc\_notify and upc\_wait
+      \or % issue #5
+        Equivalence of upc\_barrier and upc\_notify plus upc\_wait
+      \or % issue #6
+        Relaxing the relaxed consistency same-address exception
+      \or % issue #7
+        Library: Atomic Memory Operations (AMO)
+      \or % issue #8
+        Improve UPC data layout options
+      \or % issue #9
+        Library: High-Performance Wall-Clock Timers (upc\_tick\_t)
+      \or % issue #10
+        Clarification: Should upc\_flag\_t be defined in upc\_collectives.h or somewhere else?
+      \or % issue #11
+        UPC pointers-to-shared arithmetics
+      \or % issue #12
+        Library: Collective Deallocation Functions
+      \or % issue #13
+        Constrain sizeof a UPC shared type or object to the range of size\_t
+      \or % issue #14
+        Add language to the UPC spec. to further explain/constrain upc\_localsizeof semantics
+      \or % issue #15
+        Add constraint: a declaration of an array with indefinite block size must have compile-time constant dimensions
+      \or % issue #16
+        Add description of semantics of sizeof applied to a UPC shared type or expression in a static THREADS environment
+      \or % issue #17
+        Require that at least one dimension of a shared array type or declaration is an integral multiple of the block size
+      \or % issue #18
+        Clarification: UPC library functions can be implemented as macros, but must also have external linkage
+      \or % issue #19
+        Implement upc\_threadof, upc\_phaseof, and upc\_addrfield as operators
+      \or % issue #20
+        Drop strict/relaxed qualifiers when checking type compatibility with generic pointers-to-shared.
+      \or % issue #21
+        Define UPC implementation limits and required minimum values for same
+      \or % issue #22
+        Do not specify UPC support for UPC threads implemented as OS threads
+      \or % issue #23
+        Do not specify UPC support for UPC threads implemented as OS threads
+      \or % issue #24
+        Define GASP (Global Address Space Performance monitoring) support as an optional UPC library
+      \or % issue #25
+        Provide additional examples to illustrate aspects that are difficult to understand
+      \or % issue #26
+        limit allowed ranges of values for both the upc\_global\_exit() return code and barrier id values
+      \or % issue #27
+        Clarification: "long double" and "long double complex" support
+      \or % issue #28
+        stdio behavior
+      \or % issue #29
+        Correct example 2 in the UPC specification in the discussion of upc\_forall
+      \or % issue #30
+        Deprecate support for static THREADS compilation
+      \or % issue #31
+        block size of [*] should be capped at UPC\_MAX\_BLOCK\_SIZE
+      \or % issue #32
+        modification: THREADS/MYTHREAD have "(unsigned?) integral value" rather than "type int"
+      \or % issue #33
+        clarification: MYTHREAD and THREADS are expressions (cannot assign to or take address of them)
+      \or % issue #34
+        Define UPC\_OFF\_MAX and required minumum value
+      \or % issue #35
+        Define accesses to UPC shared bit fields as atomic with respect to accesses to adjacent fields.
+      \or % issue #36
+        Add language to clarify shared/non-shared alias relationships
+      \or % issue #37
+        Library: Shared-pointer privatizability (castability) functions
+      \or % issue #38
+        Deprecate the '[*]' layout qualifier
+      \or % issue #39
+        Can layout qualifiers applied to shared scalars be eliminated?
+      \or % issue #40
+        Language Extension:  generalize layout qualifiers so that they behave like C99 dynamic array types (VLA's).
+      \or % issue #41
+        Library: non-blocking memory copy extensions
+      \or % issue #42
+        Library: collectives 2.0
+      \or % issue #43
+        Can pointer-to-shared arithmetic be specified in terms of the / and \% operators of the C language?
+      \or % issue #44
+        Can pointer-to-shared arithmetic be specified in terms of the / and \% operators of the C language?
+      \or % issue #45
+        Non-deterministic return value
+      \or % issue #46
+        Request for a plain English description of memory consistency + a portable battery of consistency tests
+      \or % issue #47
+        upc\_forall semantics
+      \or % issue #48
+        UPC progress guarantees
+      \or % issue #49
+        clarification: unlock of freed lock
+      \or % issue #50
+        clarification: in-place collectives are prohibited by presence of "restrict" keyword
+      \or % issue #51
+        clarification: revise text to eliminate an ambiguity in barrier matching semantics
+      \or % issue #52
+        Library: topology query (node awareness)
+      \or % issue #53
+        Consider allowing static allocation of shared data whose affinity starts on a non-zero thread
+      \or % issue #54
+        Write section "Proposed Additions and Extensions"
+      \or % issue #55
+        Miscelaneous specification document typographical errors
+      \or % issue #56
+        Clarification: Inclusion of <upc.h> is not required for strictly conforming UPC programs
+      \or % issue #57
+        upc\_lock\_free: the effect of free-ing a UPC lock held by another thread is undefined
+      \or % issue #58
+        Bring Conformance section into agreement with the C99 specification
+      \or % issue #59
+        The affinity test on integer values in a upc\_forall statement is undefined for negative values
+      \or % issue #60
+        Clarification: the use of a non- shared qualified operand of upc\_blocksize (and related operators) is erroneous
+      \or % issue #61
+        Clarification: data tearing and read/write ordering
+      \or % issue #62
+        Add an "Informative Warnings" Annex
+      \or % issue #63
+        Provide a "UPC Implementer's Guide" document
+      \or % issue #64
+        Barrier statement optional expression type is an integer type, not just 'int'
+      \or % issue #65
+        Define a null pointer-to-shared in terms of C99's "null pointer constant"
+      \or % issue #66
+        Clarification: each collection of related library functions should have its own associated header file
+      \or % issue #67
+        Add a kitchen sink upc\_everything.h header file?
+      \or % issue #68
+        Clarification: the re-specification of a same-valued layout qualifer is allowed
+      \or % issue #69
+        Clarification: how is an empty layout qualfier, or a qualifier of [1] handled when present in a series of qualifiers, or via a typedef chain?
+      \or % issue #70
+        Clarification: how is type compatibility defined when one/both pointer-to-shared target types are incomplete?
+      \or % issue #71
+        Clarification: can the [*] layout qualifier be applied to a scalar type?
+      \or % issue #72
+        Clarification: are layout qualifiers allowed in shared scalar declarations?
+      \or % issue #73
+        Proposal: pointer-to-shared comparion should ignore phase
+      \or % issue #74
+        Clarification: cast of (shared <type> * shared) is an error
+      \or % issue #75
+        Clarification: a cast from non-shared to shared is an error
+      \or % issue #76
+        Enhancement: fully anonymous barrier
+      \or % issue #77
+        disallow & applied to shared bitfields
+      \or % issue #78
+        Clarification: shared array initialization
+      \or % issue #79
+        should not hardcode path of makeindex
+      \or % issue #80
+        Library for signalling put and point-to-point synchronization (upc\_sem\_t)
+      \or % issue #81
+        Unintentional wording regressions relative to 1.2
+      \or % issue #82
+        Remove the deprecated upc\_local\_alloc function
+      \or % issue #83
+        Strengthen the "default" pragma from "implementation-defined" to "relaxed"
+      \or % issue #84
+        Release Spec 1.3 Draft 1 for public consumption
+    \else
+        \empty
+    \fi
+}

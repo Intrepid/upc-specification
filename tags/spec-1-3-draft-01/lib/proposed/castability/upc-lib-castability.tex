@@ -1,0 +1,105 @@
+\subsection{Castability Functions {\tt <upc\_castable.h>}}
+\label{upc-castable}
+\index{privatizability}
+\index{castability}
+\index{upc\_castable.h}
+
+\np A UPC implementation may map the shared address space of another
+thread into the local address space of the current thread.  The
+functions described in this section allow the programmer to determine
+whether this is the case, and to make use of this information by
+providing the ability to obtain valid local addresses for shared cells
+with affinity to other threads.  This capability, sometimes called
+"privatizability", is referred to as "castability" in this section.
+
+\subsection{Standard headers}
+
+\np The standard header is
+
+{\tt <upc\_castable.h>}
+
+\subsection{Castability Functions}
+
+\paragraph{The {\tt upc\_cast} function}
+\index{upc\_cast}
+\index{cast}
+
+{\bf Synopsis}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc_castable.h>
+    void *upc_cast(shared void *ptr);
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_cast} function converts the specified
+pointer-to-shared to a valid pointer-to-local.  If such a conversion
+is not possible, an undefined value is returned.
+
+The conversion will be considered possible only if the returned
+pointer-to-local may be used to read and write the entire contiguous
+portion of a shared object (which may be a portion of a larger shared
+object) beginning at the specified shared address.  If only part of that
+region may be referenced, an undefined value is returned.
+
+\np If the target of the {\tt ptr} pointer has affinity to the current
+thread, {\tt upc\_cast(ptr)} is equivalent to {\tt (void *)ptr}.
+
+\np If the {\tt ptr} pointer is null, {\tt upc\_cast} returns NULL.
+
+\np The pointer returned by {\tt upc\_cast} is valid only in the calling
+thread.  It cannot be assumed that the return value may be passed to
+a different thread and used there.  It also cannot be assumed that two
+threads calling {\tt upc\_cast} with the same argument will get the same
+return value.
+
+\paragraph{The {\tt upc\_castable} function}
+\index{upc\_castable}
+\index{castable}
+
+{\bf Synopsis}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc_castable.h>
+    int upc_castable(shared void *ptr);
+\end{verbatim}
+
+{\bf Description}
+
+The {\tt upc\_castable} function returns 1 if the {\tt ptr} pointer
+can be converted to a pointer-to-local via a call to {\tt upc\_cast}.
+Otherwise, the function returns 0.
+
+If the {\tt ptr} pointer is null, or if the target of the {\tt ptr} has
+affinity to the current thread, {\tt upc\_castable} will return 1.
+
+The {\tt upc\_castable} function places no constraints on the order or
+number of subsequent calls to {\tt upc\_cast}, nor on their arguments.
+Calls to {\tt upc\_cast} are not required to be preceded by calls to
+{\tt upc\_castable}.
+
+\paragraph{The {\tt upc\_thread\_castable} function}
+\index{upc\_thread\_castable}
+\index{castable}
+
+{\bf Synopsis}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc_castable.h>
+    int upc_thread_castable(unsigned int threadnum);
+\end{verbatim}
+
+{\bf Description}
+
+The {\tt upc\_thread\_castable} function returns 1 only if all of the
+specified thread's shared data may be converted to local addresses
+via calls to {\tt upc\_cast}.  Otherwise, the function returns 0.
+
+The function returns 1 if {\tt threadnum} is equal to {\tt MYTHREAD}.
+
+\pagebreak
+\appendix

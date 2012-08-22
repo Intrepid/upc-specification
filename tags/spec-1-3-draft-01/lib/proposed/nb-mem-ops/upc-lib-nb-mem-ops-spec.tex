@@ -1,0 +1,40 @@
+\newcommand{\myspecversion}{Version 1.3}
+\newcommand{\mydraftversion}{Draft 1}
+\newcommand{\myversion}{\specversion}
+\newcommand{\mytitle}{UPC Proposed Library Specifications\\
+                      Non-Blocking Memory Copy Operations}
+\input{upc-spec-preamble}
+
+\makeindex
+
+\title{\mytitle\\
+\myversion}
+
+\author{A publication of the UPC Consortium}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\setcounter{page}{2}
+\dotoc
+
+\setcounter{section}{6} % section starts at 7
+\section{Library}
+
+\npf This section provides UPC parallel extensions of [ISO/IEC00 Sec 7.1.2].
+Also see the UPC Required Library Specifications.
+
+\np The libraries specified in this document are proposed --
+conforming implementations of the UPC language may provide or 
+omit each library at the subsection level (e.g. Sec 7.4). 
+Any subsection which is provided must be implemented in its
+entirety and predefine the specified feature macro.
+
+\setcounter{subsection}{3} % subsection starts at 4
+\input{upc-lib-nb-mem-ops}
+
+\doindex
+\end{document}

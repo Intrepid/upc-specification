@@ -1,0 +1,72 @@
+#!/usr/bin/env perl
+use warnings;
+use strict;
+use vars qw/$LATEX2HTML $LATEX2HTMLPLATDIR/;
+# Set by l2hconf.pm
+use vars qw/$ANYTOPNM $BMPTOPPM $CRAYOLAFILE $DVIPS $GIFTOPNM
+            $JPEGTOPNM $LATEX $PCXTOPPM $PERL $PNGTOPNM $PNMCUT
+            $PNMFLIP $PNMPAD $PNMROTATE $PNMSCALE $PNMTOPNG $PPMTOGIF
+            $PPMTOJPEG $RGBCOLORFILE $SGITOPNM $TEX $TIFFTOPNM $TMP
+            $XBMTOPBM $XWDTOPNM/;
+$LATEX2HTML = $ENV{'LATEX2HTML'} || 'latex2html';
+if($ENV{'LATEX2HTMLPLATDIR'}) {
+  $LATEX2HTMLPLATDIR = $ENV{'LATEX2HTMLPLATDIR'};
+} else {
+  chomp (my $l2h_path = `which '$LATEX2HTML' 2>/dev/null`);
+  if (defined ($l2h_path) && $l2h_path ne '') {
+    open my $in, '<', $l2h_path
+      or die "can't open: $l2h_path\n";
+    while (<$in>) {
+      chomp;
+      my ($l2h_tmp_dir) = /\$LATEX2HTMLPLATDIR\s*=\s*['"](.*)['"]/;
+      if (defined ($l2h_tmp_dir)) {
+        $LATEX2HTMLPLATDIR = $l2h_tmp_dir;
+	last;
+      }
+    }
+    close $in;
+  }
+}
+die "\$LATEX2HTMLPLATDIR is empty\n"
+  unless defined($LATEX2HTMLPLATDIR) && $LATEX2HTMLPLATDIR ne '';
+die "\$LATEX2HTMLPLATDIR not found: $LATEX2HTMLPLATDIR\n"
+  unless -e $LATEX2HTMLPLATDIR;
+die "\$LATEX2HTMLPLATDIR not a directory: $LATEX2HTMLPLATDIR\n"
+  unless -d $LATEX2HTMLPLATDIR;
+
+# dummy call back declarations
+sub ignore_commands {};
+sub process_commands_in_tex {};
+# Include l2hconf.pm so that we can access the config. variables
+# that it defines.
+print "Checking configuration settings in $LATEX2HTMLPLATDIR/l2hconf.pm\n";
+push @INC, $LATEX2HTMLPLATDIR;
+require l2hconf
+  or die "Can't find l2hconf.pm in: $LATEX2HTMLPLATDIR\n";
+my @cfg_vars = qw/ANYTOPNM BMPTOPPM CRAYOLAFILE DVIPS GIFTOPNM
+		  JPEGTOPNM LATEX PCXTOPPM PERL PNGTOPNM PNMCUT
+		  PNMFLIP PNMPAD PNMROTATE PNMSCALE PNMTOPNG PPMTOGIF
+		  PPMTOJPEG RGBCOLORFILE SGITOPNM TEX TIFFTOPNM TMP
+		  XBMTOPBM XWDTOPNM/;
+my $probs = 0;
+foreach my $v (@cfg_vars) {
+  if (eval "defined(\$$v)") {
+    my $file = eval "\$$v";
+    if (! -e $file) {
+      warn "$v: not found: $file\n";
+      ++$probs;
+    }
+  } else {
+    warn "missing config. var: $v\n";
+    ++$probs;
+  }
+}
+if (!$probs) {
+  print "No problems found in latex2html installation\n";
+} elsif ($probs == 1) {
+  die "1 problem found in latex2html installation\n";
+} else {
+  die "$probs problems found in latex2html installation\n";
+}
+exit 0;
+1;
