@@ -2,6 +2,7 @@
 
 = Procedure for releasing new UPC Spec drafts =
 
+  # Create an issue ticket to track the progress of the draft release. (example: issue #84)
   # Write a brief "cover note" summarizing the changes in this draft, and a release announcement email. Add the cover note to TeX.
   # Update draft number to be an integer (eg Draft 2)
   # Generate the official PDF output, both with and without change bars.
@@ -13,5 +14,3 @@
   # Wait for confirmation from at least one other person that everything looks good
   # Mail the draft to the whole world with release announcement: `upc-spec@hermes.gwu.edu, upc@hermes.gwu.edu, upc-help@hermes.gwu.edu, upc-users@lbl.gov`
   # Increment the draft number for future commits to be a non-integer (eg. Draft 2.1)
-
-
