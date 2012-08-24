@@ -1,0 +1,17 @@
+#summary Procedure for releasing new UPC Spec drafts
+
+= Procedure for releasing new UPC Spec drafts =
+
+  # Write a brief "cover note" summarizing the changes in this draft, and a release announcement email. Add the cover note to TeX.
+  # Update draft number to be an integer (eg Draft 2)
+  # Generate the official PDF output, both with and without change bars.
+  # Visually scan each page of the output for formatting problems. Fix any problems and start over.
+  # Password protect the PDFs and digitally sign them
+  # Create a project-wide SVN tag for the draft
+  # Upload the draft into the downloads section, set "Featured" tag
+  # Mail a pre-release announcement to the spec group: `upc-spec-dev@googlegroups.com, upc-spec-wg@googlegroups.com`
+  # Wait for confirmation from at least one other person that everything looks good
+  # Mail the draft to the whole world with release announcement: `upc-spec@hermes.gwu.edu, upc@hermes.gwu.edu, upc-help@hermes.gwu.edu, upc-users@lbl.gov`
+  # Increment the draft number for future commits to be a non-integer (eg. Draft 2.1)
+
+
