@@ -47,13 +47,14 @@
 {\tt\bf 
 \begin{tabular}{lll}
 MYTHREAD & upc\_barrier & upc\_localsizeof  \\
-relaxed & upc\_blocksizeof & UPC\_MAX\_BLOCKSIZE \\
+relaxed & upc\_blocksizeof & UPC\_MAX\_BLOCK\_SIZE \\
 shared &  upc\_elemsizeof & upc\_notify \\
 strict &   upc\_fence  & upc\_wait \\
 THREADS & upc\_forall  \\
 \end{tabular}
 }
 \end{center}
+\xchangenote[id=DB]{55}{UPC\_MAX\_BLOCKSIZE changed to UPC\_MAX\_BLOCK\_SIZE in the above table}
 
 
 {\bf Semantics}
@@ -943,7 +944,8 @@ expression$_{opt}${\bf ;}}\\
 
 \np When {\em affinity} is {\tt continue} or not specified, each loop
     body of the {\tt upc\_forall} statement is performed by every thread and
-    semantic 1 does not apply.
+    semantic \xreplaced[id=DB]{55}{5}{1} does not apply. 
+    % XXX: WARNING: THIS HARD-CODED CROSS-REFERENCE MUST BE ADJUSTED IF THIS SECTION CHANGES
 
 \np If the loop body of a {\tt upc\_forall} statement
     contains one or more {\tt upc\_forall} statements, either directly
