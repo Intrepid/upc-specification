@@ -240,6 +240,7 @@ detail?id=#1}{Issue \##1: \issuesummary}%
 	    }%
 	}%
     }
+    % \xchangenote is an inline change note that gets compiled away in final version
     \newcommand{\xchangenote}[3][]{%
       \cbstart%
       \xaddedncb[{#1}]{#2}{#3}%
@@ -257,6 +258,8 @@ detail?id=#1}{Issue \##1: \issuesummary}%
       \xreplacedncb[{#1}]{#2}{#3}{#4}%
       \cbend}
 
+    % use a separate footnote numbering space for change annotations
+    % to avoid disturbing the footnote numbering of the original document
     \newcounter{changefootnote}
     \newcounter{savefootnote}
     \newcommand{\openchangefootnotes}{%
@@ -269,6 +272,44 @@ detail?id=#1}{Issue \##1: \issuesummary}%
       \setcounter{footnote}{\value{savefootnote}}%
       \renewcommand{\thefootnote}{\arabic{footnote}}% Restore footnote printing
     }
+
+    % The following 'FN' versions of the commands are for annotating changes
+    % inside footnotes, where the changes package breaks because it tries to 
+    % insert a nested footnote, which is not supported in LaTeX.
+    % These are two-part commands: 
+    % \xaddedFN and friends appear inline and just take the textual change as arguments
+    % \xFNinfo must appear outside the footnote and take the author/issue info to output the change footnote
+    \let\xfootnoteorig\footnote
+    \newcommand{\discard}[1]{}
+    \newcommand{\xaddedFN}[1]{%
+      \openchangefootnotes%
+      \let\footnote\discard%
+      \added[]{#1}\footnotemark%
+      \let\footnote\xfootnoteorig%
+      \closechangefootnotes%
+    }
+    \newcommand{\xdeletedFN}[1]{%
+      \openchangefootnotes%
+      \let\footnote\discard%
+      \deleted[]{#1}\footnotemark%
+      \let\footnote\xfootnoteorig%
+      \closechangefootnotes%
+    }
+    \newcommand{\xreplacedFN}[2]{%
+      \openchangefootnotes%
+      \let\footnote\discard%
+      \replaced[]{#1}{#2}\footnotemark%
+      \let\footnote\xfootnoteorig%
+      \closechangefootnotes%
+    }
+    \newcommand{\xFNinfo}[2][]{%
+      \openchangefootnotes%
+      \ifthenelse{\isempty{#2}}%
+        {\footnotetext{#1}}%
+        {\footnotetext{#1: \specissueref{#2}}}%
+      \closechangefootnotes%
+    }
+
     % The following 'ncb' forms of the commands are for use
     % in 'fragile' environments (such as figure captions)
     % where change bars do not work.
