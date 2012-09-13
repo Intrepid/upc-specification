@@ -282,25 +282,31 @@ detail?id=#1}{Issue \##1: \issuesummary}%
     \let\xfootnoteorig\footnote
     \newcommand{\discard}[1]{}
     \newcommand{\xaddedFN}[1]{%
+      \cbstart%
       \openchangefootnotes%
       \let\footnote\discard%
       \added[]{#1}\footnotemark%
       \let\footnote\xfootnoteorig%
       \closechangefootnotes%
+      \cbend%
     }
     \newcommand{\xdeletedFN}[1]{%
+      \cbstart%
       \openchangefootnotes%
       \let\footnote\discard%
       \deleted[]{#1}\footnotemark%
       \let\footnote\xfootnoteorig%
       \closechangefootnotes%
+      \cbend%
     }
     \newcommand{\xreplacedFN}[2]{%
+      \cbstart%
       \openchangefootnotes%
       \let\footnote\discard%
       \replaced[]{#1}{#2}\footnotemark%
       \let\footnote\xfootnoteorig%
       \closechangefootnotes%
+      \cbend%
     }
     \newcommand{\xFNinfo}[2][]{%
       \openchangefootnotes%
