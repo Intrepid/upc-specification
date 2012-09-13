@@ -87,14 +87,17 @@
 \sterm{collective}%
      constraint placed on some language 
      operations which requires evaluation of such operations to be
-     matched\footnote{A collective operation need not provide any
+     matched across all threads.%
+     \footnote{A collective operation need not provide any
      actual synchronization between threads, unless otherwise noted.
      The collective requirement simply states a relative ordering property
      of calls to collective operations that must be maintained in the
      parallel execution trace for all executions of any legal program.
      Some implementations may include unspecified synchronization between
      threads within collective operations, but programs must not rely upon
-     such unspecified synchronization for correctness.} across all threads.
+     \xaddedFN{the presence of absence of}
+     such unspecified synchronization for correctness.}%
+     \xFNinfo[DB]{4}
      The behavior of collective operations is undefined unless all threads
      execute the same sequence of collective operations.
 
