@@ -137,29 +137,9 @@
     returns a pointer-to-shared value. It is not a {\em collective} function.
     If {\tt nbytes} is zero, the result is a null pointer-to-shared.
 
-\paragraph{The {\tt upc\_local\_alloc} function {\em deprecated}}
-
-{\bf Synopsis} 
-\index{upc\_local\_alloc}
-
-\npf\vspace{-2.5em}
-\begin{verbatim}
-    #include <upc.h> 
-    shared void *upc_local_alloc(size_t nblocks, size_t nbytes); 
-\end{verbatim}
-
-{\bf Description}
-
-\np The {\tt upc\_local\_alloc} function is deprecated and should not be used.
-    UPC programs should use the {\tt upc\_alloc} function instead.
-    Support may be removed in future versions of this specification.
-
-\np The {\tt upc\_local\_alloc} function allocates shared space of at
-    least {\tt nblocks * nbytes} bytes with affinity to the calling thread. 
-    If {\tt nblocks*nbytes} is zero, the result is a null pointer-to-shared.
-
-\np{\tt upc\_local\_alloc} is similar to malloc() except that it
-    returns a pointer-to-shared value. It is not a {\em collective} function.
+\cbstart
+\xdeletedncb[id=DB]{82}{SECTION REMOVED: The {\tt upc\_local\_alloc} function {\em deprecated}}
+\cbend
 
 \paragraph{The {\tt upc\_free} function}
 
