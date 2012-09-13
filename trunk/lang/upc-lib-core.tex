@@ -382,9 +382,18 @@
     referenced lock is currently unlocked or currently locked (by any
     thread).
 
-\np Any subsequent calls to locking functions from any
+\np %
+\xreplaced[id=DB]{49}{%
+    Subsequent or concurrent calls from any thread to functions defined in
+    Section~\ref{upc_lock} using the lock referenced by {\tt ptr} have
+    undefined behavior.  This also applies to any call to {\tt upc\_lock} on
+    the the lock referenced by {\tt ptr} which is blocked at the time of the
+    call to {\tt upc\_lock\_free}.
+}{%
+    Any subsequent calls to locking functions from any
     thread using {\tt ptr} have undefined effects. This also
     applies to any thread currently calling {\tt upc\_lock}.
+}
 
 \paragraph{The {\tt upc\_lock} function}
 
