@@ -1058,13 +1058,19 @@ expression$_{opt}${\bf ;}}\\
     relaxed-qualified. Such accesses shall be strict if a strict
     pragma is in effect, or relaxed if a relaxed pragma is in effect.
 
-\np Shared accesses which are not categorized by either
+\np %
+\xreplaced[id=DB]{83}{%
+    Each translation unit has an implicit {\tt \#pragma upc relaxed}
+    before the first line.
+}{%
+    Shared accesses which are not categorized by either
     referenced type or by these pragmas behave in an implementation
     defined manner in which either all such accesses are strict or
     all are relaxed.  Users wishing portable programs are strongly
     encouraged to categorize all shared accesses either by using
     type qualifiers, these directives, or by including {\tt <upc\_strict.h>}
     or {\tt <upc\_relaxed.h>}.
+}
 
 \np The pragmas shall occur either outside external
     declarations or preceding all explicit declarations and statements
