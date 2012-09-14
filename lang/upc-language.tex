@@ -72,14 +72,18 @@ as keywords and shall not be otherwise used.
 \subsubsection{{\tt THREADS}}
 \label{threads}
 \index{THREADS}
-\npf{\tt THREADS} is an expression with a value of type int; it specifies the number of
+\npf{\tt THREADS} is an expression with %
+     \xreplaced[id=DB]{32}{integral value}{a value of type int}; %
+     it specifies the number of
      threads and has the same value on every
      thread.   Under the static THREADS translation environment, {\tt THREADS}
      is an integer constant suitable for use in {\tt \#if} preprocessing directives.
 
 \subsubsection{{\tt MYTHREAD}}
 \index{MYTHREAD}
-\npf{\tt MYTHREAD} is an expression with a value of type int; it specifies the
+\npf{\tt MYTHREAD} is an expression with %
+     \xreplaced[id=DB]{32}{integral value}{a value of type int}; %
+     it specifies the
      unique thread index.%
      \xadded[id=DB]{33}{%
        \truefootnote{The definition of MYTHREAD and THREADS as expressions, not objects or   
