@@ -838,7 +838,21 @@ assignment-expression }{\bf ]}
     either the synchronization phase containing the {\tt upc\_notify} or 
     the next on different threads.}
 
-\np The {\tt upc\_wait} statement shall interrupt the execution of
+\np %
+\xreplaced[id=DB]{51}{%
+     If one or more threads provide optional expressions to {\tt upc\_notify} in
+     the current synchronization phase, then the subsequent {\tt upc\_wait} statement of at
+     least one thread shall interrupt the execution of the program in an
+     implementation-defined manner if either of the following two rules are violated:~%
+     \truefootnote{After such an interruption, subsequent behavior is undefined.}
+     1) All optional expressions provided to {\tt upc\_notify} must have
+        equal values (a consensus).
+     2) Any optional expression provided to {\tt upc\_wait} must equal
+        the consensus value from the {\tt upc\_notify}.
+     If no thread provides an optional expression to {\tt upc\_notify}, 
+     then no interruption shall be generated.
+}{%
+    The {\tt upc\_wait} statement shall interrupt the execution of
     the program in an implementation defined manner
     if the value of its expression differs from the value of
     the expression on the {\tt upc\_notify} statement issued by any
@@ -846,7 +860,7 @@ assignment-expression }{\bf ]}
     synchronization phase.  After such an interruption, subsequent behavior
     is undefined. No "difference" exists if either statement is missing
     this optional expression.
-
+}
 %\np The {\tt upc\_wait} statement will generate a runtime
 %    error if the value of its expression differs from any
 %    expression on the {\tt upc\_wait} and {\tt upc\_notify}
