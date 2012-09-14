@@ -80,7 +80,12 @@ as keywords and shall not be otherwise used.
 \subsubsection{{\tt MYTHREAD}}
 \index{MYTHREAD}
 \npf{\tt MYTHREAD} is an expression with a value of type int; it specifies the
-     unique thread index. The range of possible values is {\tt
+     unique thread index.%
+     \xadded[id=DB]{33}{%
+       \truefootnote{The definition of MYTHREAD and THREADS as expressions, not objects or   
+               l-values, means one cannot assign to them or take their address.}%
+     }%
+     The range of possible values is {\tt
      0..THREADS-1}\footnote{e.g., the program {\tt main()\{
      printf("\%d ",MYTHREAD); \} }, prints the numbers 0 through
      THREADS-1, in some order.}.
