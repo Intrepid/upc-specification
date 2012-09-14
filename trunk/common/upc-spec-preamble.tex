@@ -265,7 +265,7 @@ detail?id=#1}{Issue \##1: \issuesummary}%
     \newcommand{\openchangefootnotes}{%
       \setcounter{savefootnote}{\value{footnote}}% Swap footnote counter 
       \setcounter{footnote}{\value{changefootnote}}%
-      \renewcommand{\thefootnote}{\fnsymbol{footnote}}% Modify footnote printing
+      \renewcommand{\thefootnote}{\roman{footnote}}% Modify footnote printing
     }
     \newcommand{\closechangefootnotes}{%
       \setcounter{changefootnote}{\value{footnote}}% Swap footnote counter 
