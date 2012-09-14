@@ -1,4 +1,4 @@
-\pagebreak % DOB: fix ugly pagination
+\cbstart
 \subsection{High-Performance Wall-Clock Timers {\tt <upc\_tick.h>}}
 \label{upc-tick}
 \index{upc\_tick.h}
@@ -7,6 +7,7 @@
 \index{tick counter}
 \index{wall-clock}
 \index{cycle counter}
+\xchangenote[id=DB]{9}{SECTION ADDED}
 
 \npf This subsection provides extensions of [ISO/IEC00 Sec 7.23].
     All the characteristics of library functions described
@@ -133,5 +134,4 @@ calling thread into wall-clock nanoseconds.
   printf("Time was: %f seconds\n", upc_ticks_to_ns(end-start)/1.0E-9);
 \end{verbatim}
 
-\pagebreak
-\appendix
+\cbend
