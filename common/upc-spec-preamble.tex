@@ -272,6 +272,12 @@ detail?id=#1}{Issue \##1: \issuesummary}%
       \setcounter{footnote}{\value{savefootnote}}%
       \renewcommand{\thefootnote}{\arabic{footnote}}% Restore footnote printing
     }
+    % use \truefootnote for document footnotes that appear inside a change annotation
+    \newcommand{\truefootnote}[1]{%
+      \closechangefootnotes%
+      \footnote{#1}%
+      \openchangefootnotes%
+    }%
 
     % The following 'FN' versions of the commands are for annotating changes
     % inside footnotes, where the changes package breaks because it tries to 
@@ -344,12 +350,19 @@ detail?id=#1}{Issue \##1: \issuesummary}%
   {
     \newcommand{\xchangenote}[3][]{}
     \newcommand{\xadded}[3][]{#3}
-    \newcommand{\xdeleted}[3][]{#3}
+    \newcommand{\xdeleted}[3][]{}
     \newcommand{\xreplaced}[4][]{#3}
+    \newcommand{\xaddedFN}[1][]{#1}
+    \newcommand{\xdeletedFN}[1][]{}
+    \newcommand{\xreplacedFN}[2][]{#1}
+    \newcommand{\xFNinfo}[2][]{}
     \newcommand{\xaddedncb}[3][]{#3}
     \newcommand{\xdeletedncb}[3][]{}
     \newcommand{\xreplacedncb}[4][]{#3}
+    \let\truefootnote\footnote
     \newenvironment{changebar}{}{}
+    \newcommand{\cbstart}{}
+    \newcommand{\cbend}{}
   }
 
 % The special comments below are processed by latex2html.
