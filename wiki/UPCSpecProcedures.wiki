@@ -14,7 +14,7 @@ Anyone who wishes may participate in the standardization process.  No official m
 
 The following process will be used to review proposed changes to the UPC draft standard:
 
- # A formal proposal that identifies all changes to the specification must be made publicly accessible through the UPC specification website.
+ # A formal proposal that identifies all changes to the specification must be made publicly accessible through the UPC specification website.  Such a proposal could be created as a branch in the specification repository.
  # An email announcement must be made to the UPC specification group.
  # Following the announcement of the formal proposal, a one month public comment period will be observed.
  # Following the one month public comment period, a specification group meeting will be held to discuss the proposal and community feedback.
