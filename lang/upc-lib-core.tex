@@ -52,6 +52,7 @@
       storage, and terminates the execution for all active threads.
 
 \subsubsection{Shared memory allocation functions}
+\label{shared_allocation}
 \index{shared object, allocation}
 \index{memory allocation}
 
@@ -159,9 +160,49 @@
     a null pointer, no action occurs.  Otherwise, if the argument does
     not match a pointer earlier returned by the {\tt upc\_alloc, } 
     {\tt upc\_global\_alloc,}  {\tt upc\_all\_alloc,}  or {\tt upc\_local\_alloc,} function,
-    or if the space has been deallocated by a previous call, by any 
-    thread,\footnote{i.e., only one thread may call {\tt upc\_free} for
-     each allocation} to {\tt upc\_free,} the behavior is undefined.
+    or if the space has been deallocated by a previous call
+    to {\tt upc\_free} by any thread,\footnote{i.e., only one thread may call {\tt upc\_free} for
+     each allocation} 
+    \xadded[id=DB]{12}{or a previous call to {\tt upc\_all\_free}}, 
+    the behavior is undefined.
+
+\cbstart
+\paragraph{The {\tt upc\_all\_free} function}
+\xchangenote[id=DB]{12}{SECTION ADDED}
+
+{\bf Synopsis} 
+\index{upc\_all\_free}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    void upc_all_free(shared void *ptr); 
+\end{verbatim}
+
+{\bf Description}
+
+\np {\tt upc\_all\_free} is a {\em collective} variant of {\tt upc\_free}, provided as a convenience.
+    It must be called collectively by all threads with the {\em single-valued} argument {\tt ptr}.
+
+\np The {\tt upc\_all\_free} function frees the dynamically
+    allocated shared storage pointed to by {\tt ptr}.  If {\tt ptr} is
+    a null pointer, no action occurs.  Otherwise, if the argument does
+    not match a pointer earlier returned by the {\tt upc\_alloc},
+    {\tt upc\_global\_alloc},  {\tt upc\_all\_alloc}  or {\tt upc\_local\_alloc} function,
+    or if the space has been deallocated by a previous call to {\tt upc\_free}
+    or {\tt upc\_all\_free}, the behavior is undefined.
+
+\np The shared storage referenced by {\tt ptr} is guaranteed to remain valid
+    until all threads have entered the call to {\tt upc\_all\_free}, but the
+    function does not otherwise guarantee any synchronization or strict reference.
+
+\np There is no required correspondence between the functions specified 
+    in Section~\ref{shared_allocation} to allocate and free objects.
+    Either of the {\tt upc\_free} or {\tt upc\_all\_free} functions
+    may be used to free shared space allocated using {\tt upc\_all\_alloc},
+    {\tt upc\_alloc}, {\tt upc\_global\_alloc}, or {\tt upc\_local\_alloc}.
+
+\cbend
 
 \subsubsection{Pointer-to-shared manipulation functions}
 
@@ -374,9 +415,12 @@
     Otherwise, if the argument does not match a pointer earlier
     returned by the {\tt upc\_global\_lock\_alloc} or {\tt
     upc\_all\_lock\_alloc} function, or if the lock has been
-    deallocated by a previous call to {\tt upc\_lock\_free,}\footnote
+    deallocated by a previous call to {\tt upc\_lock\_free} by any thread,~%
+    \footnote
     {i.e., only one thread may call {\tt upc\_lock\_free} for each
-    allocation} the behavior is undefined.
+    allocation} 
+    \xadded[id=DB]{12}{or a previous call to {\tt upc\_all\_lock\_free},}
+    the behavior is undefined.
 
 \np{\tt upc\_lock\_free} succeeds regardless of whether the
     referenced lock is currently unlocked or currently locked (by any
@@ -394,6 +438,52 @@
     thread using {\tt ptr} have undefined effects. This also
     applies to any thread currently calling {\tt upc\_lock}.
 }
+
+\cbstart
+\paragraph{The {\tt upc\_all\_lock\_free} function}
+\xchangenote[id=DB]{12}{SECTION ADDED}
+
+{\bf Synopsis}
+\index{upc\_all\_lock\_free}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    void upc_all_lock_free(upc_lock_t *ptr); 
+\end{verbatim}
+
+{\bf Description}
+
+\np {\tt upc\_all\_lock\_free} is a {\em collective} variant of {\tt upc\_lock\_free}, provided as a convenience.
+    It must be called collectively by all threads with the {\em single-valued} argument {\tt ptr}.
+
+\np The {\tt upc\_all\_lock\_free} function frees all resources
+    associated with the dynamically allocated {\tt upc\_lock\_t} pointed to
+    by {\tt ptr}.  If {\tt ptr} is a null pointer, no action occurs.
+    Otherwise, if the argument does not match a pointer earlier
+    returned by the {\tt upc\_global\_lock\_alloc} or {\tt
+    upc\_all\_lock\_alloc} function, or if the lock has been
+    deallocated by a previous call to {\tt upc\_lock\_free}
+    or {\tt upc\_all\_lock\_free}, the behavior is undefined.
+
+\np{\tt upc\_all\_lock\_free} succeeds regardless of whether the
+    referenced lock is currently unlocked or currently locked (by any
+    thread).
+
+\np The lock referenced by {\tt ptr} is guaranteed to remain valid
+    until all threads have entered the call to {\tt upc\_all\_lock\_free}, but the
+    function does not otherwise guarantee any synchronization or strict reference.
+
+\np Any subsequent calls to locking functions from any
+    thread using {\tt ptr} have undefined effects. 
+
+\np There is no required correspondence between the functions specified
+    in Section~\ref{upc_lock} to allocate and free locks.
+    Either of the {\tt upc\_lock\_free} or {\tt upc\_all\_lock\_free} functions
+    may be used to free locks allocated using {\tt upc\_global\_lock\_alloc} or 
+    {\tt upc\_all\_lock\_alloc}.
+
+\cbend
 
 \paragraph{The {\tt upc\_lock} function}
 
