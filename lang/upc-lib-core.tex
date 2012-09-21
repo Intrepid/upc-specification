@@ -62,6 +62,14 @@
     to the start of the allocated space.  If the space cannot be allocated, a null
     pointer-to-shared is returned.
     
+\np \xadded[id=DB]{12}{
+    There is no required correspondence between the functions specified 
+    in Section~\ref{shared_allocation} to allocate and free objects.
+    Either of the {\tt upc\_free} or {\tt upc\_all\_free} functions
+    may be used to free shared space allocated using {\tt upc\_all\_alloc},
+    {\tt upc\_alloc}, {\tt upc\_global\_alloc}, or {\tt upc\_local\_alloc}.
+    }
+
 \paragraph{The {\tt upc\_global\_alloc} function}
 
 {\bf Synopsis} 
@@ -195,12 +203,6 @@
 \np The shared storage referenced by {\tt ptr} is guaranteed to remain valid
     until all threads have entered the call to {\tt upc\_all\_free}, but the
     function does not otherwise guarantee any synchronization or strict reference.
-
-\np There is no required correspondence between the functions specified 
-    in Section~\ref{shared_allocation} to allocate and free objects.
-    Either of the {\tt upc\_free} or {\tt upc\_all\_free} functions
-    may be used to free shared space allocated using {\tt upc\_all\_alloc},
-    {\tt upc\_alloc}, {\tt upc\_global\_alloc}, or {\tt upc\_local\_alloc}.
 
 \cbend
 
@@ -354,6 +356,15 @@
     compare as equal.  The results of applying {\tt upc\_phaseof()},
      {\tt upc\_threadof()}, and {\tt upc\_addrfield()} to such pointers
      are undefined.
+
+\np \xadded[id=DB]{12}{
+    There is no required correspondence between the functions specified
+    in Section~\ref{upc_lock} to allocate and free locks.
+    Either of the {\tt upc\_lock\_free} or {\tt upc\_all\_lock\_free} functions
+    may be used to free locks allocated using {\tt upc\_global\_lock\_alloc} or 
+    {\tt upc\_all\_lock\_alloc}.
+    }
+
 \paragraph{The {\tt upc\_global\_lock\_alloc} function}
 
 {\bf Synopsis} 
@@ -476,12 +487,6 @@
 
 \np Any subsequent calls to locking functions from any
     thread using {\tt ptr} have undefined effects. 
-
-\np There is no required correspondence between the functions specified
-    in Section~\ref{upc_lock} to allocate and free locks.
-    Either of the {\tt upc\_lock\_free} or {\tt upc\_all\_lock\_free} functions
-    may be used to free locks allocated using {\tt upc\_global\_lock\_alloc} or 
-    {\tt upc\_all\_lock\_alloc}.
 
 \cbend
 
