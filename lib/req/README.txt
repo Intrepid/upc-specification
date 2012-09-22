@@ -15,3 +15,8 @@ upc-lib-required-draft-spec.tex
 
 	The UPC required library specification draft version driver file.
 	This driver sets the draft flag and then includes the main driver.
+
+upc-lib-tick.tex
+
+	High-Performance Wall-Clock Timers specification.  Walk clock
+	timers were introduced in UPC specification version 1.3.
