@@ -485,8 +485,9 @@
     until all threads have entered the call to {\tt upc\_all\_lock\_free}, but the
     function does not otherwise guarantee any synchronization or strict reference.
 
-\np Any subsequent calls to locking functions from any
-    thread using {\tt ptr} have undefined effects. 
+\np Any subsequent calls from any thread to functions defined in
+    Section~\ref{upc_lock} using the lock referenced by {\tt ptr} have
+    undefined behavior. 
 
 \cbend
 
