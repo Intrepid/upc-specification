@@ -3,7 +3,7 @@
 = Procedure for releasing new UPC Spec drafts =
 
   # Create an issue ticket to track the progress of the draft release. (example: issue #84)
-  # Write a brief "cover note" summarizing the changes in this draft, and a release announcement email. Add the cover note to TeX.
+  # Review the cover note and List of Changes section to ensure accuracy. Write a release announcement email summarizing the changes in this draft.
   # Update draft number to be an integer (eg Draft 2)
   # Generate the official PDF output, both with and without change bars.
   # Visually scan each page of the output for formatting problems. Fix any problems and start over.
