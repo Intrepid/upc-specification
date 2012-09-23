@@ -90,7 +90,7 @@ minimal and maximal values representable in a variable of type {\tt upc\_tick\_t
  \begin{verbatim}
     #include <upc_tick.h>
 
-    upc_tick_t upc_ticks_now();
+    upc_tick_t upc_ticks_now(void);
 \end{verbatim}
 
 {\bf Description}
@@ -110,7 +110,6 @@ during any given program execution).
 \npf\vspace{-2.5em}
  \begin{verbatim}
     #include <upc_tick.h>
-    #include <stdint.h>
 
     uint64_t upc_ticks_to_ns(upc_tick_t ticks);
 \end{verbatim}
