@@ -1,0 +1,84 @@
+#!/usr/bin/perl
+#
+# Fetch the current list of UPC specification
+# issues as a CSV file; then parse the list of issues and
+# write a tab-separated text file with the following fields:
+# "Id", "Status", "Priority", "Owner", "Comments",
+# and "Summary". This list is currently limited to
+# Spec. 1.3 issues only with status 'New' or 'Accepted'.
+#
+use warnings;
+use strict;
+use LWP::Simple;
+use Text::CSV;
+use HTML::Parser;
+use utf8;
+use Text::Unidecode;
+my $csv = Text::CSV->new ( { binary => 1 } );
+# my $html= get 'http://code.google.com/p/upc-specification/issues/'
+#               . 'csv?can=1&q=&colspec=ID%20Modified%20Type%20Status'
+# 	      . '%20Milestone%20Owner%20Summary%20Milestone&sort=id';
+
+# Get all milestone 1.3 open issues.
+my $html= get 'http://code.google.com/p/upc-specification/issues/'
+              . 'csv?can=2'
+	      . '&q=milestone%3DSpec-1.3'
+	      . '&colspec=ID+Modified+Type+Status+Priority+Conensus'
+	      . '+Milestone+Owner+Summary&sort=id';
+my @text;
+my $html_parser = HTML::Parser->new (api_version => 3,
+                                     text_h => [\@text, '@{dtext}']);
+$html_parser->unbroken_text(1);
+# $html_parser->utf8_mode(1);
+my $comment_rx = qr/\bComment\s+\d+\s+by\s+project\s+member/;
+my $first_line = 1;
+my @cname;
+my @issues;
+for my $row (split "\n", $html) {
+  my $data = $csv->parse($row);
+  last unless $data;
+  my @F = $csv->fields;
+  if ($first_line) {
+    @cname = @F;
+    die "ID column not found\n"
+      unless grep /^ID/, @cname;
+    die "Summary column not found\n"
+      unless grep /^Summary/, @cname;
+    $first_line = 0;
+    next;
+  }
+  die 'expected ' . (scalar @cname) . ' columns'
+      . ' but have ' . (scalar @F) . " columns\n"
+      unless scalar @cname == scalar @F;
+  my %f = map {$cname[$_] => $F[$_]} 0..$#cname;
+  my ($id, $status, $priority, $owner, $summary) =
+      map {$f{$_}} qw/ID Status Priority Owner Summary/;
+  next unless $status eq 'New' || $status eq 'Accepted';
+  my $issue_html = get "http://code.google.com/p/upc-specification/"
+                       . "issues/detail?id=$id";
+  @text = ();
+  $html_parser->parse($issue_html);
+  $html_parser->eof;
+  my @text = map {unidecode($_)} @text;
+  my $text = join ("\n", @text);
+  # The =()= operator converts the RHS to array context.
+  my $num_comments =()= $text =~ /$comment_rx/gsm;
+  push @issues, [ $id, $status, $priority, $owner, $num_comments, $summary ];
+}
+$csv->eof or $csv->error_diag();
+if (!scalar @issues)
+  { die "No UPC specification issues found.\n"; }
+my %sts_as_int = ('New' => 0, 'Accepted' => 1);
+@issues = sort {my $a_id   = $a->[0]; my $b_id   = $b->[0];
+                my $a_sts  = $a->[1]; my $b_sts  = $b->[1];
+                my $a_prty = $a->[2]; my $b_prty  = $b->[2];
+                my $a_nc   = $a->[4]; my $b_nc    = $b->[4];
+		$a_sts = $sts_as_int{$a_sts};
+		$b_sts = $sts_as_int{$b_sts};
+		# New before Accepted, then by id.
+		$a_sts <=> $b_sts || $a_id <=> $a_id} @issues;
+print "Id\tStatus\tPriority\tOwner\tComments\tSummary\n";
+for my $issue (@issues) {
+  my ($id, $status, $priority, $owner, $num_comments, $summary) = @$issue;
+  print "$id\t$status\t$priority\t$owner\t$num_comments\t$summary\n";
+}
