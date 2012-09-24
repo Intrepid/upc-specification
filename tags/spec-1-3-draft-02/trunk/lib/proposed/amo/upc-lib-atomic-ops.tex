@@ -1,0 +1,181 @@
+\subsection{UPC Atomic Memory Operations \texttt{<}upc\_atomic.h\texttt{>}}
+\index{\_\_UPC\_ATOMIC\_\_}
+\index{upc\_atomic.h}
+
+\npf This subsection provides the UPC parallel extensions of [ISO/IEC00 
+    Sec 7.19].  All the characteristics of library functions described
+    in [ISO/IEC00 Sec 7.1.4] apply to these as well.  Implementations
+    that support this interface shall predefine the feature macro {\tt
+    \_\_UPC\_ATOMIC\_\_} to the value 1.
+
+\np The following requirements apply to all of the functions defined
+    in this section.
+
+\np When these functions are used to access a memory location in a given
+    synchronization phase, atomicity is guaranteed if and only if no other
+    mechanisms are used to access the same memory location in the same
+    synchronization phase.
+
+\subsubsection{Standard headers}
+
+\np The standard header is
+
+{\tt <upc\_atomic.h>}
+
+\subsubsection{Atomic Memory Operations}
+
+\paragraph{The {\tt upc\_amo\_cas} functions}
+\index{upc\_amo\_cas}
+
+{\bf Synopsis} 
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h>
+    #include <upc_atomic.h>
+
+    <<TYPE>> upc_amo_cas<<X>>_<<T>>(shared void * ptr,
+         <<TYPE>> cmpval, <<TYPE>> setval);
+\end{verbatim}
+
+{\bf Description}
+
+\np The function prototype above represents the 16 variations of the
+    {\tt upc\_amo\_cas{\em X}\_{\em T}} functions where {\tt{\em X}} has the
+    following correspondence:
+\begin{center}
+\begin{tabular}{ll}
+{\tt{\em X}} & {Shared Access Type} \\ \hline
+{\tt S} & {Strict shared access} \\
+{\tt R} & {Relaxed shared access} \\
+\end{tabular}
+\end{center}
+    and {\tt{\em T}} and {\tt{\em TYPE}} have the following correspondences:
+    \footnote{For example, if {\tt{\em T}} is {\tt U64}, then 
+    {\tt{\em TYPE}} must be {\tt uint64\_t}.}
+\begin{center}
+\begin{tabular}{ll|ll}
+{\tt{\em T}} & {\tt{\em TYPE}} \hspace*{1.5in} &
+{\tt{\em T}} & {\tt{\em TYPE}} \\ \hline
+{\tt I} & {\tt signed int} &
+{\tt I32} & {\tt int32\_t} \\
+{\tt U} & {\tt unsigned int} &
+{\tt U32} & {\tt uint32\_t} \\
+{\tt IL} & {\tt signed long} &
+{\tt I64} & {\tt int64\_t} \\
+{\tt UL} & {\tt unsigned long} &
+{\tt U64} & {\tt uint64\_t} \\
+\end{tabular}
+\end{center}
+
+\np The {\tt upc\_amo\_cas} functions will set the value of the {\tt{\em TYPE}}
+    shared object referenced by {\tt ptr} to {\tt setval} if and only if
+    the current value {\tt *ptr} is equal to the comparison value {\tt cmpval}.
+
+\np The {\tt upc\_amo\_cas} functions return the original value of the
+    {\tt{\em TYPE}} shared object referenced by {\tt ptr} regardless of whether
+    the write was performed.
+
+\np The {\tt upc\_amo\_cas} function treats the {\tt ptr} pointer as having
+    type:
+\begin{verbatim}
+    shared TYPE *
+\end{verbatim}
+
+\np EXAMPLE 1: {\tt upc\_amo\_cas} of type relaxed {\tt signed int}.
+\begin{verbatim}
+  #include <upc.h>
+  #include <upc_atomic.h>
+  shared int i = 5;
+  int orig = upc_amo_casR_I(&i, 5, -5);
+\end{verbatim}
+
+\paragraph{The {\tt upc\_amo\_op} and {\tt upc\_amo\_fop} functions}
+\index{upc\_amo\_op}
+\index{upc\_amo\_fop}
+
+{\bf Synopsis} 
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h>
+    #include <upc_atomic.h>
+
+    void upc_amo_op<<X>>_<<T>>(shared void * ptr,
+         <<TYPE>> val, upc_op_t op);
+
+    <<TYPE>> upc_amo_fop<<X>>_<<T>>(shared void * ptr,
+         <<TYPE>> val, upc_op_t op);
+\end{verbatim}
+
+{\bf Description}
+
+\np The function prototype above represents the 16 variations of the
+    {\tt upc\_amo\_op{\em X}\_{\em T}} and {\tt upc\_amo\_fop{\em X}\_{\em T}}
+    functions where {\tt{\em X}} has the following correspondence:
+\begin{center}
+\begin{tabular}{ll}
+{\tt{\em X}} & {Shared Access Type} \\ \hline
+{\tt S} & {Strict shared access} \\
+{\tt R} & {Relaxed shared access} \\
+\end{tabular}
+\end{center}
+    and {\tt{\em T}} and {\tt{\em TYPE}} have the following correspondences:
+\begin{center}
+\begin{tabular}{ll|ll}
+{\tt{\em T}} & {\tt{\em TYPE}} \hspace*{1.5in} &
+{\tt{\em T}} & {\tt{\em TYPE}} \\ \hline
+{\tt I} & {\tt signed int} &
+{\tt I32} & {\tt int32\_t} \\
+{\tt U} & {\tt unsigned int} &
+{\tt U32} & {\tt uint32\_t} \\
+{\tt IL} & {\tt signed long} &
+{\tt I64} & {\tt int64\_t} \\
+{\tt UL} & {\tt unsigned long} &
+{\tt U64} & {\tt uint64\_t} \\
+\end{tabular}
+\end{center}
+    
+\np The operator specified by the variable {\tt op} may take the following
+    values:
+\begin{tabular}{ll}
+{\textbf{\tt UPC\_ADD}} & Addition \\
+{\textbf{\tt UPC\_AND}} & Bitwise {\tt AND} \\
+{\textbf{\tt UPC\_OR}}  & Bitwise {\tt OR} \\
+{\textbf{\tt UPC\_XOR}} & Bitwise {\tt XOR} \\
+{\textbf{\tt UPC\_MAX}} & Maximum \\
+{\textbf{\tt UPC\_MIN}} & Minimum \\
+{\textbf{\tt UPC\_SET}} & Value assignment \\
+\end{tabular}
+
+\np On completion of the {\tt upc\_amo\_op} and {\tt upc\_amo\_fop} variants,
+    the value of the {\tt{\em TYPE}} shared object referenced by {\tt ptr} is 
+    {\tt *ptr} $\oplus$ {\tt val} where ``$\oplus$'' is the operator
+    specified by the variable {\tt op}.
+
+\np The {\tt upc\_amo\_op} functions do not return a value.  The
+    {\tt upc\_amo\_fop} functions return a value of type {\tt{\em TYPE}}, which
+    is the value of the shared object referenced by {\tt ptr} prior to the
+    application of the ``$\oplus$'' operator.
+
+\np The {\tt upc\_amo\_op} and {\tt upc\_amo\_fop} functions treat the
+    {\tt ptr} pointer as having type:
+\begin{verbatim}
+    shared TYPE *
+\end{verbatim}
+
+\np EXAMPLE 1: {\tt upc\_amo\_op} of type relaxed {\tt int32\_t UPC\_XOR}.
+\begin{verbatim}
+  #include <upc.h>
+  #include <upc_atomic.h>
+  shared int32_t i = 0;
+  upc_amo_opR_I32(&i, 1, UPC_XOR);
+\end{verbatim}
+
+\np EXAMPLE 2: {\tt upc\_amo\_fop} of type strict {\tt unsigned long UPC\_ADD}.
+\begin{verbatim}
+  #include <upc.h>
+  #include <upc_atomic.h>
+  shared unsigned long i = 0;
+  unsigned long old = upc_amo_fopS_UL(&i, 1, UPC_ADD);
+\end{verbatim}

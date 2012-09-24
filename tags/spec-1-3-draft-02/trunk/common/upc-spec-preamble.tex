@@ -1,0 +1,401 @@
+% By default create final copy
+\providecommand{\draftorfinal}{\setboolean{draft}{false}}
+% Set default document options for 'final' output.
+\providecommand{\docoptions}{
+   \documentclass[
+       12pt,
+       titlepage,
+       twoside,
+       bookmarks,
+       bookmarksopen=false,
+       bookmarksnumbered=true,
+       pdfpagemode=UseOutlines,
+       colorlinks=true]{article}}
+
+\docoptions
+
+% Make text searchable (avoid ligatures in words like affinity)
+% by loading the 'cmap' package.
+\usepackage{cmap}
+
+% Choose a font that is available as T1, specify encoding
+% and load symbol definitions.
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+
+\usepackage[noindentafter]{titlesec}
+\usepackage{xifthen}
+\usepackage[all]{xy}
+\usepackage{html}
+
+\newboolean{draft}
+\newcommand{\ifdraftspec}[2]{\ifthenelse{\boolean{draft}}{#1}{#2}}
+\draftorfinal
+
+% The spec. file will define \myspecversion and \mydraftversion.
+%
+% NOTE: \specversion must evaluate to a string without
+% embedded \if's due to the fragile nature of its use
+% within \title and \hypersetup.  Thus, \ifdraftspec cannot be used
+% inside the \newcommand definition below.
+%
+\ifdraftspec{
+  \newcommand{\specversion}{\myspecversion~\mydraftversion}
+}{
+  \newcommand{\specversion}{\myspecversion}
+}
+
+\ifdraftspec{
+  % DRAFT FOR NOW -- first page only
+  \usepackage[firstpage]{draftwatermark}
+  \SetWatermarkLightness{0.80}
+}{}
+
+\ifdraftspec{
+  \newcommand{\draftnote}{\\
+  \vspace{1in}
+  \fbox{
+  \parbox{\textwidth}{
+  {\bf Draft Note:}\\
+  \small
+  This document is a draft and has not been ratified by the UPC consortium. 
+  All contents should be considered speculative and subject to change.
+  Change annotations appearing in this draft are relative to the baseline Version 1.3
+  Draft 1, which is believed to be semantically identical in every detail to
+  UPC language specification version 1.2 (ratified May 2005). Change
+  annotations in the spec body are for reviewer convenience only and are not 
+  normative, nor will they appear in the final draft. 
+  \\ \\
+  To learn more about planned changes or participate in the UPC specification
+  revision process, please visit: 
+  {\tt http://code.google.com/p/upc-specification/}
+  }} }
+}{
+  \newcommand{\draftnote}{}
+}
+
+% stabilize the margins for twoside
+\setlength{\oddsidemargin}{50pt}  
+\setlength{\evensidemargin}{50pt}  
+
+% fix-up some poor vertical spacing
+\usepackage{parskip}
+\renewcommand{\pagebreak}{\newpage}
+
+% Headers and footers, similar to ISO C99 spec
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\setlength{\headheight}{14.5pt}  
+\renewcommand{\sectionmark}[1]{\markboth{\thesection}{#1}}
+\renewcommand{\subsectionmark}[1]{\markboth{\thesubsection}{#1}}
+\renewcommand{\subsubsectionmark}[1]{\markboth{\thesubsubsection}{#1}}
+\renewcommand{\paragraphmark}[1]{\markboth{\theparagraph}{#1}}
+\newcommand{\footersection}{ 
+   \ifthenelse{\equal{\thesection}{0} 
+           \OR \equal{\firstleftmark}{0} 
+           \OR \equal{\firstleftmark}{INDEX} 
+	       } {} %  omit empty section numbers in front-matter
+       {\S\firstleftmark}}
+\cfoot{\parbox{0.75\textwidth}{\centering\nouppercase{\firstrightmark}}}
+\fancyfoot[LO,RE]{\footersection}
+\fancyfoot[RO,LE]{\thepage}
+\lhead{\mytitle}
+\rhead{\myversion}
+
+\usepackage{makeidx}
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{3}
+
+% Make paragraphs behave like subsubsections
+% See: http://www.charlietanksley.net/philtex/\
+%      modifying-section-commands-with-the-titlesec-package/
+\titleformat{\paragraph}[hang]{\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}{0pt}{1.25ex plus 0.5ex minus 0.25 ex}{0.5ex}
+
+\newcounter{parnum}
+\makeatletter
+\@addtoreset{parnum}{section}
+\@addtoreset{parnum}{subsection}
+\@addtoreset{parnum}{subsubsection}
+\@addtoreset{parnum}{paragraph}
+\makeatother
+
+% unnumbered section that will play nicely with toc, hyperref and footers
+\newcommand{\sectionstar}[1]{
+\phantomsection
+\section*{#1}
+\addcontentsline{toc}{section}{#1}
+\markboth{0}{#1}
+}
+
+\newcommand{\doloc}{
+  \ifdraftspec{
+    % hack: make sure no pages after the title revert to plain style
+    % (ie \makeindex)
+    \renewcommand{\thispagestyle}[1]{}
+    \newpage
+    \setlength{\parskip}{0ex}
+    \phantomsection
+    \markboth{0}{List of Changes}
+    \addcontentsline{toc}{section}{List of Changes}
+    \renewcommand\listtablename{List of Changes}
+    \hypersetup{linktocpage=true}
+    \listoftables
+    %\listofchanges
+    \setlength{\parskip}{1.3ex}
+    \newpage
+  }{}
+}
+\newcommand{\locentry}[1]{%
+  \ifdraftspec{%
+    {\addcontentsline{lot}{table}{\footnotesize{#1}}}%
+  }{}%
+}
+
+\newcommand{\dotoc}{
+% hack: make sure no pages after the title revert to plain style
+% (ie \makeindex)
+\renewcommand{\thispagestyle}[1]{}
+\newpage
+\setlength{\parskip}{0ex}
+\phantomsection
+\addcontentsline{toc}{section}{Contents}
+\hypersetup{linktocpage=false}
+\tableofcontents
+\setlength{\parskip}{1.3ex}
+\newpage
+}
+
+\newcommand{\doindex}{
+\newpage
+% ensure correct hyperref
+\phantomsection
+% Hack: suppress the bogus section mark inserted by makeindex
+\renewcommand{\firstleftmark}{0}
+\addcontentsline{toc}{section}{Index}
+\printindex
+\newpage
+}
+
+% Not really a tab, but something like it for HTML
+% output.  If we want real tabs, we'll probably need to use CSS.
+\newcommand{\tab}{\texttt{~~~~~~}}
+
+\newcommand{\np}{%
+\addtocounter{parnum}{1}%
+\latex{\hspace{-2em}\makebox[2em][l]{\arabic{parnum}}}%
+\html{{\bf{\arabic{parnum}}}\tab}}
+
+\newcommand{\npf}{\setcounter{parnum}{0}\np}
+
+\newcommand{\sterm}[1]{\subsection{\html{#1}}
+\npf \latex{{\bf #1}\\}
+\index{#1}}
+
+\newcommand{\ssterm}[1]{\subsubsection{\html{#1}}
+\npf \latex{{\bf #1}\\}
+\index{#1}}
+
+\newcommand{\pterm}[1]{\paragraph{\html{#1}}
+\npf \latex{{\bf #1}\\}
+\index{#1}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.3ex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% change/revision mark up.
+%
+% NOTE: the 'changes' annotations (\added, \changed, \deleted)
+% cannot span paragraphs.
+%
+% fixme can be used to add 'todo' notations
+\usepackage{fixme}
+
+\ifdraftspec{
+    % We extend the changes markup to include change bars.
+    % The 'ncb' forms of the commands should be used in 'fragile'
+    % contexts such as caption titles.
+    \usepackage{changes}
+    \usepackage[outerbars]{changebar}
+    \input{upc-specification-issues}
+    \definechangesauthor[name={Dan Bonachea}]{DB}
+    \definechangesauthor[name={Bill Carlson}]{WC}
+    \definechangesauthor[name={Gary Funck}]{GF}
+    \definechangesauthor[name={Nick Park}]{NP}
+    \definechangesauthor[name={Yili Zheng}]{YZ}
+    \setlength{\changebarwidth}{2pt}
+    \setcounter{changebargrey}{0}
+    \setauthormarkup{}
+    \setaddedmarkup{\textcolor{blue}{#1}}
+    \setdeletedmarkup{\textcolor{red}{\sout{#1}}}
+    \newcommand{\specissueref}[1]{%
+      \ifthenelse{\isempty{#1}}%
+	{}%
+        {%
+	  \def\issuesummary{\upcspecissue{#1}}%
+	  \ifthenelse{\isempty{\issuesummary}}%
+	    {Issue \##1}%
+	    {%
+               \href{http://code.google.com/p/upc-specification/issues/%
+detail?id=#1}{Issue \##1: \issuesummary}%
+	    }%
+	}%
+    }
+    % \xchangenote is an inline change note that gets compiled away in final version
+    \newcommand{\xchangenote}[3][]{%
+      \cbstart%
+      \xaddedncb[{#1}]{#2}{#3}%
+      \cbend}
+    \newcommand{\xadded}[3][]{%
+      \cbstart%
+      \xaddedncb[{#1}]{#2}{#3}%
+      \cbend}
+    \newcommand{\xdeleted}[3][]{%
+      \cbstart%
+      \xdeletedncb[{#1}]{#2}{#3}%
+      \cbend}
+    \newcommand{\xreplaced}[4][]{%
+      \cbstart%
+      \xreplacedncb[{#1}]{#2}{#3}{#4}%
+      \cbend}
+
+    % use a separate footnote numbering space for change annotations
+    % to avoid disturbing the footnote numbering of the original document
+    \newcounter{changefootnote}
+    \newcounter{savefootnote}
+    \newcommand{\openchangefootnotes}{%
+      \setcounter{savefootnote}{\value{footnote}}% Swap footnote counter 
+      \setcounter{footnote}{\value{changefootnote}}%
+      \renewcommand{\thefootnote}{\roman{footnote}}% Modify footnote printing
+    }
+    \newcommand{\closechangefootnotes}{%
+      \setcounter{changefootnote}{\value{footnote}}% Swap footnote counter 
+      \setcounter{footnote}{\value{savefootnote}}%
+      \renewcommand{\thefootnote}{\arabic{footnote}}% Restore footnote printing
+    }
+    % use \truefootnote for document footnotes that appear inside a change annotation
+    \newcommand{\truefootnote}[1]{%
+      \closechangefootnotes%
+      \footnote{#1}%
+      \openchangefootnotes%
+    }%
+
+    % The following 'FN' versions of the commands are for annotating changes
+    % inside footnotes, where the changes package breaks because it tries to 
+    % insert a nested footnote, which is not supported in LaTeX.
+    % These are two-part commands: 
+    % \xaddedFN and friends appear inline and just take the textual change as arguments
+    % \xFNinfo must appear outside the footnote and take the author/issue info to output the change footnote
+    \let\xfootnoteorig\footnote
+    \newcommand{\discard}[1]{}
+    \newcommand{\xaddedFN}[1]{%
+      \cbstart%
+      \openchangefootnotes%
+      \let\footnote\discard%
+      \added[]{#1}\footnotemark%
+      \let\footnote\xfootnoteorig%
+      \closechangefootnotes%
+      \cbend%
+    }
+    \newcommand{\xdeletedFN}[1]{%
+      \cbstart%
+      \openchangefootnotes%
+      \let\footnote\discard%
+      \deleted[]{#1}\footnotemark%
+      \let\footnote\xfootnoteorig%
+      \closechangefootnotes%
+      \cbend%
+    }
+    \newcommand{\xreplacedFN}[2]{%
+      \cbstart%
+      \openchangefootnotes%
+      \let\footnote\discard%
+      \replaced[]{#1}{#2}\footnotemark%
+      \let\footnote\xfootnoteorig%
+      \closechangefootnotes%
+      \cbend%
+    }
+    \newcommand{\xFNinfo}[2][]{%
+      \openchangefootnotes%
+      \ifthenelse{\isempty{#2}}%
+        {\footnotetext{#1}}%
+        {\locentry{\protect\specissueref{#2}}%
+	 \footnotetext{#1: \specissueref{#2}}}%
+      \closechangefootnotes%
+    }
+
+    % The following 'ncb' forms of the commands are for use
+    % in 'fragile' environments (such as figure captions)
+    % where change bars do not work.
+    \newcommand{\xaddedncb}[3][]{%
+      \openchangefootnotes%
+      \ifthenelse{\isempty{#2}}%
+        {\added[{#1}]{#3}}%
+	{\locentry{\protect\specissueref{#2}}%
+	 \added[remark={\protect\specissueref{#2}},{#1}]{#3}}%
+      \closechangefootnotes%
+    }
+    \newcommand{\xdeletedncb}[3][]{%
+      \openchangefootnotes%
+      \ifthenelse{\isempty{#2}}%
+        {\deleted[{#1}]{#3}}%
+	{\locentry{\protect\specissueref{#2}}%
+	 \deleted[remark={\protect\specissueref{#2}},{#1}]{#3}}%
+      \closechangefootnotes%
+    }
+    \newcommand{\xreplacedncb}[4][]{%
+      \openchangefootnotes%
+      \ifthenelse{\isempty{#2}}%
+        {\replaced[{#1}]{#3}{#4}}%
+	{\locentry{\protect\specissueref{#2}}%
+	 \replaced[remark={\protect\specissueref{#2}},{#1}]{#3}{#4}}%
+      \closechangefootnotes%
+    }
+  }
+  {
+    \newcommand{\xchangenote}[3][]{}
+    \newcommand{\xadded}[3][]{#3}
+    \newcommand{\xdeleted}[3][]{}
+    \newcommand{\xreplaced}[4][]{#3}
+    \newcommand{\xaddedFN}[1][]{#1}
+    \newcommand{\xdeletedFN}[1][]{}
+    \newcommand{\xreplacedFN}[2][]{#1}
+    \newcommand{\xFNinfo}[2][]{}
+    \newcommand{\xaddedncb}[3][]{#3}
+    \newcommand{\xdeletedncb}[3][]{}
+    \newcommand{\xreplacedncb}[4][]{#3}
+    \let\truefootnote\footnote
+    \newenvironment{changebar}{}{}
+    \newcommand{\cbstart}{}
+    \newcommand{\cbend}{}
+  }
+
+% The special comments below are processed by latex2html.
+% Everything between them will be skipped by latex2html.
+%begin{latexonly}
+  \usepackage{ifpdf}
+  \ifpdf
+    \usepackage{pdfsync}
+    \usepackage{hyperref}
+    \hypersetup{bookmarksdepth=4,
+		% set the title in the pdf file properties
+                pdftitle={\mytitle,\ \myversion},
+		pdfauthor={UPC Consortium},
+                pageanchor=true,
+		% default view on open
+		pdfpagemode=UseOutlines,
+		% view after clicking a link
+		pdfview=Fit
+		}
+  \fi
+%end{latexonly}
+ 
+% DO NOT PLACE ANY OTHER PACKAGES HERE - hyperref must come last!

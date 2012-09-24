@@ -1,0 +1,43 @@
+\newcommand{\myspecversion}{Version 1.3}
+\newcommand{\mydraftversion}{Draft 2}
+\newcommand{\myversion}{\specversion}
+\newcommand{\mytitle}{UPC Language Specifications}
+\input{upc-spec-preamble}
+
+\makeindex
+
+\title{\mytitle\\
+\myversion}
+
+\author{A publication of the UPC Consortium}
+
+\date{\today
+\draftnote}
+
+
+
+\begin{document}
+
+\maketitle
+
+\setcounter{page}{2}
+\doloc
+\input{upc-acknowledgments}
+
+\dotoc
+
+\input{upc-introduction}
+\input{upc-scope}
+\input{upc-terms-and-defs}
+\input{upc-language}
+\input{upc-lib-core}
+\input{upc-lib-mem-semantics}
+
+\appendix
+\input{upc-lang-extensions}
+\input{upc-mem-consistency-model}
+\input{upc-vs-c-std-section-nums}
+\input{upc-references}
+
+\doindex
+\end{document}
