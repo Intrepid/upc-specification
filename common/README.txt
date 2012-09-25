@@ -35,6 +35,11 @@ latex2html.cfg
 
 	A configuration/customization file for latex2html.
 
+Makefile
+
+	Makefile with target 'issues', which updates
+	the upc-specification-issues.tex if necessary.
+
 Makefile.in
 
 	Common Makefile fragment that is included from the
