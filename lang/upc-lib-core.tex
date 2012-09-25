@@ -67,7 +67,7 @@
     in Section~\ref{shared_allocation} to allocate and free objects.
     Either of the {\tt upc\_free} or {\tt upc\_all\_free} functions
     may be used to free shared space allocated using {\tt upc\_all\_alloc},
-    {\tt upc\_alloc}, {\tt upc\_global\_alloc}, or {\tt upc\_local\_alloc}.
+    {\tt upc\_global\_alloc} or {\tt upc\_alloc}.
     }
 
 \paragraph{The {\tt upc\_global\_alloc} function}
@@ -166,8 +166,9 @@
 \np The {\tt upc\_free} function frees the dynamically
     allocated shared storage pointed to by {\tt ptr}.  If {\tt ptr} is
     a null pointer, no action occurs.  Otherwise, if the argument does
-    not match a pointer earlier returned by the {\tt upc\_alloc, } 
-    {\tt upc\_global\_alloc,}  {\tt upc\_all\_alloc,}  or {\tt upc\_local\_alloc,} function,
+    not match a pointer earlier returned by the {\tt upc\_alloc},
+\xdeleted[id=DB]{82}{ {\tt upc\_local\_alloc}, }
+    {\tt upc\_global\_alloc} or {\tt upc\_all\_alloc} functions,
     or if the space has been deallocated by a previous call
     to {\tt upc\_free} by any thread,\footnote{i.e., only one thread may call {\tt upc\_free} for
      each allocation} 
@@ -196,7 +197,7 @@
     allocated shared storage pointed to by {\tt ptr}.  If {\tt ptr} is
     a null pointer, no action occurs.  Otherwise, if the argument does
     not match a pointer earlier returned by the {\tt upc\_alloc},
-    {\tt upc\_global\_alloc},  {\tt upc\_all\_alloc}  or {\tt upc\_local\_alloc} function,
+    {\tt upc\_global\_alloc},  or {\tt upc\_all\_alloc} functions,
     or if the space has been deallocated by a previous call to {\tt upc\_free}
     or {\tt upc\_all\_free}, the behavior is undefined.
 
