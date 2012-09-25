@@ -1,10 +1,12 @@
 TARGETS=clean distclean draft final make-default
 
-.PHONY: $(TARGETS)
+.PHONY: issues $(TARGETS)
 
-all: make-default
+all: issues make-default
 
 $(TARGETS):
 	$(MAKE) -C lang $@
 	$(MAKE) -C lib $@
 
+issues:
+	$(MAKE) -C common issues
