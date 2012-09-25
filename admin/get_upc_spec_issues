@@ -59,7 +59,7 @@ for my $row (split "\n", $html) {
   @text = ();
   $html_parser->parse($issue_html);
   $html_parser->eof;
-  my @text = map {unidecode($_)} @text;
+  @text = map {unidecode($_)} @text;
   my $text = join ("\n", @text);
   # The =()= operator converts the RHS to array context.
   my $num_comments =()= $text =~ /$comment_rx/gsm;
@@ -76,7 +76,7 @@ my %sts_as_int = ('New' => 0, 'Accepted' => 1);
 		$a_sts = $sts_as_int{$a_sts};
 		$b_sts = $sts_as_int{$b_sts};
 		# New before Accepted, then by id.
-		$a_sts <=> $b_sts || $a_id <=> $a_id} @issues;
+		$a_sts <=> $b_sts || $a_id <=> $b_id} @issues;
 print "Id\tStatus\tPriority\tOwner\tComments\tSummary\n";
 for my $issue (@issues) {
   my ($id, $status, $priority, $owner, $num_comments, $summary) = @$issue;
