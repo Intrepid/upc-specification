@@ -100,7 +100,7 @@
       \or % issue #49
         clarification: unlock of freed lock
       \or % issue #50
-        clarification: in-place collectives are prohibited by presence of "restrict" keyword
+        clarification: overlapping memory copies undefined by presence of "restrict" keyword
       \or % issue #51
         clarification: revise text to eliminate an ambiguity in barrier matching semantics
       \or % issue #52
@@ -156,7 +156,7 @@
       \or % issue #77
         disallow & applied to shared bitfields
       \or % issue #78
-        Clarification: shared array initialization
+        Remove shared array initialization
       \or % issue #79
         should not hardcode path of makeindex
       \or % issue #80
@@ -180,9 +180,17 @@
       \or % issue #89
         Publicity materials for SC12
       \or % issue #90
-        limit allowed range of values for program exit (via exit or upc\_glabal\_exit)
+        limit allowed range of values for program exit (via exit or upc\_global\_exit)
       \or % issue #91
         Library section boilerplate spec text
+      \or % issue #92
+        Collective support for long double and long double complex
+      \or % issue #93
+        Enhancement: Library for PTS arithmetic with parametric blocksize
+      \or % issue #94
+        Clarification: dynamic threads and the constraint "when multiplied by an integer expression"
+      \or % issue #95
+        Clarification: can THREADS appeareclarator in more than once in a PTS typedef (in a dynamic threads environment)?
     \else
         \empty
     \fi
