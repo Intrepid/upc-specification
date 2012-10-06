@@ -118,6 +118,13 @@ during the transfer interval, then the results of the transfer are undefined. Sp
 concurrent writes to these locations will result in indeterminate values in the destination
 memory which persist after synchronization.
 
+\np The source memory specified in a transfer is not modified by the transfer.
+Concurrent reads of source memory areas by any thread are permitted and behave as usual.
+Multiple concurrent transfers initiated by any thread are permitted to specify overlapping source memory areas.
+If a transfer specifies destination memory which overlaps its own source, or the source or destination of a 
+concurrent transfer initiated by any thread, the resulting values in all destination memory specified
+by the affected transfers are indeterminate.
+
 \np The memory consistency semantics of all transfers performed by the library are as described in 
 [UPC Language Specifications, Section B.3.2.1]. Specifically, the effect on
 conflicting accesses issued {\em outside} the transfer interval is as if the transfer were
@@ -329,7 +336,7 @@ void upc_memput_nbi( shared void * restrict dst,
 
 {\bf Description}
 
-\np The transfer initiated by \func shall have the same effects as \sfunc.
+\np The transfer initiated by \func\args shall have the same effects as \sfunc\args.
 The transfer interval extends until the return of the next successful 
 \synci call performed by the initiating thread.
 
@@ -412,7 +419,7 @@ thereby ending those transfer intervals. Otherwise, it returns 0.
 
 \np If there are no such pending implicit-handle transfers, the function returns non-zero.
 
-\np The \func function does not interact with nor have any effect upon explicit-handle transfers.
+\np The \func function does not complete explicit-handle transfers.
 
 \def\bfunc{upc\_synci}
 \funcheader
@@ -429,5 +436,5 @@ thereby ending those transfer intervals.
 
 \np If there are no such pending implicit-handle transfers, the function returns immediately.
 
-\np The \func function does not interact with nor have any effect upon explicit-handle transfers.
+\np The \func function does not complete explicit-handle transfers.
 
