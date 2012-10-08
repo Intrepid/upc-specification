@@ -8,13 +8,17 @@
     that support this interface shall predefine the feature macro {\tt
     \_\_UPC\_IO\_\_} to the value 1.
 
+\np \xadded[id=DB]{10}{
+    Every inclusion of {\tt <upc\_io.h>} has the effect of including {\tt <upc\_types.h>}.
+    }
+
 {\bf Common Constraints}
 
 \index{upc\_flag\_t}
 \np All UPC-IO functions are collective and must be called by all threads collectively.\footnote{Note that 
 collective does not necessarily imply barrier synchronization.  The synchronization behavior of the 
-UPC-IO data movement library functions is explicitly controlled by using the {\tt
-flags} flag argument. See Section \ref{upc-flag-t} for details.}
+UPC-IO data movement library functions is explicitly controlled by using the 
+{\tt upc\_flag\_t flags} argument. See \upcflagsection for details.}
 
 \np If a program calls {\tt exit}, {\tt upc\_global\_exit}, or returns from {\tt main} with a
 UPC file still open, the file will automatically be closed at program
@@ -44,7 +48,7 @@ they had a phase field of zero (that is, the input phase is ignored).
 
 \np All UPC-IO read/write functions take an argument {\tt flags}
     of type {\tt upc\_flag\_t}. The semantics of this argument is
-    defined in Section \ref{upc-flag-t}. These semantics apply only to
+    defined in \upcflagsection. These semantics apply only to
     memory locations in user-provided buffers, not to the read/write
     operations on the storage medium or any buffer memory internal to
     the library implementation.

@@ -12,6 +12,7 @@
     <upc_strict.h> 
     <upc_relaxed.h>
     <upc.h> 
+    <upc_types.h> 
 \end{verbatim}
 
 \index{upc\_strict.h}
@@ -21,6 +22,11 @@
 \index{upc\_relaxed.h}
 \np Every inclusion of {\tt <upc\_relaxed.h>} asserts the upc 
     relaxed pragma and has the effect of including {\tt <upc.h>}.
+
+\index{upc\_types.h}
+\np \xadded[id=DB]{10}{
+    Every inclusion of {\tt <upc.h>} has the effect of including {\tt <upc\_types.h>}.
+    }
 
 \index{collective}
 \np By convention, all UPC standard library functions are  named
@@ -599,3 +605,133 @@
    The effect is equivalent to setting the entire contents of a shared
    array object with this type (the {\tt dst} array) to the value {\tt c}.
 
+\pagebreak
+\def\header{{\tt <upc\_types.h>}\xspace}
+% would prefer to indent with \hspace{30}, but can't make that work right
+\newcommand\defmacro[1]{{\tt \quote UPC\_#1\endquote}\index{UPC\_#1}\vspace{-8pt}}
+\newcommand\deftype[1]{{\tt \quote #1 \endquote}\index{#1}}
+\newcommand\defmacrotab[2]{ & {\tt UPC\_#1}\index{UPC\_#1} & {\tt #2}\\}
+\subsection{UPC standard types \header}
+\index{upc\_types.h}
+\label{upc-types-h}
+\xchangenote[id=DB]{10}{SECTION ADDED}
+
+% 7.1.4 reference boilerplate deliberately omitted as it is not applicable to this header
+
+\npf The \header header declares several standard types and value macros
+     used by other UPC libraries.
+
+\np Unless otherwise noted, all of the types and macros
+    specified in Section~\ref{upc-types-h}
+    are declared by the header \header.
+
+\np The \header header shall constitute a strictly-conforming translation
+    unit for an [ISO/IEC00] C compiler (ie one that lacks UPC language extensions).
+
+\subsubsection{Operation designator ({\tt upc\_op\_t})}
+\label{upc-op-t}
+
+\npf The \header header defines the type:
+
+\deftype{upc\_op\_t}
+
+which is an integer type whose values are used to designate a library operation 
+or set of operations.
+
+% Following text modeled on C99 signal.h
+\np The \header header defines the following macros, 
+which expand to integer constant expressions with type {\tt upc\_op\_t},
+which are suitable for use in {\tt \#if} preprocessing directives. 
+Each macro value designates the specified operation.
+The expressions are defined such that bitwise or ({\tt |}) of all combinations 
+of the macros result in distinct positive values less than 512.
+\begin{tabular}{ p{30pt} l l }
+& Macro name & Specified operation\\
+\cline{2-3}
+\defmacrotab{ADD}	{Addition}
+\defmacrotab{MULT}	{Multiplication}
+\defmacrotab{AND}	{Bitwise and ({\tt \&})}
+\defmacrotab{OR}	{Bitwise inclusive or ({\tt |})}
+\defmacrotab{XOR}	{Bitwise exclusive or ({\tt $\wedge$})}
+\defmacrotab{LOGAND}	{Logical and ({\tt \&\&})}
+\defmacrotab{LOGOR}	{Logical or ({\tt ||})}
+\defmacrotab{MIN}	{Minimum value ({\tt op1<op2?op1:op2})}
+\defmacrotab{MAX}	{Maximum value ({\tt op1>op2?op1:op2})}
+% When adding operations need to also update the max combination in the text
+\end{tabular}
+
+\np Extension libraries may define additional value macros of type {\tt upc\_op\_t},
+but their values shall not conflict with those defined in \header.
+
+\subsubsection{Type designator ({\tt upc\_type\_t})}
+\label{upc-type-t}
+
+\npf The \header header defines the type:
+
+\deftype{upc\_type\_t}
+
+which is an integer type whose values are used to designate a language type.
+
+\np The \header header defines the following macros, 
+which expand to integer constant expressions with type {\tt upc\_type\_t},
+distinct positive values, and which are suitable for use 
+in {\tt \#if} preprocessing directives. 
+Each macro value designates the specified type.
+
+\begin{tabular}[b]{ p{30pt} l l }
+& Macro name & Specified type\\
+\cline{2-3}
+\defmacrotab{CHAR}	{char}
+\defmacrotab{UCHAR}	{unsigned char}
+\defmacrotab{SHORT}	{short}
+\defmacrotab{USHORT}	{unsigned short}
+\defmacrotab{INT}	{int}
+\defmacrotab{UINT}	{unsigned int}
+\defmacrotab{LONG}	{long}
+\defmacrotab{ULONG}	{unsigned long}
+\defmacrotab{LLONG}	{long long}
+\defmacrotab{ULLONG}	{unsigned long long}
+\defmacrotab{INT8}	{int8\_t}
+\defmacrotab{UINT8}	{uint8\_t}
+\defmacrotab{INT16}	{int16\_t}
+\defmacrotab{UINT16}	{uint16\_t}
+\defmacrotab{INT32}	{int32\_t}
+\defmacrotab{UINT32}	{uint32\_t}
+\defmacrotab{INT64}	{int64\_t}
+\defmacrotab{UINT64}	{uint64\_t}
+\defmacrotab{FLOAT}	{float}
+\defmacrotab{DOUBLE}	{double}
+\defmacrotab{LDOUBLE}	{long double}
+\defmacrotab{PTS}	{shared void *}
+\end{tabular}
+
+\np Extension libraries may define additional value macros of type {\tt upc\_type\_t},
+but their values shall not conflict with those defined in \header.
+
+\subsubsection{Synchronization flags ({\tt upc\_flag\_t})}
+\label{upc-flag-t}
+
+\npf The \header header defines the type:
+
+\deftype{upc\_flag\_t}
+
+which is an integer type.
+
+\np The following macros are defined in \header:
+
+\defmacro{OUT\_ALLSYNC}
+\defmacro{OUT\_MYSYNC}
+\defmacro{OUT\_NOSYNC}
+\defmacro{IN\_ALLSYNC}
+\defmacro{IN\_MYSYNC}
+\defmacro{IN\_NOSYNC}
+\vspace{8pt}
+
+All expand to integer constant expressions with type {\tt upc\_flag\_t}
+which are suitable for use in {\tt \#if} preprocessing directives.
+The expressions are defined such that bitwise or ({\tt |}) of all combinations 
+of the macros result in distinct positive values less than 64.
+
+\np The semantics of these macros are defined in Section~\ref{upc-flag-semantics}.
+
+\input{upc-lib-mem-semantics}

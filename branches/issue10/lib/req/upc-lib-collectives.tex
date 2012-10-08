@@ -8,9 +8,14 @@
     feature macro {\tt \_\_UPC\_COLLECTIVE\_\_} to the value 1.
 
 \np The following requirements apply to all of the functions defined
-in this section.
+in Section~\ref{upc-collective}.
 
-\np All of the functions are collective.
+\np All of the functions are collective.~%
+\xadded[id=DB]{10}{%
+  \truefootnote{Note that collective does not necessarily imply barrier synchronization.  
+  The synchronization behavior of the library functions is explicitly controlled by 
+  using the {\tt upc\_flag\_t flags} argument. See \upcflagsection for details.}
+}
 
 \np All collective function arguments are single-valued.
 
@@ -23,6 +28,10 @@ and the corresponding {\tt upc\_wait}.
 
 {\tt <upc\_collective.h>}
 
+\np \xadded[id=DB]{10}{
+    Every inclusion of {\tt <upc\_collective.h>} has the effect of including {\tt <upc\_types.h>}.
+    }
+
 \subsubsection{Relocalization Operations}
 
 \paragraph{The {\tt upc\_all\_broadcast} function}
@@ -33,7 +42,6 @@ and the corresponding {\tt upc\_wait}.
 
 \npf\vspace{-2.5em}
 \begin{verbatim}
-    #include <upc.h>
     #include <upc_collective.h>
     void upc_all_broadcast(shared void * restrict dst, 
          shared const void * restrict src, size_t nbytes, 
@@ -70,7 +78,6 @@ thread 0.
 
 \np EXAMPLE 1 shows {\tt upc\_all\_broadcast}
 \begin{verbatim}
-  #include <upc.h>
   #include <upc_collective.h>
   shared int A[THREADS];
   shared int B[THREADS];
@@ -83,7 +90,6 @@ thread 0.
 
 \np EXAMPLE 2:
 \begin{verbatim}
-  #include <upc.h>
   #include <upc_collective.h>
   #define NELEMS 10
   shared [] int A[NELEMS];
@@ -98,7 +104,6 @@ thread 0.
 {\tt (B[20],B[21])}, ..., 
 {\tt (B[NELEMS*(THREADS-1)],B[NELEMS*(THREADS-1)+1])}.
 \begin{verbatim}
-  #include <upc.h>
   #include <upc_collective.h>
   #define NELEMS 10
   shared [NELEMS] int A[NELEMS*THREADS];
@@ -118,7 +123,6 @@ thread 0.
 
 \npf\vspace{-2.5em}
 \begin{verbatim}
-    #include <upc.h>
     #include <upc_collective.h>
     void upc_all_scatter(shared void * restrict dst, 
          shared const void * restrict src, size_t nbytes, 
@@ -162,7 +166,6 @@ environment.
 %This example corresponds to Figure \ref{fig2}.
 
 \begin{verbatim}
-  #include <upc.h>
   #include <upc_collective.h>
   #define NUMELEMS 10
   #define SRC_THREAD 1
@@ -187,7 +190,6 @@ environment.
 translation environment.
 
 \begin{verbatim}
-  #include <upc.h>
   #include <upc_collective.h>
   #define NELEMS 10
   shared [] int A[NELEMS*THREADS];
@@ -206,7 +208,6 @@ translation environment.
 \npf\vspace{-2.5em} 
 
 \begin{verbatim}
-    #include <upc.h>
     #include <upc_collective.h>
     void upc_all_gather(shared void * restrict dst,
          shared const void * restrict src, size_t nbytes,
@@ -250,7 +251,6 @@ to the $i$th block of {\tt nbytes} bytes pointed to by {\tt dst}.
 translation environment.
 
 \begin{verbatim}
-  #include <upc.h>
   #include <upc_collective.h>
   #define NELEMS 10
   shared [NELEMS] int A[NELEMS*THREADS];
@@ -285,7 +285,6 @@ translation environment.
 
 \npf\vspace{-2.5em} 
 \begin{verbatim}
-    #include <upc.h>
     #include <upc_collective.h>
     void upc_all_gather_all(shared void * restrict dst,
          shared const void * restrict src, size_t nbytes,
@@ -333,7 +332,6 @@ has affinity to each thread.
 translation environment.
 
 \begin{verbatim}
-  #include <upc.h>
   #include <upc_collective.h>
   #define NELEMS 10
   shared [NELEMS] int A[NELEMS*THREADS];
@@ -374,7 +372,6 @@ translation environment.
 
 \npf\vspace{-2.5em}
 \begin{verbatim}
-    #include <upc.h>
     #include <upc_collective.h>
     void upc_all_exchange(shared void * restrict dst, 
          shared const void * restrict src, size_t nbytes,
@@ -416,7 +413,6 @@ pointed to by {\tt dst}.
 translation environment.
 
 \begin{verbatim}
-  #include <upc.h>
   #include <upc_collective.h>
   #define NELEMS 10
   shared [NELEMS*THREADS] int A[THREADS][NELEMS*THREADS];
@@ -463,7 +459,6 @@ translation environment.
 
 \npf\vspace{-2.5em}
 \begin{verbatim}
-    #include <upc.h>
     #include <upc_collective.h>
     void upc_all_permute(shared void * restrict dst,
         shared const void * restrict src, 
@@ -504,7 +499,6 @@ that has affinity to thread {\tt perm}[$i$] pointed to by {\tt dst}.
 
 \np EXAMPLE 1 {\tt upc\_all\_permute}.
 \begin{verbatim}
-  #include <upc.h>
   #include <upc_collective.h>
   #define NELEMS 10
   shared [NELEMS] int A[NELEMS*THREADS], B[NELEMS*THREADS];
@@ -518,44 +512,17 @@ that has affinity to thread {\tt perm}[$i$] pointed to by {\tt dst}.
 
 \subsubsection{Computational Operations}
 \label{upc-op-t-section}
-\index{upc\_op\_t}
-\index{UPC\_ADD}
-\index{UPC\_MULT}
-\index{UPC\_AND}
-\index{UPC\_OR}
-\index{UPC\_XOR}
-\index{UPC\_LOGAND}
-\index{UPC\_LOGOR}
-\index{UPC\_MIN}
-\index{UPC\_MAX}
 \index{UPC\_FUNC}
 \index{UPC\_NONCOMM\_FUNC}
+\xchangenote[id=DB]{10}{DEFINITION OF UPC\_OP\_T MOVED TO CORE LIBRARY}
 
-\npf
-\label{upc-op-t-item}
-A variable of type {\tt upc\_op\_t} can have the following values:
+\npf Computational operations are specified using a value of type
+{\tt upc\_op\_t}, which is specified in \upcopsection. All of the 
+operations defined in that section are supported for computational collectives.
+
+In addition, the following {\tt upc\_op\_t} value macros 
+are defined in {\tt <upc\_collective.h>}:
 \begin{description}
-\item[{\tt UPC\_ADD}]
-Addition.
-\item[{\tt UPC\_MULT}]
-Multiplication.
-\item[{\tt UPC\_AND}]
-Bitwise {\tt AND} for integer and character variables.
-Results are undefined for floating point numbers.
-\item[{\tt UPC\_OR}]
-Bitwise {\tt OR} for integer and character variables.
-Results are undefined for floating point numbers.
-\item[{\tt UPC\_XOR}]
-Bitwise {\tt XOR} for integer and character variables.
-Results are undefined for floating point numbers.
-\item[{\tt UPC\_LOGAND}]
-Logical {\tt AND} for all variable types.
-\item[{\tt UPC\_LOGOR}]
-Logical {\tt OR} for all variable types.
-\item[{\tt UPC\_MIN}]
-For all data types, find the minimum value.
-\item[{\tt UPC\_MAX}]
-For all data types, find the maximum value.
 \item[{\tt UPC\_FUNC}]
 Use the specified commutative function {\tt func} to operate
 on the data in the {\tt src} array at each step.
@@ -563,6 +530,9 @@ on the data in the {\tt src} array at each step.
 Use the specified non-commutative function {\tt func} to
 operate on the data in the {\tt src} array at each step.
 \end{description}
+
+\np Bitwise operations shall not be specified for collective 
+    operations on floating-point types.
 
 \np The operations represented by a variable of type {\tt upc\_op\_t}
 (including user-provided operators) are assumed to be associative.
@@ -591,7 +561,6 @@ the order of the operands will have undefined results.
 
 \npf 
 \begin{verbatim}
-#include <upc.h>
 #include <upc_collective.h>
 void upc_all_reduce_<<T>>(
         shared void * restrict dst,
@@ -600,7 +569,7 @@ void upc_all_reduce_<<T>>(
         size_t nelems,
         void size_t blk_size,
         <<TYPE>>(*func)(<<TYPE>>, <<TYPE>>),
-        void upc_flag_t flags);
+        upc_flag_t flags);
 void upc_all_prefix_reduce<<T>>(
         shared void * restrict dst,
         void  shared const void * restrict src,
@@ -608,7 +577,7 @@ void upc_all_prefix_reduce<<T>>(
         size_t nelems,
         void size_t blk_size,
         <<TYPE>>(*func)(<<TYPE>>, <<TYPE>>),
-        void upc_flag_t flags);
+        upc_flag_t flags);
 \end{verbatim}
 
 {\bf Description} 
@@ -695,7 +664,6 @@ phase of the {\tt src} and {\tt dst} pointers to match -- ie.
 
 \np EXAMPLE 1 {\tt upc\_all\_reduce} of type {\tt long UPC\_ADD}.
 \begin{verbatim}
-  #include <upc.h>
   #include <upc_collective.h>
   #define BLK_SIZE 3
   #define NELEMS 10
@@ -714,7 +682,7 @@ phase of the {\tt src} and {\tt dst} pointers to match -- ie.
 %
 % {\bf Synopsis} 
 %
-%1\hspace{1em}   {\tt \#include <upc.h>}\\
+%1\hspace{1em}   \\
 %        {\tt \#include <upc\_collective.h>}\\
 %        {\tt void {upc\_all\_prefix\_reduce}{\em T}(restrict shared void *dst, \\
 %         \phantom{void {upc\_all\_prefix\_reduce}{\em T}(}restrict shared const void *src,\\
@@ -795,7 +763,6 @@ phase of the {\tt src} and {\tt dst} pointers to match -- ie.
 \np EXAMPLE 2 {\tt upc\_all\_prefix\_reduce} of type {\tt long UPC\_ADD}.
 
 \begin{verbatim}
-  #include <upc.h>
   #include <upc_collective.h>
   #define BLK_SIZE 3
   #define NELEMS 10
