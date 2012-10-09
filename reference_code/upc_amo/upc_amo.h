@@ -69,7 +69,7 @@ enum {
   UPC_AMO_THROUGHPUT
 };
 
-typedef struct upc_amodomain_t upc_amodomain_t;
+typedef shared struct upc_amodomain_t upc_amodomain_t;
 
 /* ************************************************************** */
 /*                    domain allocator                            */  
@@ -78,6 +78,10 @@ typedef struct upc_amodomain_t upc_amodomain_t;
 upc_amodomain_t * upc_amodomain_all_alloc (upc_amo_op_t ops, 
 					   upc_amo_type_t type, 
 					   upc_amohint_t hints);
+
+upc_amodomain_t * upc_amodomain_global_alloc (upc_amo_op_t ops, 
+					      upc_amo_type_t type, 
+					      upc_amohint_t hints);
 
 void upc_amodomain_free (upc_amodomain_t *ptr);
 

@@ -188,15 +188,16 @@ int  upc_amo_relaxed  (upc_amodomain_t  * domain,
 		       const void       * operand1,
 		       const void       * operand2)
 {
-  upc_lock (domain->lock);
+  struct upc_amodomain_t * ldomain = (struct upc_amodomain_t *) &domain[MYTHREAD];
+  upc_lock (ldomain->lock);
   
 #define UPC_AMO_CALL(__name__,__type__)					\
   upc_amo_##__name__(op, (__type__ *)fetch_ptr, (shared __type__ *)target, \
 		     (const __type__ *)operand1, \
 		     (const __type__ *)operand2); break;
 
-  if (domain->ops != 0 && ((domain->ops&op)==0)) return 1;
-  if (domain->types != 0 && ((domain->types&optype)==0)) return 1;
+  if (ldomain->ops != 0 && ((ldomain->ops&op)==0)) return 1;
+  if (ldomain->types != 0 && ((ldomain->types&optype)==0)) return 1;
   
   switch (optype)
     {
@@ -220,7 +221,7 @@ int  upc_amo_relaxed  (upc_amodomain_t  * domain,
     case UPC_AMO_DOUBLE:  UPC_AMO_CALL(dbl,double);
     case UPC_AMO_LDOUBLE: UPC_AMO_CALL(ldbl,long double);
     }
-  upc_unlock (domain->lock);
+  upc_unlock (ldomain->lock);
   return 0;
 }
 
@@ -239,26 +240,56 @@ int upc_amo_strict (upc_amodomain_t  * domain,
   return r;
 }
 
+/* ***************************************************************************/
+/*  AMO  domain collective allocator                                         */
+/* ***************************************************************************/
+
 upc_amodomain_t * upc_amodomain_all_alloc (upc_amo_op_t ops,
                                            upc_amo_type_t types,
                                            upc_amohint_t hints)
 {
-  upc_amodomain_t * domain = malloc (sizeof(struct upc_amodomain_t));
+  upc_amodomain_t * domain = (upc_amodomain_t *)
+    upc_all_alloc (THREADS, sizeof(struct upc_amodomain_t));
   assert (domain != NULL);
-  domain->lock = upc_all_lock_alloc ();
+  struct upc_amodomain_t * ldomain = (struct upc_amodomain_t*)
+    &domain[MYTHREAD];
+  ldomain->lock = upc_all_lock_alloc ();
   assert (domain->lock != NULL);
-  domain->ops = ops;
-  domain->types = types;
+  ldomain->ops = ops;
+  ldomain->types = types;
   /* we ignore hint */
   return domain;
 }
 
+/* ***************************************************************************/
+/*  AMO  domain one-sided allocator                                          */
+/* ***************************************************************************/
+
+upc_amodomain_t * upc_amodomain_global_alloc (upc_amo_op_t ops,
+					      upc_amo_type_t types,
+					      upc_amohint_t hints)
+{
+  upc_amodomain_t * domain = (upc_amodomain_t *)
+    upc_global_alloc (THREADS, sizeof(struct upc_amodomain_t));
+  assert (domain != NULL);
+  struct upc_amodomain_t * ldomain = (struct upc_amodomain_t*)
+    &domain[MYTHREAD];
+  ldomain->lock = upc_global_lock_alloc ();
+  assert (domain->lock != NULL);
+  ldomain->ops = ops;
+  ldomain->types = types;
+  /* we ignore hint */
+  return domain;
+}
+
+/* ***************************************************************************/
+/*           UPC AMO domain free (one-sided)                                 */
+/* ***************************************************************************/
 
 void upc_amodomain_free (upc_amodomain_t * domain)
 {
   assert (domain != NULL);
-  if (MYTHREAD==0) upc_lock_free (domain->lock);
-  upc_barrier;
-  free (domain);
+  upc_lock_free (domain->lock);
+  upc_free (domain);
 }
 
