@@ -82,16 +82,17 @@ int main() {
   {
     upc_op_t allops = 0;
     for(i = 0; i < sizeof(everyop)/sizeof(upc_op_t); i++) {
-      assert(everyop[i]);
+      assert(everyop[i] > 0);
+      assert(everyop[i] < 65536);
       assert((allops & everyop[i]) == 0);
       allops = allops | everyop[i];
     }
-    assert(allops == 511);
   }
 
   {
     for(i = 0; i < sizeof(everytype)/sizeof(upc_type_t); i++) {
       assert(everytype[i] > 0);
+      assert(everytype[i] < 65536);
       for(j = 0; j < sizeof(everytype)/sizeof(upc_type_t); j++) {
         if (i != j) assert(everytype[i] != everytype[j]);
       }

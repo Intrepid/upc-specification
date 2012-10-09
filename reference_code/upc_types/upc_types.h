@@ -45,6 +45,16 @@ typedef int upc_type_t;
 
 typedef int upc_flag_t;
 
+#ifdef UPC_IN_ALLSYNC
+/* this is not required for conformance, but helpful for 1.2->1.3 transition period */
+#undef UPC_IN_ALLSYNC
+#undef UPC_IN_MYSYNC   
+#undef UPC_IN_NOSYNC   
+#undef UPC_OUT_ALLSYNC 
+#undef UPC_OUT_MYSYNC  
+#undef UPC_OUT_NOSYNC  
+#endif
+
 #define UPC_IN_ALLSYNC       (1<<0)
 #define UPC_IN_MYSYNC        (1<<1)
 #define UPC_IN_NOSYNC        (1<<2)
