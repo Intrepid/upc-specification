@@ -1,6 +1,8 @@
 #include <upc.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
+#include <stdint.h>
 
 #include "upc_amo.h"
 

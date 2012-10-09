@@ -110,15 +110,15 @@ int upc_amo_strict  (upc_amodomain_t *domain,
 		     upc_amo_op_t op, 
 		     upc_amo_type_t optype,
 		     shared void *target, 
-		     void *operand1, 
-		     void *operand2);
+		     const void *operand1, 
+		     const void *operand2);
 
 int upc_amo_relaxed  (upc_amodomain_t *domain, 
 		      void *fetch_ptr, 
 		      upc_amo_op_t op, 
 		      upc_amo_type_t optype,
 		      shared void *target, 
-		      void *operand1, 
-		      void *operand2);
+		      const void *operand1, 
+		      const void *operand2);
 
 #endif
