@@ -644,7 +644,7 @@ which expand to integer constant expressions with type {\tt upc\_op\_t},
 which are suitable for use in {\tt \#if} preprocessing directives. 
 Each macro value designates the specified operation.
 The expressions are defined such that bitwise or ({\tt |}) of all combinations 
-of the macros result in distinct positive values less than 512.
+of the macros result in distinct positive values less than 65536.
 \begin{tabular}{ p{30pt} l l }
 & Macro name & Specified operation\\
 \cline{2-3}
@@ -674,7 +674,7 @@ which is an integer type whose values are used to designate a language type.
 
 \np The \header header defines the following macros, 
 which expand to integer constant expressions with type {\tt upc\_type\_t},
-distinct positive values, and which are suitable for use 
+distinct positive values less than 65536, and which are suitable for use 
 in {\tt \#if} preprocessing directives. 
 Each macro value designates the specified type.
 
