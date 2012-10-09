@@ -60,7 +60,9 @@ int main(int argc, char ** argv)
   test_amo_add_USHORT(d);
   test_amo_add_UINT (d);
   test_amo_add_ULONG (d);
-  upc_amodomain_free (d);
+
+
+  if (MYTHREAD==0) upc_amodomain_free (d);
   return 0;
 }
 
