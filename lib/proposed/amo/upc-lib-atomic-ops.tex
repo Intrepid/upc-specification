@@ -1,6 +1,12 @@
-\subsection{UPC Atomic Memory Operations \texttt{<}upc\_atomic.h\texttt{>}}
-\index{\_\_UPC\_ATOMIC\_\_}
-\index{upc\_atomic.h}
+\subsection{UPC Atomic Memory Operations {\tt <upc\_amo.h>}}
+\index{\_\_UPC\_AMO\_\_}
+\index{upc\_amo.h}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% NICK'S TEMP STUFF %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\hl}[1]{\colorbox{yellow}{#1}}
+%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \npf This subsection provides the UPC parallel extensions of [ISO/IEC00 
     Sec 7.19].  All the characteristics of library functions described
@@ -8,174 +14,200 @@
     that support this interface shall predefine the feature macro {\tt
     \_\_UPC\_ATOMIC\_\_} to the value 1.
 
-\np The following requirements apply to all of the functions defined
-    in this section.
+%%% \np The following requirements apply to all of the functions defined
+%%%     in this section.
+%%% 
+%%% \np When these functions are used to access a memory location in a given
+%%%     synchronization phase, atomicity is guaranteed if and only if no other
+%%%     mechanisms are used to access the same memory location in the same
+%%%     synchronization phase.
 
-\np When these functions are used to access a memory location in a given
-    synchronization phase, atomicity is guaranteed if and only if no other
-    mechanisms are used to access the same memory location in the same
-    synchronization phase.
-
+% STANDARD HEADERS
 \subsubsection{Standard headers}
 
 \np The standard header is
 
-{\tt <upc\_atomic.h>}
+{\tt <upc\_amo.h>}
 
+% ATOMIC MEMORY OPERATIONS
 \subsubsection{Atomic Memory Operations}
 
-\paragraph{The {\tt upc\_amo\_cas} functions}
-\index{upc\_amo\_cas}
+% -- upc_amodomain_t
+\paragraph{The {\tt upc\_amodomain\_t} type}
 
-{\bf Synopsis} 
+\npf The type declared is
+\begin{verbatim}
+    upc_amodomain_t
+\end{verbatim}
 
-\npf\vspace{-2.5em}
+\np The type {\tt upc\_amodomain\_t} is an opaque UPC type.
+    {\tt upc\_amodomain\_t} is a shared datatype with incomplete type (as 
+    defined in [ISO/IEC00 Sec 6.2.5]).  Objects of type {\tt upc\_amodomain\_t}
+    may therefore only be manipulated through pointers.
+
+\np Two pointers that reference the same atomicity domain object will compare
+    as equal.  The results of applying {\tt upc\_phaseof()},
+    {\tt upc\_threadof()}, and {\tt upc\_addrfield()} to such pointers are
+    undefined.
+
+\np An object of type {\tt upc\_amodomain\_t} represents an atomicity domain,
+    which specifies a single datatype and a set of operations over which
+    access to a memory location in a given synchronization phase is guaranteed
+    to be atomic if and only if no other mechanisms or atomicity domains are
+    used to access the same memory location in the same synchronization phase.
+
+% -- upc_amohint_t
+\paragraph{The {\tt upc\_amohint\_t} type}
+
+\npf The type declared is
+\begin{verbatim}
+    upc_amohint_t
+\end{verbatim}
+
+\np The following constants of type {\tt upc\_amohint\_t} shall be defined
+    to allow the specification of a ``hint'' to an implementation to indicate
+    a \emph{preferred} mode of optimization for the implementation.
+\begin{description}
+  \item[{\tt UPC\_AMO\_HINT\_DEFAULT == 0}]
+    An implementation-defined default mode
+  \item[{\tt UPC\_AMO\_HINT\_LATENCY}]
+    Favor low-latency atomic memory operations
+  \item[{\tt UPC\_AMO\_HINT\_THROUGHPUT}]
+    Favor high-throughput atomic memory operations
+  \item[{\tt UPC\_AMO\_HINT\_*}]
+    Implementation-defined additional hint values
+\end{description}
+
+% -- default operations/types
+\paragraph{Default operations and data types}
+\label{upc-amo-types-ops}
+
+\npf The atomicity modes {\tt UPC\_AMO\_DEFAULT}, {\tt UPC\_AMO\_LATENCY},
+    and {\tt UPC\_AMO\_BANDWIDTH} will support the following combination of
+    operations and data types:
+
+\begin{center}
+\begin{tabular}{l|ccccccccc}
+Type    & GET & SET & CSWAP & AND & OR  & XOR & ADD & MIN & MAX \\ \hline
+I, I32  &  X  &  X  &   X   &  X  &  X  &  X  &  X  &  X  &  X  \\
+L, I64  &  X  &  X  &   X   &  X  &  X  &  X  &  X  &  X  &  X  \\
+UI, U32 &  X  &  X  &   X   &  X  &  X  &  X  &  X  &  X  &  X  \\
+UL, U64 &  X  &  X  &   X   &  X  &  X  &  X  &  X  &  X  &  X  \\
+F32     &     &     &       &     &     &     &  X  &  X  &  X  \\
+F64     &     &     &       &     &     &     &  X  &  X  &  X  \\
+PTS     &     &     &   X   &     &     &     &     &     &     \\
+\end{tabular}
+\end{center}
+
+where 
+
+% -- upc_amo_query()
+\paragraph{The {\tt upc\_amo\_query} functions}
+
+{\bf Synopsis}
+
+\npf\vspace{-1.8em}
 \begin{verbatim}
     #include <upc.h>
-    #include <upc_atomic.h>
-
-    <<TYPE>> upc_amo_cas<<X>>_<<T>>(shared void * ptr,
-         <<TYPE>> cmpval, <<TYPE>> setval);
+    #include <upc_amo.h>
+    int upc_amo_query();
 \end{verbatim}
 
 {\bf Description}
 
-\np The function prototype above represents the 16 variations of the
-    {\tt upc\_amo\_cas{\em X}\_{\em T}} functions where {\tt{\em X}} has the
-    following correspondence:
-\begin{center}
-\begin{tabular}{ll}
-{\tt{\em X}} & {Shared Access Type} \\ \hline
-{\tt S} & {Strict shared access} \\
-{\tt R} & {Relaxed shared access} \\
-\end{tabular}
-\end{center}
-    and {\tt{\em T}} and {\tt{\em TYPE}} have the following correspondences:
-    \footnote{For example, if {\tt{\em T}} is {\tt U64}, then 
-    {\tt{\em TYPE}} must be {\tt uint64\_t}.}
-\begin{center}
-\begin{tabular}{ll|ll}
-{\tt{\em T}} & {\tt{\em TYPE}} \hspace*{1.5in} &
-{\tt{\em T}} & {\tt{\em TYPE}} \\ \hline
-{\tt I} & {\tt signed int} &
-{\tt I32} & {\tt int32\_t} \\
-{\tt U} & {\tt unsigned int} &
-{\tt U32} & {\tt uint32\_t} \\
-{\tt IL} & {\tt signed long} &
-{\tt I64} & {\tt int64\_t} \\
-{\tt UL} & {\tt unsigned long} &
-{\tt U64} & {\tt uint64\_t} \\
-\end{tabular}
-\end{center}
+\np \hl{Text goes here!}
 
-\np The {\tt upc\_amo\_cas} functions will set the value of the {\tt{\em TYPE}}
-    shared object referenced by {\tt ptr} to {\tt setval} if and only if
-    the current value {\tt *ptr} is equal to the comparison value {\tt cmpval}.
+% -- upc_all_amodomain_alloc()
+\paragraph{The {\tt upc\_all\_amodomain\_alloc} function}
 
-\np The {\tt upc\_amo\_cas} functions return the original value of the
-    {\tt{\em TYPE}} shared object referenced by {\tt ptr} regardless of whether
-    the write was performed.
+{\bf Synopsis}
 
-\np The {\tt upc\_amo\_cas} function treats the {\tt ptr} pointer as having
-    type:
-\begin{verbatim}
-    shared TYPE *
-\end{verbatim}
-
-\np EXAMPLE 1: {\tt upc\_amo\_cas} of type relaxed {\tt signed int}.
-\begin{verbatim}
-  #include <upc.h>
-  #include <upc_atomic.h>
-  shared int i = 5;
-  int orig = upc_amo_casR_I(&i, 5, -5);
-\end{verbatim}
-
-\paragraph{The {\tt upc\_amo\_op} and {\tt upc\_amo\_fop} functions}
-\index{upc\_amo\_op}
-\index{upc\_amo\_fop}
-
-{\bf Synopsis} 
-
-\npf\vspace{-2.5em}
+\npf\vspace{-1.8em}
 \begin{verbatim}
     #include <upc.h>
-    #include <upc_atomic.h>
-
-    void upc_amo_op<<X>>_<<T>>(shared void * ptr,
-         <<TYPE>> val, upc_op_t op);
-
-    <<TYPE>> upc_amo_fop<<X>>_<<T>>(shared void * ptr,
-         <<TYPE>> val, upc_op_t op);
+    #include <upc_amo.h>
+    upc_amodomain_t *upc_all_amodomain_alloc(upc_type_t type,
+         upc_op_t ops, upc_amohint_t mode);
 \end{verbatim}
 
 {\bf Description}
 
-\np The function prototype above represents the 16 variations of the
-    {\tt upc\_amo\_op{\em X}\_{\em T}} and {\tt upc\_amo\_fop{\em X}\_{\em T}}
-    functions where {\tt{\em X}} has the following correspondence:
-\begin{center}
-\begin{tabular}{ll}
-{\tt{\em X}} & {Shared Access Type} \\ \hline
-{\tt S} & {Strict shared access} \\
-{\tt R} & {Relaxed shared access} \\
-\end{tabular}
-\end{center}
-    and {\tt{\em T}} and {\tt{\em TYPE}} have the following correspondences:
-\begin{center}
-\begin{tabular}{ll|ll}
-{\tt{\em T}} & {\tt{\em TYPE}} \hspace*{1.5in} &
-{\tt{\em T}} & {\tt{\em TYPE}} \\ \hline
-{\tt I} & {\tt signed int} &
-{\tt I32} & {\tt int32\_t} \\
-{\tt U} & {\tt unsigned int} &
-{\tt U32} & {\tt uint32\_t} \\
-{\tt IL} & {\tt signed long} &
-{\tt I64} & {\tt int64\_t} \\
-{\tt UL} & {\tt unsigned long} &
-{\tt U64} & {\tt uint64\_t} \\
-\end{tabular}
-\end{center}
-    
-\np The operator specified by the variable {\tt op} may take the following
-    values:
-\begin{tabular}{ll}
-{\textbf{\tt UPC\_ADD}} & Addition \\
-{\textbf{\tt UPC\_AND}} & Bitwise {\tt AND} \\
-{\textbf{\tt UPC\_OR}}  & Bitwise {\tt OR} \\
-{\textbf{\tt UPC\_XOR}} & Bitwise {\tt XOR} \\
-{\textbf{\tt UPC\_MAX}} & Maximum \\
-{\textbf{\tt UPC\_MIN}} & Minimum \\
-{\textbf{\tt UPC\_SET}} & Value assignment \\
-\end{tabular}
+\np The {\tt upc\_all\_amodomain\_alloc} function dynamically allocates an
+    atomicity domain and returns a pointer to it.
 
-\np On completion of the {\tt upc\_amo\_op} and {\tt upc\_amo\_fop} variants,
-    the value of the {\tt{\em TYPE}} shared object referenced by {\tt ptr} is 
-    {\tt *ptr} $\oplus$ {\tt val} where ``$\oplus$'' is the operator
-    specified by the variable {\tt op}.
+\np The {\tt upc\_all\_amodomain\_alloc} function is a {\em collective} function.
+    The return value on every thread points to the same atomicity domain
+    object.
 
-\np The {\tt upc\_amo\_op} functions do not return a value.  The
-    {\tt upc\_amo\_fop} functions return a value of type {\tt{\em TYPE}}, which
-    is the value of the shared object referenced by {\tt ptr} prior to the
-    application of the ``$\oplus$'' operator.
+\np The atomicity domain created supports AMO calls to operate on objects of a
+    unique type, specified by the {\tt type} parameter.  The {\tt upc\_type\_t}
+    values and the corresponding type they specify are listed in
+    \hl{x-ref to upc\_types.h}.
 
-\np The {\tt upc\_amo\_op} and {\tt upc\_amo\_fop} functions treat the
-    {\tt ptr} pointer as having type:
+\np The {\tt ops} parameter specifies the atomic operations to be supported by
+    the atomicity domain.  The valid {\tt upc\_op\_t} values and their meanings
+    are listed in \hl{x-ref to upc\_types.h}.  Multiple {\tt upc\_op\_t} values
+    can be combined by using the bitwise OR operator ($|$), and each value has
+    a unique bitwise representation that can be unambiguously tested using the
+    bitwise AND operator ({\tt \&}).
+
+\np The {\tt ops} parameter shall only specify operations within the set
+    permitted for {\tt type} (as defined in \ref{upc-amo-types-ops}), otherwise
+    behavior is undefined.
+
+\np The implementation is free to ignore the {\tt hints} parameter.
+
+\np EXAMPLE: Collectively allocate an atomicity domain that supports the
+    addition, maximum, and minimum operations (i.e., {\tt UPC\_ADD},
+    {\tt UPC\_MAX}, {\tt UPC\_MIN}) on signed 64-bit integers (i.e.,
+    {\tt UPC\_INT64}).
 \begin{verbatim}
-    shared TYPE *
+    #include <upc.h>
+    #include <upc_amo.h>
+    upc_amodomain_t* domain = upc_all_amodomain_alloc(
+         UPC_INT64, UPC_ADD | UPC_MAX | UPC_MIN, 0);
 \end{verbatim}
 
-\np EXAMPLE 1: {\tt upc\_amo\_op} of type relaxed {\tt int32\_t UPC\_XOR}.
+% -- upc_amo()
+\paragraph{The {\tt upc\_amo\_strict} and {\tt upc\_amo\_relaxed} functions}
+
+{\bf Synopsis}
+
+\npf\vspace{-1.8em}
 \begin{verbatim}
-  #include <upc.h>
-  #include <upc_atomic.h>
-  shared int32_t i = 0;
-  upc_amo_opR_I32(&i, 1, UPC_XOR);
+    #include <upc.h>
+    #include <upc_amo.h>
+    void upc_amo_strict(upc_amodomain_t *domain, void *fetch_ptr,
+         upc_op_t op, shared void *target,
+         void *operand1, void *operand2);
+    void upc_amo_relaxed(upc_amodomain_t *domain, void *fetch_ptr,
+         upc_op_t op, shared void *target,
+         void *operand1, void *operand2);
 \end{verbatim}
 
-\np EXAMPLE 2: {\tt upc\_amo\_fop} of type strict {\tt unsigned long UPC\_ADD}.
-\begin{verbatim}
-  #include <upc.h>
-  #include <upc_atomic.h>
-  shared unsigned long i = 0;
-  unsigned long old = upc_amo_fopS_UL(&i, 1, UPC_ADD);
-\end{verbatim}
+{\bf Description}
+
+\np The {\tt upc\_amo\_strict} and {\tt upc\_amo\_relaxed} functions perform
+    an atomic update of the object pointed to by {\tt target} such that:
+
+    \begin{verse}
+      {\tt *target = *target} $\oplus$ {\tt *operand1},
+        where ``$\oplus$'' is the operator specified by the variable {\tt op}
+        and {\tt op} $\in$ \{AND, OR, XOR, ADD, MIN, MAX\} \\
+      {\tt *target = (*target == *operand1) ? *operand2 : *target},
+        where {\tt op} is CSWAP \\
+      {\tt *target = *operand1},
+        where {\tt op} is SET \\
+      {\tt *target} is unchanged,
+        where {\tt op} is GET \\
+    \end{verse}
+
+\np The value of the object pointed to by {\tt target} prior to performing
+    the specified update is stored in {\tt fetch\_ptr} if and only if
+    {\tt fetch\_ptr} $\neq$ {\tt NULL}.%
+    \footnote{Note that if {\tt op} is GET and {\tt fetch\_ptr == NULL}, the
+              effect is a no-op.}
+
+\np The {\tt upc\_amo\_strict} function performs the atomic update as a strict
+    shared access, while the {\tt upc\_amo\_relaxed} function performs the
+    update a relaxed shared access.
