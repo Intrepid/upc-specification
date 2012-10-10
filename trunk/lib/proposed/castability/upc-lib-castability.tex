@@ -1,24 +1,28 @@
-\subsection{Castability Functions {\tt <upc\_castable.h>}}
+\subsection{Castability Functions \texttt{<}upc\_castable.h\texttt{>}}
 \label{upc-castable}
 \index{privatizability}
 \index{castability}
 \index{upc\_castable.h}
+\index{\_\_UPC\_CASTABLE\_\_}
 
-\np A UPC implementation may map the shared address space of another
-thread into the local address space of the current thread.  The
+\npf A UPC implementation may map some or all of the shared address space
+of another thread into the local address space of the current thread.  The
 functions described in this section allow the programmer to determine
 whether this is the case, and to make use of this information by
 providing the ability to obtain valid local addresses for shared cells
 with affinity to other threads.  This capability, sometimes called
 "privatizability", is referred to as "castability" in this section.
 
-\subsection{Standard headers}
+\np Implementations that support this interface shall predefine the
+feature macro {\_\_UPC\_CASTABLE\_\_} to the value 1.
 
-\np The standard header is
+\subsubsection{Standard headers}
+
+\npf The standard header is
 
 {\tt <upc\_castable.h>}
 
-\subsection{Castability Functions}
+\subsubsection{Castability Functions}
 
 \paragraph{The {\tt upc\_cast} function}
 \index{upc\_cast}
@@ -36,13 +40,13 @@ with affinity to other threads.  This capability, sometimes called
 
 \np The {\tt upc\_cast} function converts the specified
 pointer-to-shared to a valid pointer-to-local.  If such a conversion
-is not possible, an undefined value is returned.
+is not possible, the value NULL is returned.  The conversion will be considered possible only if the returned
+pointer-to-local may be used to read and write the target thread's
+entire contiguous portion of the largest shared object
+containing the specified shared address.
 
-The conversion will be considered possible only if the returned
-pointer-to-local may be used to read and write the entire contiguous
-portion of a shared object (which may be a portion of a larger shared
-object) beginning at the specified shared address.  If only part of that
-region may be referenced, an undefined value is returned.
+\np If the conversion is possible, the pointer is referred to as {\em castable}.
+\index{castable}
 
 \np If the target of the {\tt ptr} pointer has affinity to the current
 thread, {\tt upc\_cast(ptr)} is equivalent to {\tt (void *)ptr}.
@@ -51,55 +55,73 @@ thread, {\tt upc\_cast(ptr)} is equivalent to {\tt (void *)ptr}.
 
 \np The pointer returned by {\tt upc\_cast} is valid only in the calling
 thread.  It cannot be assumed that the return value may be passed to
-a different thread and used there.  It also cannot be assumed that two
+a different thread and used by that thread.  It also cannot be assumed that two
 threads calling {\tt upc\_cast} with the same argument will get the same
 return value.
 
-\paragraph{The {\tt upc\_castable} function}
-\index{upc\_castable}
-\index{castable}
+\paragraph{The {\tt upc\_thread\_info} function}
+\index{upc\_thread\_info}
 
 {\bf Synopsis}
 
 \npf\vspace{-2.5em}
 \begin{verbatim}
     #include <upc_castable.h>
-    int upc_castable(shared void *ptr);
+    upc_thread_info_t upc_thread_info(int threadId);
 \end{verbatim}
 
 {\bf Description}
 
-The {\tt upc\_castable} function returns 1 if the {\tt ptr} pointer
-can be converted to a pointer-to-local via a call to {\tt upc\_cast}.
-Otherwise, the function returns 0.
+\index{upc\_thread\_info\_t}
+\np The {\tt upc\_thread\_info} function returns information about
+potential uses of the {\tt upc\_cast} function on objects with
+affinity to the specified thread.  The information is returned in a
+{\tt upc\_thread\_info\_t} structure, with the following fields:
 
-If the {\tt ptr} pointer is null, or if the target of the {\tt ptr} has
-affinity to the current thread, {\tt upc\_castable} will return 1.
+\begin{description}
+\item{\tt int guaranteedCastable}
+Indicates which memory regions are guaranteed to be castable.
+\item{\tt int probablyCastable}
+Indicates which memory regions are likely (but not guaranteed)
+to be castable.
+\end{description}
 
-The {\tt upc\_castable} function places no constraints on the order or
-number of subsequent calls to {\tt upc\_cast}, nor on their arguments.
-Calls to {\tt upc\_cast} are not required to be preceded by calls to
-{\tt upc\_castable}.
+\np An implementation may provide additional fields in this structure,
+allowing {\tt upc\_thread\_info} to return other information about
+the specified thread.
 
-\paragraph{The {\tt upc\_thread\_castable} function}
-\index{upc\_thread\_castable}
-\index{castable}
+\np The {\tt guaranteedCastable} and {\tt probablyCastable} fields
+contain coded integer values indicating memory regions.  If the flag
+for a particular region is set in the {\tt guaranteedCastable} field,
+it indicates that
+any pointer into that region in the specified target thread's memory is
+castable.  If the flag is
+set for a particular region is set in the {\tt probablyCastable} field,
+it indicates that it is likely, but not guaranteed, that a pointer into
+that region is castable.
 
-{\bf Synopsis}
+\np Flag values are as specified below.  Multiple flag values may be
+combined using the bitwise OR operator ({\textbar}).  Each flag has a
+unique bitwise representation that can be unambiguously tested using the
+bitwise AND operator (\&).
 
-\npf\vspace{-2.5em}
-\begin{verbatim}
-    #include <upc_castable.h>
-    int upc_thread_castable(unsigned int threadnum);
-\end{verbatim}
-
-{\bf Description}
-
-The {\tt upc\_thread\_castable} function returns 1 only if all of the
-specified thread's shared data may be converted to local addresses
-via calls to {\tt upc\_cast}.  Otherwise, the function returns 0.
-
-The function returns 1 if {\tt threadnum} is equal to {\tt MYTHREAD}.
+\begin{description}
+\item[{\tt UPC\_CASTABLE\_NONE}] \hfill \\
+No memory regions are indicated by this field.  {\tt UPC\_CASTABLE\_NONE}
+shall be defined to be zero.
+\item[{\tt UPC\_CASTABLE\_ALL\_ALLOC}] \hfill \\
+Refers to memory allocated via {\tt upc\_all\_alloc}.
+\item[{\tt UPC\_CASTABLE\_GLOBAL\_ALLOC}] \hfill \\
+Refers to memory allocated via {\tt upc\_global\_alloc}.
+\item[{\tt UPC\_CASTABLE\_ALLOC}] \hfill \\
+Refers to memory allocated via {\tt upc\_alloc}.
+\item[{\tt UPC\_CASTABLE\_STATIC}] \hfill \\
+Refers to shared variables defined via static and file scope declarations.
+\item[{\tt UPC\_CASTABLE\_ALL}] \hfill \\
+Refers to all regions of shared memory.  {\tt UPC\_CASTABLE\_ALL} shall
+be defined to be all the region-specific values combined via bitwise
+OR ({\textbar}) operations.
+\end{description}
 
 \pagebreak
 \appendix
