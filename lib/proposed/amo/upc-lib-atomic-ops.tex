@@ -9,14 +9,6 @@
     that support this interface shall predefine the feature macro {\tt
     \_\_UPC\_ATOMIC\_\_} to the value 1.
 
-%%% \np The following requirements apply to all of the functions defined
-%%%     in this section.
-%%% 
-%%% \np When these functions are used to access a memory location in a given
-%%%     synchronization phase, atomicity is guaranteed if and only if no other
-%%%     mechanisms are used to access the same memory location in the same
-%%%     synchronization phase.
-
 % STANDARD HEADERS
 \subsubsection{Standard headers}
 
@@ -283,10 +275,10 @@ Floating Point &  X               &              &  X          \\
     #include <upc_amo.h>
     void upc_amo_strict(upc_amodomain_t *domain, void *fetch_ptr,
          upc_op_t op, shared void *target,
-         void *operand1, void *operand2);
+         const void *operand1, const void *operand2);
     void upc_amo_relaxed(upc_amodomain_t *domain, void *fetch_ptr,
          upc_op_t op, shared void *target,
-         void *operand1, void *operand2);
+         const void *operand1, const void *operand2);
 \end{verbatim}
 
 {\bf Description}
