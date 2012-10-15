@@ -1,37 +1,7 @@
 #ifndef __upc_amo_h__
 #define __upc_amo_h__
 
-/* ************************************************************** */
-/* These are stand-in types from from upctypes.h                  */
-/* \todo: we need to make sure that upc.h enumerates these ops    */
-/* in a bit-masked fashion, so that combinations are possible.    */
-/* ************************************************************** */
-
-typedef int upc_amo_type_t;
-
-enum {
-  UPC_AMO_CHAR     = (1<<0),  
-  UPC_AMO_SHORT    = (1<<1),  
-  UPC_AMO_INT      = (1<<2),
-  UPC_AMO_LONG     = (1<<3),
-  UPC_AMO_UCHAR    = (1<<4),
-  UPC_AMO_USHORT   = (1<<5),
-  UPC_AMO_UINT     = (1<<6),
-  UPC_AMO_ULONG    = (1<<7),
-  UPC_AMO_INT8     = (1<<8),
-  UPC_AMO_INT16    = (1<<9),
-  UPC_AMO_INT32    = (1<<10),
-  UPC_AMO_INT64    = (1<<11),
-  UPC_AMO_UINT8    = (1<<12),
-  UPC_AMO_UINT16   = (1<<13),
-  UPC_AMO_UINT32   = (1<<14),
-  UPC_AMO_UINT64   = (1<<15),
-  UPC_AMO_FLOAT    = (1<<16),
-  UPC_AMO_DOUBLE   = (1<<17),
-  UPC_AMO_LDOUBLE  = (1<<18),
-  UPC_AMO_PTS      = (1<<19),
-  UPC_AMO_NTYPES   = (1<<20)
-};
+#include "upc_types.h"
 
 /* ************************************************************** */
 /* These are stand-in types from upctypes.h                       */
@@ -43,55 +13,95 @@ enum {
 typedef int upc_amo_op_t;
 
 enum {
-  UPC_AMO_GET    = (1<<0),
-  UPC_AMO_SET    = (1<<1),
-  UPC_NOT        = (1<<2),
-  UPC_AMO_SWAP   = (1<<3),
-  UPC_AMO_ADD    = (1<<4),
-  UPC_AMO_AND    = (1<<5),
-  UPC_AMO_XOR    = (1<<6),
-  UPC_AMO_OR     = (1<<7),
-  UPC_AMO_MIN    = (1<<8),
-  UPC_AMO_MAX    = (1<<9),
-  UPC_AMO_CSWAP  = (1<<10),
-  UPC_AMO_NOPS   = (1<<11)
+  UPC_GET = (1<<9),
+  UPC_SET = (1<<10),
+  UPC_CSWAP  = (1<<11),
 };
 
 /* ************************************************************** */
 /* AMO specific types and enumerations                            */
 /* ************************************************************** */
 
+/**
+ * \brief upc_amodomain_t
+ * Opaque data type used to reference UPC AMO domains.
+ * upc_amodomain_t is a shared object type, therefore pointers to domains
+ * are pointers-to-shared.
+ */
+
+typedef shared struct upc_amodomain_t upc_amodomain_t;
+
+/**
+ * \brief upc_amohint_t
+ * enumerated data type denoting hints to an implementation of AMOs w.r.t.
+ * preferred mode of operation.
+ */
+
 typedef int upc_amohint_t;
 
 enum { 
-  UPC_AMO_DEFAULT=0, 
-  UPC_AMO_LATENCY, 
-  UPC_AMO_THROUGHPUT
+  UPC_AMO_HINT_DEFAULT=0, 
+  UPC_AMO_HINT_LATENCY=1, 
+  UPC_AMO_HINT_THROUGHPUT=2
+  /* other implementation-specific values are allowed here */
 };
 
-typedef shared struct upc_amodomain_t upc_amodomain_t;
+/**
+ * \brief type used to indicate whether a set of AMOs are using locks
+ */
+
+typedef int upc_amolock_t;
+
+enum {
+  UPC_AMO_LOCK_FREE=0,
+  UPC_AMO_NOT_LOCK_FREE
+};
+
+/* ************************************************************** */
+/*                   AMO query function                           */
+/* ************************************************************** */
+
+/**
+ * \brief Query whether implementation of an AMO function uses locks
+ * \param optype: the data type AMO is executed upon
+ * \param ops:    the actual operation of the AMO
+ * \param addr:   the target address
+ * \returns       UPC_AMO_LOCK_FREE if the parameters are valid and 
+ *                implementation is lock free; 
+ *                UPC_AMO_NOT_LOCK_FREE otherwise.
+ */
+
+upc_amolock_t 
+upc_amo_query (upc_type_t optype, upc_op_t ops, shared void *addr);
 
 /* ************************************************************** */
 /*                    domain allocator                            */  
 /* ************************************************************** */
 
-upc_amodomain_t * upc_amodomain_all_alloc (upc_amo_op_t ops, 
-					   upc_amo_type_t type, 
+/**
+ * \brief AMO collective allocator. Has barrier semantics.
+ * \param ops: a bit mask of allowed operations on the new domain.
+ * \param type: the data type the domain operates on.
+ * \param hints: performance/functionality hints (impl. specific)
+ * \returns: a domain object usable in all threads.
+ */
+
+upc_amodomain_t * upc_all_amodomain_alloc (upc_amo_op_t ops, 
+					   upc_type_t optype, 
 					   upc_amohint_t hints);
 
-upc_amodomain_t * upc_amodomain_global_alloc (upc_amo_op_t ops, 
-					      upc_amo_type_t type, 
-					      upc_amohint_t hints);
+/**
+ * \brief Collectively free an AMO domain. All threads participate.
+ */
 
-void upc_amodomain_free (upc_amodomain_t *ptr);
+void upc_all_amodomain_free (upc_amodomain_t * domain);
 
-/* ************************************************************** */
-/*                  domain query: what is implemented?            */
-/* ************************************************************** */
+/**
+ * \brief Free an AMO domain. Invoked by a single thread.
+ */
 
-int upc_amo_query   (upc_amodomain_t *domain,
-		     upc_amo_op_t op, 
-		     upc_amo_type_t optype);
+void upc_amodomain_free (upc_amodomain_t * domain);
+
 
 /* ************************************************************** */
 /*                 prototype declarations for AMOs                */
@@ -109,20 +119,18 @@ int upc_amo_query   (upc_amodomain_t *domain,
  * \returns 0 if operation completed correctly, 1 if unimplemented
  */
 
-int upc_amo_strict  (upc_amodomain_t *domain, 
-		     void *fetch_ptr, 
-		     upc_amo_op_t op, 
-		     upc_amo_type_t optype,
-		     shared void *target, 
-		     const void *operand1, 
-		     const void *operand2);
+void upc_amo_strict  (upc_amodomain_t   * domain, 
+		      void              * fetch_ptr, 
+		      upc_amo_op_t        op, 
+		      shared void       * target, 
+		      const void        * operand1, 
+		      const void        * operand2);
 
-int upc_amo_relaxed  (upc_amodomain_t *domain, 
-		      void *fetch_ptr, 
-		      upc_amo_op_t op, 
-		      upc_amo_type_t optype,
-		      shared void *target, 
-		      const void *operand1, 
-		      const void *operand2);
+void upc_amo_relaxed  (upc_amodomain_t  * domain, 
+		       void             * fetch_ptr, 
+		       upc_amo_op_t       op, 
+		       shared void      * target, 
+		       const void       * operand1, 
+		       const void       * operand2);
 
 #endif
