@@ -1,0 +1,324 @@
+\subsection{UPC Atomic Memory Operations {\tt <upc\_amo.h>}}
+\label{upc-amo}
+\index{\_\_UPC\_AMO\_\_}
+\index{upc\_amo.h}
+
+\npf This subsection provides the UPC parallel extensions of [ISO/IEC00 
+    Sec 7.19].  All the characteristics of library functions described
+    in [ISO/IEC00 Sec 7.1.4] apply to these as well.  Implementations
+    that support this interface shall predefine the feature macro {\tt
+    \_\_UPC\_ATOMIC\_\_} to the value 1.
+
+% STANDARD HEADERS
+\subsubsection{Standard headers}
+
+\np The standard header is
+
+{\tt <upc\_amo.h>}
+
+\np Unless otherwise noted, all of the functions, types and macros specified
+    in Section~\ref{upc-amo} are declared by the header {\tt <upc\_amo.h>}.
+
+\np Every inclusion of {\tt <upc\_amo.h>} has the effect of including
+    {\tt <upc\_types.h>}.
+
+% COMMON REQUIREMENTS
+\subsubsection{Common Requirements}
+\label{upc-amo-reqs}
+\npf The following requirements apply to all of the functions defined
+     in Section~\ref{upc-amo}.
+
+\np The UPC Atomic Memory Operations (AMO) library introduces an
+    \emph{atomicity domain}, an object that specifies a single datatype and
+    a set of operations over which access to a memory location in a given
+    synchronization phase is guaranteed to be atomic if and only if no other
+    mechanisms or atomicity domains are used to access the same memory
+    location in the same synchronization phase.
+
+\np The following table presents the required support for operations and
+    datatypes
+
+\begin{center}
+\begin{tabular}{l|ccccc}
+Type           & {\tt UPC\_CSWAP} & Bit-wise Ops & Numeric Ops \\ \hline
+Integer        &  X               &  X           &  X          \\
+Floating Point &  X               &              &  X          \\
+{\tt UPC\_PTS} &  X               &              &             \\
+\end{tabular}
+\end{center}
+
+    where
+\begin{itemize}
+  \item[-] Supported integer types are {\tt UPC\_INT}, {\tt UPC\_UINT},
+    {\tt UPC\_LONG}, {\tt UPC\_ULONG}, {\tt UPC\_INT32}, {\tt UPC\_UINT32},
+    {\tt UPC\_INT64}, and {\tt UPC\_UINT64}.
+  \item[-] Supported floating-point types are {\tt UPC\_FLOAT} and
+    {\tt UPC\_DOUBLE}.
+  \item[-] Supported bit-wise operations are {\tt UPC\_AND}, {\tt UPC\_OR},
+    and {\tt UPC\_XOR}.
+  \item[-] Supported numeric operations are {\tt UPC\_GET}, {\tt UPC\_SET},
+    {\tt UPC\_ADD}, {\tt UPC\_MAX}, and {\tt UPC\_MIN}.
+\end{itemize}
+
+% AMO-SPECIFIC TYPES
+\subsubsection{AMO-Specific Types}
+\label{upc-amo-types}
+
+% -- upc_amodomain_t
+\paragraph{The {\tt upc\_amodomain\_t} type}
+\index{upc\_amodomain\_t}
+
+\npf The type declared is
+\begin{verbatim}
+    upc_amodomain_t
+\end{verbatim}
+
+\np The type {\tt upc\_amodomain\_t} is an opaque UPC type.
+    {\tt upc\_amodomain\_t} is a shared datatype with incomplete type (as 
+    defined in [ISO/IEC00 Sec 6.2.5]).  Objects of type {\tt upc\_amodomain\_t}
+    may therefore only be manipulated through pointers.
+
+\np Two pointers that reference the same atomicity domain object will compare
+    as equal.  The results of applying {\tt upc\_phaseof()},
+    {\tt upc\_threadof()}, and {\tt upc\_addrfield()} to such pointers are
+    undefined.
+
+% -- upc_amohint_t
+\paragraph{The {\tt upc\_amohint\_t} type}
+\index{upc\_amohint\_t}
+
+\npf The type declared is
+\begin{verbatim}
+    upc_amohint_t
+\end{verbatim}
+
+\np The following constants of type {\tt upc\_amohint\_t} shall be defined
+    to allow the specification of a ``hint'' to an implementation to indicate
+    a \emph{preferred} mode of optimization for the implementation.
+\begin{description}
+  \item[{\tt 0}]
+    An implementation-defined default mode
+  \item[{\tt UPC\_AMO\_HINT\_LATENCY}]
+    Favor low-latency atomic memory operations
+  \item[{\tt UPC\_AMO\_HINT\_THROUGHPUT}]
+    Favor high-throughput atomic memory operations
+  \item[{\tt UPC\_AMO\_HINT\_*}]
+    Implementation-defined additional hint values
+\end{description}
+
+% -- upc_amolock_t
+\paragraph{The {\tt upc\_amolock\_t} type}
+\index{upc\_amolock\_t}
+
+\npf The type declared is
+\begin{verbatim}
+    upc_amolock_t
+\end{verbatim}
+
+\np The following constants of type {\tt upc\_amolock\_t} shall be defined
+    to indicate whether a specified set of atomic memory operations for a
+    specified type are implemented with or without locks.
+\begin{description}
+  \item[{\tt UPC\_AMO\_LOCK\_FREE}]
+    The AMO is implemented without locks
+  \item[{\tt UPC\_AMO\_NOT\_LOCK\_FREE}]
+    The AMO is implemented using locks
+\end{description}
+
+% AMO FUNCTIONS
+\subsubsection{AMO Functions}
+\label{upc-amo-functions}
+
+% -- upc_amo_query()
+\paragraph{The {\tt upc\_amo\_query} function}
+\index{upc\_amo\_query}
+
+{\bf Synopsis}
+
+\npf\vspace{-1.8em}
+\begin{verbatim}
+    #include <upc_amo.h>
+    upc_amolock_t upc_amo_query(upc_type_t type, upc_op_t ops,
+         shared void *addr);
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_amo\_query} function shall return {\tt UPC\_AMO\_LOCK\_FREE}
+    if and only if the atomic operations specified by {\tt ops} can be
+    supported in a lock-free implementation for the datatype specified by
+    {\tt type} with alignment to the address {\tt addr}.  Otherwise, the
+    function shall return {\tt UPC\_AMO\_NOT\_LOCK\_FREE}.
+
+% -- upc_all_amodomain_alloc()
+\paragraph{The {\tt upc\_all\_amodomain\_alloc} function}
+\index{upc\_all\_amodomain\_alloc}
+
+{\bf Synopsis}
+
+\npf\vspace{-1.8em}
+\begin{verbatim}
+    #include <upc_amo.h>
+    upc_amodomain_t *upc_all_amodomain_alloc(upc_type_t type,
+         upc_op_t ops, upc_amohint_t mode);
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_all\_amodomain\_alloc} function dynamically allocates an
+    atomicity domain and returns a pointer to it.
+
+\np The {\tt upc\_all\_amodomain\_alloc} function is a {\em collective} function.
+    The return value on every thread points to the same atomicity domain
+    object.
+
+\np The atomicity domain created supports AMO calls to operate on objects of a
+    unique type, specified by the {\tt type} parameter.  The {\tt upc\_type\_t}
+    values and the corresponding type they specify are listed in
+    \upctypesection{}.
+
+\np The {\tt ops} parameter specifies the atomic operations to be supported by
+    the atomicity domain.  The valid {\tt upc\_op\_t} values and their meanings
+    are listed in \upcopsection{}.  Multiple {\tt upc\_op\_t} values
+    can be combined by using the bitwise OR operator ($|$), and each value has
+    a unique bitwise representation that can be unambiguously tested using the
+    bitwise AND operator ({\tt \&}).
+
+\np The {\tt ops} parameter shall only specify operations within the set
+    permitted for {\tt type} (as defined in \ref{upc-amo-reqs}), otherwise
+    behavior is undefined.
+
+\np The implementation is free to ignore the {\tt hints} parameter.
+
+\np EXAMPLE: Collectively allocate an atomicity domain that supports the
+    addition, maximum, and minimum operations (i.e., {\tt UPC\_ADD},
+    {\tt UPC\_MAX}, {\tt UPC\_MIN}) on signed 64-bit integers (i.e.,
+    {\tt UPC\_INT64}).
+\begin{verbatim}
+    #include <upc_amo.h>
+    upc_amodomain_t* domain = upc_all_amodomain_alloc(
+         UPC_INT64, UPC_ADD | UPC_MAX | UPC_MIN, 0);
+\end{verbatim}
+
+% -- upc_amodomain_free()
+\paragraph{The {\tt upc\_amodomain\_free} function}
+\index{upc\_amodomain\_free}
+
+{\bf Synopsis}
+
+\npf\vspace{-1.8em}
+\begin{verbatim}
+    #include <upc_amo.h>
+    void upc_amodomain_free(upc_amodomain_t *ptr);
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_amodomain\_free} function frees all resources associated with
+    the dynamically-allocated {\tt upc\_amodomain\_t} object pointed to by
+    {\tt ptr}.  If {\tt ptr} is a null pointer, no action occurs.  Otherwise,
+    if the argument does not match a pointer earlier returned by the
+    {\tt upc\_all\_amodomain\_alloc} function, or if the atomicity domain has
+    been deallocated by a previous call to {\tt upc\_amodomain\_free},%
+    \footnote{i.e., only one thread may call {\tt upc\_amodomain\_free} for
+    each allocation}, or a previous call to {\tt upc\_all\_amodomain\_free},
+    the behavior is undefined.
+
+\np Any subsequent calls from any thread to atomic memory operation functions
+    referencing the atomicity domain pointed to by {\tt ptr} have undefined
+    effects.
+
+% -- upc_all_amodomain_free()
+\paragraph{The {\tt upc\_all\_amodomain\_free} function}
+\index{upc\_all\_amodomain\_free}
+
+{\bf Synopsis}
+
+\npf\vspace{-1.8em}
+\begin{verbatim}
+    #include <upc_amo.h>
+    void upc_all_amodomain_free(upc_amodomain_t *ptr);
+\end{verbatim}
+
+{\bf Description}
+
+\np {\tt upc\_all\_amodomain\_free} is a \emph{collective} variant of
+    {\tt upc\_amodomain\_free}, provided as a convenience.  It must be called
+    collectively by all threads with the \emph{single-valued} argument
+    {\tt ptr}.
+
+\np The {\tt upc\_all\_amodomain\_free} function frees the dynamically-allocated
+    shared storage pointed to by {\tt ptr}.  If {\tt ptr} is a null pointer,
+    no action occurs.  Otherwise, if the argument does not match a pointer
+    earlier returned by the {\tt upc\_all\_amodomain\_alloc} function, or if
+    the atomicity domain has been deallocated by a previous call to
+    {\tt upc\_amodomain\_free} or {\tt upc\_all\_amodomain\_free} the
+    behavior is undefined.
+
+\np The atomicity domain referenced by {\tt ptr} is guaranteed to remain valid
+    until all threads have entered the call to {\tt upc\_all\_amodomain\_free},
+    but the function does not otherwise guarantee any synchronization or
+    strict reference.
+
+\np Any subsequent calls to AMO functions from any thread using {\tt ptr} have
+    undefined effects.
+
+% -- upc_amo()
+\paragraph{The {\tt upc\_amo\_strict} and {\tt upc\_amo\_relaxed} functions}
+\index{upc\_amo\_strict}
+\index{upc\_amo\_relaxed}
+
+{\bf Synopsis}
+
+\npf\vspace{-1.8em}
+\begin{verbatim}
+    #include <upc_amo.h>
+    void upc_amo_strict(upc_amodomain_t *domain, void *fetch_ptr,
+         upc_op_t op, shared void *target,
+         const void *operand1, const void *operand2);
+    void upc_amo_relaxed(upc_amodomain_t *domain, void *fetch_ptr,
+         upc_op_t op, shared void *target,
+         const void *operand1, const void *operand2);
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_amo\_strict} and {\tt upc\_amo\_relaxed} functions perform
+    an atomic update of the object pointed to by {\tt target} such that:
+
+    \begin{verse}
+      {\tt *target = *target $\oplus$ *operand1},
+        where ``$\oplus$'' is the operator specified by the variable {\tt op}
+        and {\tt op} $\in$ \{{\tt UPC\_AND}, {\tt UPC\_OR}, {\tt UPC\_XOR},
+        {\tt UPC\_ADD}, {\tt UPC\_MIN}, {\tt UPC\_MAX}\} \\
+      {\tt *target = (*target == *operand1) ? *operand2 : *target},
+        where {\tt op} is {\tt UPC\_CSWAP} \\
+      {\tt *target = *operand1},
+        where {\tt op} is {\tt UPC\_SET} \\
+      {\tt *target} is unchanged,
+        where {\tt op} is {\tt UPC\_GET} \\
+    \end{verse}
+
+\np The value of the object pointed to by {\tt target} prior to performing
+    the specified update is stored in {\tt fetch\_ptr} if and only if
+    {\tt fetch\_ptr $\neq$ NULL}.%
+    \footnote{Note that if {\tt op} is {\tt UPC\_GET} and
+              {\tt fetch\_ptr == NULL}, the effect is a no-op.}
+
+\np The {\tt upc\_amo\_strict} function performs the atomic update as a strict
+    shared access, while the {\tt upc\_amo\_relaxed} function performs the
+    update a relaxed shared access.
+
+\np EXAMPLE: Perform a relaxed atomic fetch-and-increment of a value of type
+    {\tt UPC\_UINT64} after allocating an atomicity domain {\tt domain} to
+    support {\tt UPC\_ADD} for {\tt UPC\_UINT64}.
+\begin{verbatim}
+    #include <upc_amo.h>
+    const uint64_t ONE = 1;
+    uint64_t oldval;
+    shared uint64_t val = 42;
+    upc_amodomain_t* domain = upc_all_amodomain_alloc(
+         UPC_UINT64, UPC_ADD, 0);
+    upc_amo_relaxed(domain, &oldval, UPC_ADD, &val, &ONE, 0);
+    
+\end{verbatim}

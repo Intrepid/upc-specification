@@ -1,0 +1,41 @@
+\newcommand{\myspecversion}{Version 1.3}
+\newcommand{\mydraftversion}{Draft 2.1}
+\newcommand{\myversion}{\specversion}
+\newcommand{\mytitle}{UPC Required Library Specifications}
+\input{upc-spec-preamble}
+
+\makeindex
+
+\title{\mytitle\\
+\myversion}
+
+\author{A publication of the UPC Consortium}
+
+\date{\today
+\draftnote}
+
+\begin{document}
+
+\maketitle
+
+\setcounter{page}{2}
+
+\dotoc
+
+\setcounter{section}{6} % section starts at 7
+\section{Library}
+
+\npf This section provides UPC parallel extensions of [ISO/IEC00 Sec 7.1.2]. Also see the UPC Optional Library Specifications.
+
+\np The libraries specified in this document are required and shall be provided by all conforming implementations of the UPC language.
+
+\setcounter{subsection}{2} % subsection starts at 3
+
+\input{upc-lib-collectives}
+
+\pagebreak
+
+\input{upc-lib-tick}
+
+\doindex
+\end{document}
