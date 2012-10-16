@@ -78,13 +78,20 @@ as keywords and shall not be otherwise used.
      threads and has the same value on every
      thread.   Under the static THREADS translation environment, {\tt THREADS}
      is an integer constant suitable for use in {\tt \#if} preprocessing directives.
+     \xadded[id=DB]{97}{
+     Under the dynamic THREADS translation environment, the value of {\tt THREADS}
+     is invariant throughout program execution.
+     }
 
 \subsubsection{{\tt MYTHREAD}}
 \index{MYTHREAD}
 \npf{\tt MYTHREAD} is an expression with %
      \xreplaced[id=DB]{32}{integral value}{a value of type int}; %
      it specifies the
-     unique thread index.%
+     unique thread index,
+     \xadded[id=DB]{97}{
+     which is invariant for each thread throughout program execution.
+     }
      \xadded[id=DB]{33}{%
        \truefootnote{The definition of MYTHREAD and THREADS as expressions, not objects or   
                l-values, means one cannot assign to them or take their address.}%
@@ -327,8 +334,9 @@ as keywords and shall not be otherwise used.
 \npf A shared type qualifier shall not appear in a type cast
     where the corresponding pointer component of the type of the expression
     being cast is not shared-qualified.\footnote{i.e., pointers-to-local
-    cannot be cast to pointers-to-shared.}  An exception is made when the constant
-    expression 0 is cast, the result is called the {\em null 
+    cannot be cast to pointers-to-shared.}  An exception is made when 
+    \xreplaced[id=DB]{65}{a null pointer constant}{the constant expression 0}
+    is cast, the result is called the {\em null 
     pointer-to-shared}.\footnote{[ISO/IEC00 Sec.
     6.3.2.3/6.5.16.1] imply that an implicit cast is allowed for zero
     and that all null pointers-to-shared compare equal.}
@@ -336,7 +344,9 @@ as keywords and shall not be otherwise used.
 {\bf Semantics} 
 
 \np The casting or assignment from one pointer-to-shared 
-    to another in which either the type size or block size differs results  in 
+    to another in which either the type size or block size differs,
+    \xadded[id=DB]{70}{or either type is incomplete,}
+    results in 
     a pointer with a zero phase, unless one of the types is a qualified or
     unqualified version of {\tt shared void*}, the {\em generic pointer-to-shared},
     in which case the phase is preserved unchanged in the resulting
@@ -490,6 +500,11 @@ as keywords and shall not be otherwise used.
 
 \np A layout qualifier of [*] shall not appear in the
     declaration specifiers of a pointer type.
+
+\np \xadded[id=DB]{71}{
+    A layout qualifier of [*] shall not appear in the declaration specifiers of
+    a declaration whose storage-class specifier is typedef.
+    }
 
 \np A layout qualifier shall not appear in the type
     qualifiers for the referenced type in a pointer to void type.
@@ -665,10 +680,18 @@ assignment-expression }{\bf ]}
     shall only occur either alone or when multiplied by an integer
     constant expression.\footnote{In the {\em static THREADS} environment
     THREADS is an integer constant expression, and is therefore valid in
-    all dimensions.} \footnote{This implies the THREADS expression
-    shall not appear anywhere in the declarator of a shared array with
-    indefinite blocksize under the {\em dynamic THREADS} environment.}
+    all dimensions.} 
 
+\np \xadded[id=DB]{15}{
+    The THREADS expression
+    shall not appear anywhere in the declarator of a shared array with 
+    indefinite blocksize under the {\em dynamic THREADS} environment.
+    }
+
+\np \xadded[id=DB]{78}{
+    If an init-declarator that declares an array with shared-qualified elements
+    includes an initializer, the behavior is implementation-defined.
+    }
 
 {\bf Semantics} 
 
@@ -788,7 +811,9 @@ assignment-expression }{\bf ]}
 
 {\bf Constraints} 
 
-\np{\em expression} shall have type {\tt int}. 
+\np{\em expression} shall have
+\xadded[id=DB]{64}{a type such that its value may be assigned to an object of}
+type {\tt int}. 
 
 
 {\bf Semantics} 
@@ -964,6 +989,7 @@ expression$_{opt}${\bf ;}}\\
 \np When {\em affinity} is an integer expression, the loop body of
     the {\tt upc\_forall} statement is executed for each iteration in which
     the value of {\tt MYTHREAD} equals the value {\em affinity }{\tt mod THREADS}.
+    \xadded[id=DB]{59}{If the value of {\em affinity} is negative, behavior is undefined.}
 
 \np When {\em affinity} is {\tt continue} or not specified, each loop
     body of the {\tt upc\_forall} statement is performed by every thread and
@@ -1034,7 +1060,9 @@ expression$_{opt}${\bf ;}}\\
 \end{verbatim}
    Each thread evaluates foo1() exactly once, before any further action on that
    thread. Each thread will execute foo2() and foo3() in alternating sequence, 
-   10 times on each thread. Assuming there is no enclosing upc\_forall loop, 
+   10 times on each thread,
+   \xadded[id=DB]{29}{followed by a final call to foo2() on each thread before the loop terminates.}
+   Assuming there is no enclosing upc\_forall loop, 
    foo4() will be evaluated exactly 10 times total before the last thread exits the 
    loop, once with each of i=0..9. Evaluations of foo4() may occur on different 
    threads (as determined by the affinity clause) with no implied synchronization 
