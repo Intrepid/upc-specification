@@ -22,6 +22,10 @@ feature macro {\_\_UPC\_CASTABLE\_\_} to the value 1.
 
 {\tt <upc\_castable.h>}
 
+\np Unless otherwise noted, all of the functions, types and macros
+specified in Section~\ref{upc-castable}
+are declared by the header {\tt <upc\_castable.h>}.
+
 \subsubsection{Castability Functions}
 
 \paragraph{The {\tt upc\_cast} function}
@@ -40,7 +44,7 @@ feature macro {\_\_UPC\_CASTABLE\_\_} to the value 1.
 
 \np The {\tt upc\_cast} function converts the specified
 pointer-to-shared to a valid pointer-to-local.  If such a conversion
-is not possible, the value NULL is returned.  The conversion will be considered possible only if the returned
+is not possible, a null pointer is returned.  The conversion will be considered possible only if the returned
 pointer-to-local may be used to read and write the target thread's
 entire contiguous portion of the largest shared object
 containing the specified shared address.
@@ -51,13 +55,18 @@ containing the specified shared address.
 \np If the target of the {\tt ptr} pointer has affinity to the current
 thread, {\tt upc\_cast(ptr)} is equivalent to {\tt (void *)ptr}.
 
-\np If the {\tt ptr} pointer is null, {\tt upc\_cast} returns NULL.
+\np If the {\tt ptr} pointer is null, {\tt upc\_cast} returns a null pointer.
 
 \np The pointer returned by {\tt upc\_cast} is valid only in the calling
 thread.  It cannot be assumed that the return value may be passed to
 a different thread and used by that thread.  It also cannot be assumed that two
 threads calling {\tt upc\_cast} with the same argument will get the same
 return value.
+
+\np The pointer returned by {\tt upc\_cast} remains valid for the lifetime
+of the referenced shared object.  In particular, if the referenced shared
+object was dynamically allocated, the pointer is no longer valid after the 
+associated shared memory has been freed.
 
 \paragraph{The {\tt upc\_thread\_info} function}
 \index{upc\_thread\_info}
@@ -74,21 +83,22 @@ return value.
 
 \index{upc\_thread\_info\_t}
 \np The {\tt upc\_thread\_info} function returns information about
-potential uses of the {\tt upc\_cast} function on objects with
-affinity to the specified thread.  The information is returned in a
+potential uses of the {\tt upc\_cast} function in the calling
+thread in reference to objects with
+affinity to thread {\tt threadId}.  The information is returned in a
 {\tt upc\_thread\_info\_t} structure, with the following fields:
 
 \begin{description}
-\item{\tt int guaranteedCastable}
+\item{\tt int guaranteedCastable} \hfill \\
 Indicates which memory regions are guaranteed to be castable.
-\item{\tt int probablyCastable}
+\item{\tt int probablyCastable} \hfill \\
 Indicates which memory regions are likely (but not guaranteed)
 to be castable.
 \end{description}
 
 \np An implementation may provide additional fields in this structure,
 allowing {\tt upc\_thread\_info} to return other information about
-the specified thread.
+thread {\tt threadId} with respect to the calling thread.
 
 \np The {\tt guaranteedCastable} and {\tt probablyCastable} fields
 contain coded integer values indicating memory regions.  If the flag
@@ -106,22 +116,27 @@ unique bitwise representation that can be unambiguously tested using the
 bitwise AND operator (\&).
 
 \begin{description}
-\item[{\tt UPC\_CASTABLE\_NONE}] \hfill \\
-No memory regions are indicated by this field.  {\tt UPC\_CASTABLE\_NONE}
-shall be defined to be zero.
+\index{UPC\_CASTABLE\_ALL\_ALLOC}
 \item[{\tt UPC\_CASTABLE\_ALL\_ALLOC}] \hfill \\
 Refers to memory allocated via {\tt upc\_all\_alloc}.
+\index{UPC\_CASTABLE\_GLOBAL\_ALLOC}
 \item[{\tt UPC\_CASTABLE\_GLOBAL\_ALLOC}] \hfill \\
 Refers to memory allocated via {\tt upc\_global\_alloc}.
+\index{UPC\_CASTABLE\_ALLOC}
 \item[{\tt UPC\_CASTABLE\_ALLOC}] \hfill \\
 Refers to memory allocated via {\tt upc\_alloc}.
+\index{UPC\_CASTABLE\_STATIC}
 \item[{\tt UPC\_CASTABLE\_STATIC}] \hfill \\
 Refers to shared variables defined via static and file scope declarations.
-\item[{\tt UPC\_CASTABLE\_ALL}] \hfill \\
-Refers to all regions of shared memory.  {\tt UPC\_CASTABLE\_ALL} shall
-be defined to be all the region-specific values combined via bitwise
-OR ({\textbar}) operations.
 \end{description}
+
+\np The macro {\tt UPC\_CASTABLE\_ALL} shall
+be defined to be all the region-specific values combined via bitwise
+OR ({\textbar}) operations.  It is defined for convenient testing of
+whether all shared memory regions are covered in the returned flag.
+
+\np If no memory regions are indicated by the returned flag, the flag
+value shall be zero.
 
 \pagebreak
 \appendix
