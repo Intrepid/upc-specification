@@ -131,7 +131,10 @@ conflicting accesses issued {\em outside} the transfer interval is as if the tra
 performed by a set of relaxed shared reads and relaxed shared writes of
 unspecified size and order, issued at unspecified times anywhere within the transfer
 interval by the initiating thread. Conflicting accesses {\em inside} the transfer interval
-have undefined results, as specified in the preceding paragraphs.  
+have undefined results, as specified in the preceding paragraphs.~%
+\footnote{The restrictions described in the three preceding paragraphs are a direct consequence of 
+[UPC Language Specifications, Section B.3.2.1], and also apply to the blocking \memstar functions.
+They are explicitly stated here for clarity.}
 Here {\em inside} and {\em outside} are defined by the {\tt Precedes()} program order for 
 accesses issued by the initiating thread; accesses issued by other threads are considered {\em inside} 
 unless every possible and valid $<_{strict}$ relationship orders them outside the transfer interval.~%
