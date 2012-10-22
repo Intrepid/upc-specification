@@ -336,7 +336,9 @@ as keywords and shall not be otherwise used.
 {\bf Semantics} 
 
 \np The casting or assignment from one pointer-to-shared 
-    to another in which either the type size or block size differs results  in 
+    to another in which either the type size or block size differs,
+    \xadded[id=DB]{70}{or either type is incomplete,}
+    results in 
     a pointer with a zero phase, unless one of the types is a qualified or
     unqualified version of {\tt shared void*}, the {\em generic pointer-to-shared},
     in which case the phase is preserved unchanged in the resulting
@@ -788,7 +790,9 @@ assignment-expression }{\bf ]}
 
 {\bf Constraints} 
 
-\np{\em expression} shall have type {\tt int}. 
+\np{\em expression} shall have
+\xadded[id=DB]{64}{a type such that its value may be assigned to an object of}
+type {\tt int}. 
 
 
 {\bf Semantics} 
@@ -1034,7 +1038,9 @@ expression$_{opt}${\bf ;}}\\
 \end{verbatim}
    Each thread evaluates foo1() exactly once, before any further action on that
    thread. Each thread will execute foo2() and foo3() in alternating sequence, 
-   10 times on each thread. Assuming there is no enclosing upc\_forall loop, 
+   10 times on each thread,
+   \xadded[id=DB]{29}{followed by a final call to foo2() on each thread before the loop terminates.}
+   Assuming there is no enclosing upc\_forall loop, 
    foo4() will be evaluated exactly 10 times total before the last thread exits the 
    loop, once with each of i=0..9. Evaluations of foo4() may occur on different 
    threads (as determined by the affinity clause) with no implied synchronization 
