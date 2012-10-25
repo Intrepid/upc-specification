@@ -7,7 +7,7 @@
     Sec 7.19].  All the characteristics of library functions described
     in [ISO/IEC00 Sec 7.1.4] apply to these as well.  Implementations
     that support this interface shall predefine the feature macro {\tt
-    \_\_UPC\_ATOMIC\_\_} to the value 1.
+    \_\_UPC\_AMO\_\_} to the value 1.
 
 % STANDARD HEADERS
 \subsubsection{Standard headers}
@@ -40,10 +40,10 @@
 
 \begin{center}
 \begin{tabular}{l|ccccc}
-Type           & {\tt UPC\_CSWAP} & Bit-wise Ops & Numeric Ops \\ \hline
-Integer        &  X               &  X           &  X          \\
-Floating Point &  X               &              &  X          \\
-{\tt UPC\_PTS} &  X               &              &             \\
+Type           & Accessors & Bit-wise Ops & Numeric Ops \\ \hline
+Integer        &  X        &  X           &  X          \\
+Floating Point &  X        &              &  X          \\
+{\tt UPC\_PTS} &  X        &              &             \\
 \end{tabular}
 \end{center}
 
@@ -54,11 +54,18 @@ Floating Point &  X               &              &  X          \\
     {\tt UPC\_INT64}, and {\tt UPC\_UINT64}.
   \item[-] Supported floating-point types are {\tt UPC\_FLOAT} and
     {\tt UPC\_DOUBLE}.
+  \item[-] Supported accessors are {\tt UPC\_GET}, {\tt UPC\_SET}, and
+    {\tt UPC\_CSWAP}.
   \item[-] Supported bit-wise operations are {\tt UPC\_AND}, {\tt UPC\_OR},
     and {\tt UPC\_XOR}.
-  \item[-] Supported numeric operations are {\tt UPC\_GET}, {\tt UPC\_SET},
+  \item[-] Supported numeric operations are
     {\tt UPC\_ADD}, {\tt UPC\_MAX}, and {\tt UPC\_MIN}.
 \end{itemize}
+
+\np The {\tt UPC\_GET}, {\tt UPC\_SET}, and {\tt UPC\_CSWAP} value macros are
+    defined in {\tt <upc\_amo.h>}.  All other {\tt UPC\_*} value macros used
+    in this subsection are defined by {\tt <upc\_types.h>} (see
+    \upcopsection{} and \upctypesection{}).
 
 % AMO-SPECIFIC TYPES
 \subsubsection{AMO-Specific Types}
@@ -96,7 +103,7 @@ Floating Point &  X               &              &  X          \\
     to allow the specification of a ``hint'' to an implementation to indicate
     a \emph{preferred} mode of optimization for the implementation.
 \begin{description}
-  \item[{\tt 0}]
+  \item[{\tt UPC\_AMO\_HINT\_DEFAULT == 0}]
     An implementation-defined default mode
   \item[{\tt UPC\_AMO\_HINT\_LATENCY}]
     Favor low-latency atomic memory operations
@@ -106,49 +113,9 @@ Floating Point &  X               &              &  X          \\
     Implementation-defined additional hint values
 \end{description}
 
-% -- upc_amolock_t
-\paragraph{The {\tt upc\_amolock\_t} type}
-\index{upc\_amolock\_t}
-
-\npf The type declared is
-\begin{verbatim}
-    upc_amolock_t
-\end{verbatim}
-
-\np The following constants of type {\tt upc\_amolock\_t} shall be defined
-    to indicate whether a specified set of atomic memory operations for a
-    specified type are implemented with or without locks.
-\begin{description}
-  \item[{\tt UPC\_AMO\_LOCK\_FREE}]
-    The AMO is implemented without locks
-  \item[{\tt UPC\_AMO\_NOT\_LOCK\_FREE}]
-    The AMO is implemented using locks
-\end{description}
-
 % AMO FUNCTIONS
 \subsubsection{AMO Functions}
 \label{upc-amo-functions}
-
-% -- upc_amo_query()
-\paragraph{The {\tt upc\_amo\_query} function}
-\index{upc\_amo\_query}
-
-{\bf Synopsis}
-
-\npf\vspace{-1.8em}
-\begin{verbatim}
-    #include <upc_amo.h>
-    upc_amolock_t upc_amo_query(upc_type_t type, upc_op_t ops,
-         shared void *addr);
-\end{verbatim}
-
-{\bf Description}
-
-\np The {\tt upc\_amo\_query} function shall return {\tt UPC\_AMO\_LOCK\_FREE}
-    if and only if the atomic operations specified by {\tt ops} can be
-    supported in a lock-free implementation for the datatype specified by
-    {\tt type} with alignment to the address {\tt addr}.  Otherwise, the
-    function shall return {\tt UPC\_AMO\_NOT\_LOCK\_FREE}.
 
 % -- upc_all_amodomain_alloc()
 \paragraph{The {\tt upc\_all\_amodomain\_alloc} function}
@@ -160,7 +127,7 @@ Floating Point &  X               &              &  X          \\
 \begin{verbatim}
     #include <upc_amo.h>
     upc_amodomain_t *upc_all_amodomain_alloc(upc_type_t type,
-         upc_op_t ops, upc_amohint_t mode);
+         upc_op_t ops, upc_amohint_t hints);
 \end{verbatim}
 
 {\bf Description}
@@ -178,55 +145,25 @@ Floating Point &  X               &              &  X          \\
     \upctypesection{}.
 
 \np The {\tt ops} parameter specifies the atomic operations to be supported by
-    the atomicity domain.  The valid {\tt upc\_op\_t} values and their meanings
-    are listed in \upcopsection{}.  Multiple {\tt upc\_op\_t} values
+    the atomicity domain.  The {\tt ops} parameter shall only specify
+    operations within the set permitted for {\tt type} (as defined in
+    \ref{upc-amo-reqs}), otherwise behavior is undefined.
+    Multiple atomic operation value macros from \ref{upc-amo-reqs}
     can be combined by using the bitwise OR operator ($|$), and each value has
     a unique bitwise representation that can be unambiguously tested using the
     bitwise AND operator ({\tt \&}).
-
-\np The {\tt ops} parameter shall only specify operations within the set
-    permitted for {\tt type} (as defined in \ref{upc-amo-reqs}), otherwise
-    behavior is undefined.
 
 \np The implementation is free to ignore the {\tt hints} parameter.
 
 \np EXAMPLE: Collectively allocate an atomicity domain that supports the
     addition, maximum, and minimum operations (i.e., {\tt UPC\_ADD},
     {\tt UPC\_MAX}, {\tt UPC\_MIN}) on signed 64-bit integers (i.e.,
-    {\tt UPC\_INT64}).
+    {\tt int64\_t}).
 \begin{verbatim}
     #include <upc_amo.h>
     upc_amodomain_t* domain = upc_all_amodomain_alloc(
          UPC_INT64, UPC_ADD | UPC_MAX | UPC_MIN, 0);
 \end{verbatim}
-
-% -- upc_amodomain_free()
-\paragraph{The {\tt upc\_amodomain\_free} function}
-\index{upc\_amodomain\_free}
-
-{\bf Synopsis}
-
-\npf\vspace{-1.8em}
-\begin{verbatim}
-    #include <upc_amo.h>
-    void upc_amodomain_free(upc_amodomain_t *ptr);
-\end{verbatim}
-
-{\bf Description}
-
-\np The {\tt upc\_amodomain\_free} function frees all resources associated with
-    the dynamically-allocated {\tt upc\_amodomain\_t} object pointed to by
-    {\tt ptr}.  If {\tt ptr} is a null pointer, no action occurs.  Otherwise,
-    if the argument does not match a pointer earlier returned by the
-    {\tt upc\_all\_amodomain\_alloc} function, or if the atomicity domain has
-    been deallocated by a previous call to {\tt upc\_amodomain\_free},%
-    \footnote{i.e., only one thread may call {\tt upc\_amodomain\_free} for
-    each allocation}, or a previous call to {\tt upc\_all\_amodomain\_free},
-    the behavior is undefined.
-
-\np Any subsequent calls from any thread to atomic memory operation functions
-    referencing the atomicity domain pointed to by {\tt ptr} have undefined
-    effects.
 
 % -- upc_all_amodomain_free()
 \paragraph{The {\tt upc\_all\_amodomain\_free} function}
@@ -273,12 +210,16 @@ Floating Point &  X               &              &  X          \\
 \npf\vspace{-1.8em}
 \begin{verbatim}
     #include <upc_amo.h>
-    void upc_amo_strict(upc_amodomain_t *domain, void *fetch_ptr,
-         upc_op_t op, shared void *target,
-         const void *operand1, const void *operand2);
-    void upc_amo_relaxed(upc_amodomain_t *domain, void *fetch_ptr,
-         upc_op_t op, shared void *target,
-         const void *operand1, const void *operand2);
+    void upc_amo_strict(upc_amodomain_t *domain,
+         void * restrict fetch_ptr, upc_op_t op,
+         shared void * restrict target,
+         const void * restrict operand1,
+         const void * restrict operand2);
+    void upc_amo_relaxed(upc_amodomain_t *domain,
+         void * restrict fetch_ptr, upc_op_t op,
+         shared void * restrict target,
+         const void * restrict operand1,
+         const void * restrict operand2);
 \end{verbatim}
 
 {\bf Description}
@@ -299,11 +240,19 @@ Floating Point &  X               &              &  X          \\
         where {\tt op} is {\tt UPC\_GET} \\
     \end{verse}
 
+\np The arguments {\tt operand1} and {\tt operand2} shall each have a null
+    pointer value for those operations that do not require them.%
+    \footnote{That is, for all permitted operations other than {\tt UPC\_CSWAP},
+    {\tt operand2} shall have a null pointer value, and for {\tt UPC\_GET}
+    both {\tt operand1} and {\tt operand2} shall have a null pointer value.}
+
 \np The value of the object pointed to by {\tt target} prior to performing
     the specified update is stored in {\tt fetch\_ptr} if and only if
     {\tt fetch\_ptr $\neq$ NULL}.%
-    \footnote{Note that if {\tt op} is {\tt UPC\_GET} and
-              {\tt fetch\_ptr == NULL}, the effect is a no-op.}
+    \footnote{{\bf NB}, if {\tt op} is {\tt UPC\_SET} and {\tt *fetch\_ptr} is
+      a non-null pointer value, the effect is an unconditional atomic swap.}
+    If {\tt op} is {\tt UPC\_GET}, {\tt *fetch\_ptr} shall have a non-null
+    pointer value.
 
 \np The {\tt upc\_amo\_strict} function performs the atomic update as a strict
     shared access, while the {\tt upc\_amo\_relaxed} function performs the
@@ -320,5 +269,32 @@ Floating Point &  X               &              &  X          \\
     upc_amodomain_t* domain = upc_all_amodomain_alloc(
          UPC_UINT64, UPC_ADD, 0);
     upc_amo_relaxed(domain, &oldval, UPC_ADD, &val, &ONE, 0);
-    
 \end{verbatim}
+
+% -- upc_amo_isfast()
+\paragraph{The {\tt upc\_amo\_isfast} function}
+\index{upc\_amo\_isfast}
+
+{\bf Synopsis}
+
+\npf\vspace{-1.8em}
+\begin{verbatim}
+    #include <upc_amo.h>
+    upc_amolock_t upc_amo_isfast(upc_type_t type, upc_op_t ops,
+         shared void *addr);
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_amo\_isfast} function queries the implementation to determine
+    the expected performance of performing a {\tt upc\_amo\_relaxed} call on
+    {\tt addr}, using a domain allocated with the arguments {\tt type} and
+    {\tt ops}.  The call returns non-zero if the performance is expected to be
+    comparable to the fasted expected performance of {\tt upc\_amo\_relaxed}
+    for any combination of {\tt addr}, {\tt type}, and {\tt ops}.  Otherwise
+    the function returns zero.%
+    \footnote{This function allows the implementation to report which
+    combinations of type, ops, and alignment are best supported; e.g., using
+    hardware atomic instructions.  Some implementations may also return zero
+    when {\tt upc\_threadof(addr)} is not equal to the calling thread, to
+    indicate the additional cost of remote access.}
