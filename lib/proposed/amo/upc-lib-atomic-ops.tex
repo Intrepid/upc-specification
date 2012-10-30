@@ -266,7 +266,8 @@ Floating Point &  X        &              &  X          \\
       {\tt *target = *target - 1}, 
         where {\tt op} is {\tt UPC\_DEC} \\
       {\tt *target = (*target == *operand1) ? *operand2 : *target},
-        where {\tt op} is {\tt UPC\_CSWAP} \\
+        where {\tt op} is {\tt UPC\_CSWAP}%
+        \footnote{UPC\_CSWAP does not fail spuriously, for example due to cache events.} \\
       {\tt *target = *operand1},
         where {\tt op} is {\tt UPC\_SET} \\
       {\tt *target} is unchanged,
@@ -305,7 +306,8 @@ Floating Point &  X        &              &  X          \\
 \np The {\tt upc\_amo\_relaxed} function {\em atomically} performs a relaxed shared read of {\tt *target} 
     followed by a relaxed shared write of {\tt *target}. 
     The {\tt upc\_amo\_strict} function {\em atomically} performs a strict shared read of {\tt *target} 
-    followed by a strict shared write of {\tt *target}. The write is omitted for {\tt UPC\_GET}, 
+    followed by a strict shared write of {\tt *target}. The write is omitted for {\tt UPC\_GET} 
+    or a {\tt UPC\_CSWAP} that fails, 
     and the read is omitted for {\tt UPC\_SET} when {\tt fetch\_ptr} is a null pointer.
     {\em Atomically} requires the read and write accesses comprising one AMO shall not appear (to any thread) 
     to have been interleaved (or word-torn) with the read/write pair of a conflicting AMO to the same location
