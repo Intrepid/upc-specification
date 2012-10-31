@@ -327,8 +327,9 @@ as keywords and shall not be otherwise used.
 \npf A shared type qualifier shall not appear in a type cast
     where the corresponding pointer component of the type of the expression
     being cast is not shared-qualified.\footnote{i.e., pointers-to-local
-    cannot be cast to pointers-to-shared.}  An exception is made when the constant
-    expression 0 is cast, the result is called the {\em null 
+    cannot be cast to pointers-to-shared.}  An exception is made when 
+    \xreplaced[id=DB]{65}{a null pointer constant}{the constant expression 0}
+    is cast, the result is called the {\em null 
     pointer-to-shared}.\footnote{[ISO/IEC00 Sec.
     6.3.2.3/6.5.16.1] imply that an implicit cast is allowed for zero
     and that all null pointers-to-shared compare equal.}
@@ -492,6 +493,11 @@ as keywords and shall not be otherwise used.
 
 \np A layout qualifier of [*] shall not appear in the
     declaration specifiers of a pointer type.
+
+\np \xadded[id=DB]{71}{
+    A layout qualifier of [*] shall not appear in the declaration specifiers of
+    a declaration whose storage-class specifier is typedef.
+    }
 
 \np A layout qualifier shall not appear in the type
     qualifiers for the referenced type in a pointer to void type.
@@ -968,6 +974,7 @@ expression$_{opt}${\bf ;}}\\
 \np When {\em affinity} is an integer expression, the loop body of
     the {\tt upc\_forall} statement is executed for each iteration in which
     the value of {\tt MYTHREAD} equals the value {\em affinity }{\tt mod THREADS}.
+    \xadded[id=DB]{59}{If the value of {\em affinity} is negative, behavior is undefined.}
 
 \np When {\em affinity} is {\tt continue} or not specified, each loop
     body of the {\tt upc\_forall} statement is performed by every thread and
