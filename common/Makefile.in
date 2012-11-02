@@ -3,7 +3,7 @@ BIN_DIR = $(abspath $(COMMON))
 LATEX_DIR = $(abspath $(COMMON)/latex)
 
 PATH := $(PATH):$(BIN_DIR)
-TEXINPUTS := .:$(COMMON):${LATEX_DIR}:$(TEXINPUTS)
+TEXINPUTS := .:$(COMMON):$(LATEX_DIR):$(TEXINPUTS)
 
 LATEX_MK ?= latex-mk
 
