@@ -37,23 +37,30 @@ are declared by the header {\tt <upc\_castable.h>}.
 \npf\vspace{-2.5em}
 \begin{verbatim}
     #include <upc_castable.h>
-    void *upc_cast(shared void *ptr);
+    void *upc_cast(const shared void *ptr);
 \end{verbatim}
 
 {\bf Description}
 
 \np The {\tt upc\_cast} function converts the specified
 pointer-to-shared to a valid pointer-to-local.  If such a conversion
-is not possible, a null pointer is returned.  The conversion will be considered possible only if the returned
-pointer-to-local may be used to read and write the target thread's
-entire contiguous portion of the largest shared object
-containing the specified shared address.
+is not possible, a null pointer is returned.
 
-\np If the conversion is possible, the pointer is referred to as {\em castable}.
+\np The pointer {\tt ptr} points into one or more shared objects.
+Consider the portions of all of these shared objects with affinity to
+{\tt upc\_threadof(ptr)}.  Choose the shared object
+containing {\tt ptr} where the portion with this affinity is largest.
+The conversion performed by the
+{\tt upc\_cast} function will be considered possible only if this entire
+portion may be read and written by the current thread based on the returned
+pointer-to-local value.
+
 \index{castable}
+\np If the conversion is possible, the pointer-to-shared value is referred to as
+{\em castable}.
 
-\np If the target of the {\tt ptr} pointer has affinity to the current
-thread, {\tt upc\_cast(ptr)} is equivalent to {\tt (void *)ptr}.
+\np If {\tt upc\_threadof(ptr)} is equal to
+{\tt MYTHREAD}, {\tt upc\_cast(ptr)} is equivalent to {\tt (void *)ptr}.
 
 \np If the {\tt ptr} pointer is null, {\tt upc\_cast} returns a null pointer.
 
@@ -68,6 +75,10 @@ of the referenced shared object.  In particular, if the referenced shared
 object was dynamically allocated, the pointer is no longer valid after the 
 associated shared memory has been freed.
 
+\np If a call to {\tt upc\_cast} succeeds, subsequent calls by the same thread
+with the same pointer, or with a pointer into the same object and with the same
+affinity, are also guaranteed to succeed for the lifetime of the object.
+
 \paragraph{The {\tt upc\_thread\_info} function}
 \index{upc\_thread\_info}
 
@@ -76,7 +87,7 @@ associated shared memory has been freed.
 \npf\vspace{-2.5em}
 \begin{verbatim}
     #include <upc_castable.h>
-    upc_thread_info_t upc_thread_info(int threadId);
+    upc_thread_info_t upc_thread_info(size_t threadId);
 \end{verbatim}
 
 {\bf Description}
@@ -104,14 +115,13 @@ thread {\tt threadId} with respect to the calling thread.
 contain coded integer values indicating memory regions.  If the flag
 for a particular region is set in the {\tt guaranteedCastable} field,
 it indicates that
-any pointer into that region in the specified target thread's memory is
+any pointer into that region with affinity to {\tt threadId} is
 castable.  If the flag is
 set for a particular region is set in the {\tt probablyCastable} field,
 it indicates that it is likely, but not guaranteed, that a pointer into
-that region is castable.
+that region with affinity to {\tt threadId} is castable.
 
-\np Flag values are as specified below.  Multiple flag values may be
-combined using the bitwise OR operator ({\textbar}).  Each flag has a
+\np Flag values are as specified below.  Each flag has a
 unique bitwise representation that can be unambiguously tested using the
 bitwise AND operator (\&).
 
@@ -130,8 +140,11 @@ Refers to memory allocated via {\tt upc\_alloc}.
 Refers to shared variables defined via static and file scope declarations.
 \end{description}
 
+\np Implementations may define additional memory region flags.
+
 \np The macro {\tt UPC\_CASTABLE\_ALL} shall
-be defined to be all the region-specific values combined via bitwise
+be defined to be all the region-specific values (including any
+implementation-specific values) combined via bitwise
 OR ({\textbar}) operations.  It is defined for convenient testing of
 whether all shared memory regions are covered in the returned flag.
 
