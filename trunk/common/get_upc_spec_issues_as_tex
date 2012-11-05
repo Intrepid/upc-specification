@@ -6,7 +6,8 @@ use Text::CSV;
 my $csv = Text::CSV->new ( { binary => 1 } );
 my $url = 'http://code.google.com/p/upc-specification/issues/'
           . 'csv?can=1&q=&colspec=ID%20Modified%20Type%20Status'
-	  . '%20Milestone%20Owner%20Summary%20Milestone&sort=id';
+	  . '%20Milestone%20Owner%20Summary%20Milestone&sort=id'
+	  . '&num=1000';
 my $first_line = 1;
 my @cname;
 my @issues;
