@@ -1,16 +1,23 @@
 \pagebreak
-\section{Proposed Additions and Extensions}
+\section{Additions and Extensions}
 \index{proposed extensions}
 
-\np This section contains proposed additions and extensions to the UPC
+\xchangenote[id=JD]{54}{UPDATED TO REFLECT NEW DOCUMENT ORGANIZATION}
+
+\np The UPC additions and extensions specification is divided into required
+    [UPC-LIB-REQ] and optional [UPC-LIB-OPT] library specifications.  Required extensions shall be provided by
+    a conformant UPC implementation, while a conformant UPC implementation is
+    not required to provide optional extensions.
+    The optional extensions specifications contains proposed additions and extensions to the UPC
     specification.  Such proposals are included when stable enough for
     developers to implement and for users to study and experiment with
     them.  However, their presence does not suggest long term support.
-    When fully stable and tested, they will be moved to the main body of
-    the specification.
+    When fully stable and tested, they will be moved to the required extensions
+    specification.
 
 \np This section also describes the process used to add new items to the
-    specification, which starts with inclusion in this section.  Requirements
+    additions and extensions specification, which starts with inclusion in the
+    optional extensions specification.  Requirements
     for inclusion are:\footnote{These requirements ensure that most of
     the semantic issues that arise during initial implementation have
     been addressed and prevents the accumulation of interfaces that no
@@ -32,11 +39,11 @@
 
 \np If all implementations drop support for an extension and/or all interested parties
     no longer believe the extension is worth pursuing, then it may simply be dropped.
-    Otherwise, the requirements for inclusion of an extension in the main body of the
-    specification are:
+    Otherwise, the requirements for inclusion of an extension in the required
+    extensions specification are:
 
 \begin{enumerate}
-\item Six months residence in this section.
+\item Six months residence in the optional extensions specification.
 
 \item The existence of either one (or more) publicly available "reference" implementation 
 written in standard UPC OR at least two independent implementations (possibly specific 
@@ -56,3 +63,7 @@ to a given UPC implementation).
    to be the interface version of the extension if it is supported, otherwise
    undefined.
 
+\index{header files}
+\np For each library extension, a separate header file whose name begins with
+    {\tt upc\_} shall be specified.  This header file shall be provided by an
+    implementation if the extension is supported.

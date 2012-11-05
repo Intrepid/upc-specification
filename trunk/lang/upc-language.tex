@@ -673,10 +673,18 @@ assignment-expression }{\bf ]}
     shall only occur either alone or when multiplied by an integer
     constant expression.\footnote{In the {\em static THREADS} environment
     THREADS is an integer constant expression, and is therefore valid in
-    all dimensions.} \footnote{This implies the THREADS expression
-    shall not appear anywhere in the declarator of a shared array with
-    indefinite blocksize under the {\em dynamic THREADS} environment.}
+    all dimensions.} 
 
+\np \xadded[id=DB]{15}{
+    The THREADS expression
+    shall not appear anywhere in the declarator of a shared array with 
+    indefinite blocksize under the {\em dynamic THREADS} environment.
+    }
+
+\np \xadded[id=DB]{78}{
+    If an init-declarator that declares an array with shared-qualified elements
+    includes an initializer, the behavior is implementation-defined.
+    }
 
 {\bf Semantics} 
 
