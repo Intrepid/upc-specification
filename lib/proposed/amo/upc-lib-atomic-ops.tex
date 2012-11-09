@@ -159,6 +159,8 @@ Floating Point &  X        &              &  X          \\
     unique type, specified by the {\tt type} parameter.  The {\tt upc\_type\_t}
     values and the corresponding type they specify are listed in
     \upctypesection{}.
+    The {\tt type} parameter shall specify a type permitted
+    by Section~\ref{upc-atomic-reqs}, otherwise behavior is undefined.
 
 \np The {\tt ops} parameter specifies the atomic operations to be supported by
     the atomicity domain.  The {\tt ops} parameter shall only specify
@@ -240,7 +242,7 @@ Floating Point &  X        &              &  X          \\
     argument to the {\tt upc\_all\_atomicdomain\_alloc} call used to construct
     {\tt domain}, otherwise behavior is undefined.
 
-\np The {\tt target} argument shall be a pointer to a location having the type
+\np The {\tt target} argument shall point to an object having the type
     specified in the {\tt type} argument to the {\tt upc\_all\_atomicdomain\_alloc} 
     call used to construct {\tt domain}, otherwise behavior is undefined. 
     The function treats the arguments {\tt fetch\_ptr}, {\tt target}, 
@@ -275,13 +277,13 @@ Floating Point &  X        &              &  X          \\
 
 \np The value of {\tt *target} prior to performing
     the specified update is stored in {\tt *fetch\_ptr} if and only if
-    {\tt fetch\_ptr $\neq$ NULL}.%
+    {\tt fetch\_ptr} is not a null pointer.%
     \footnote{If {\tt op} is {\tt UPC\_SET} and {\tt fetch\_ptr} is
     not a null pointer, the effect is an unconditional atomic swap.}
     If {\tt op} is {\tt UPC\_GET}, {\tt fetch\_ptr} shall not be a null pointer.
 
 \np The following requirements apply when {\tt domain} was allocated 
-    with {\tt type == UPC\_FLOAT} or {\tt type == UPC\_DOUBLE}:
+    with {\tt type} $\in$ \{{\tt UPC\_FLOAT}, {\tt UPC\_DOUBLE}\}:
     If {\tt *target}, {\tt *operand1} or {\tt *operand2} is a {\em signalling NaN} value 
     (as defined in [ISO/IEC00 Sec 5.2.4.2.2]), behavior is undefined.
     If {\tt op} is {\tt UPC\_CSWAP} and {\tt *target} or {\tt *operand1} is a {\em quiet NaN} value 
@@ -334,7 +336,7 @@ Floating Point &  X        &              &  X          \\
 {\bf Description}
 
 \np The {\tt upc\_atomic\_isfast} function queries the implementation to determine
-    the expected performance of performing a {\tt upc\_atomic\_relaxed} call on
+    the expected performance of a {\tt upc\_atomic\_relaxed} call on
     {\tt addr}, using a domain allocated with the arguments {\tt type} and
     {\tt ops}.  The call returns non-zero if the performance is expected to be
     comparable to the fastest expected performance of {\tt upc\_atomic\_relaxed}
