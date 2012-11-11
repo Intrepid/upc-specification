@@ -1,0 +1,269 @@
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
+
+% To avoid the introduction of an extra space at the beginning of
+% a definition, it is necessary to end each introducing term macro
+% invocation below with a %-sign.  This is the LaTeX comment symbol;
+% LaTeX will "eat" the newline and subsequent initial white space
+% on the next line; this is the desired behavior, necessary to avoid
+% the introduction of a spurious white space character.
+
+\section{Terms, definitions and symbols}
+
+\npf For the purpose of these specifications the following
+    definitions apply.
+
+\np Other terms are defined where they appear in {\em
+    italic} type or on the left hand side of a syntactical rule.
+
+\sterm{thread}% 
+     an instance of execution initiated by the execution
+     environment at program startup.
+
+\sterm{object}%
+     region of data storage in the execution environment
+     which can represent values.
+
+\ssterm{shared object}%
+    an object allocated using a shared-qualified
+    declarator or by a library function defined to create shared objects.
+    
+\np  NOTE \hspace{5pt}  All threads may access shared 
+     objects.\footnote{The file scope declaration
+     {\tt shared int x;} creates a single object which any thread may access.}
+   
+\ssterm{private object}%
+     any object which is not a shared object.
+
+\np  NOTE \hspace{5pt} Each thread declares and creates its own 
+     private objects which no other thread can access.
+     \footnote{The file scope declaration
+     {\tt int y;} creates a separate object for each thread to access.}
+
+\ssterm{shared array}%
+     an array with elements that have shared qualified type.
+  
+\sterm{affinity}%
+     logical association between shared
+     objects and threads.  Each element of data storage that contains
+     shared objects has affinity to exactly one thread.
+ 
+\sterm{pointer-to-shared}%
+     a pointer whose referenced type is shared-qualified.
+
+\sterm{pointer-to-local}%
+     a pointer whose referenced type is not
+     shared-qualified.
+
+\label{def-access}
+\sterm{access}%
+     $<$execution-time action$>$ to read or
+     modify the value of an object by a thread.
+
+\ssterm{shared access}%
+     an access using an expression whose type
+     is shared-qualified.
+
+\pterm{strict shared read}%
+     a shared read access which is determined to be
+     strict according to section \ref{type_qualifiers} of this specification.
+
+\pterm{strict shared write}%
+     a shared modify access which is determined to be
+     strict according to section \ref{type_qualifiers} of this specification.
+
+\pterm{relaxed shared read}%
+     a shared read access which is determined to be
+     relaxed according to section \ref{type_qualifiers} of this specification.
+
+\pterm{relaxed shared write}%
+     a shared modify access which is determined to be
+     relaxed according to section \ref{type_qualifiers} of this specification.
+
+\ssterm{local access}%
+     an access using an expression whose type
+     is not shared-qualified.
+
+\index{synchronization}
+\sterm{collective}%
+     constraint placed on some language 
+     operations which requires evaluation of such operations to be
+     matched across all threads.%
+     \footnote{A collective operation need not provide any
+     actual synchronization between threads, unless otherwise noted.
+     The collective requirement simply states a relative ordering property
+     of calls to collective operations that must be maintained in the
+     parallel execution trace for all executions of any legal program.
+     Some implementations may include unspecified synchronization between
+     threads within collective operations, but programs must not rely upon
+     \xaddedFN{the presence or absence of}
+     such unspecified synchronization for correctness.}%
+     \xFNinfo[DB]{4}
+     The behavior of collective operations is undefined unless all threads
+     execute the same sequence of collective operations.
+
+\sterm{single-valued}%
+     an operand to a collective operation, which has
+     the same value on every thread.  The behavior of the operation
+     is otherwise undefined.
+
+\sterm{phase}%
+     an unsigned integer value associated with a
+     pointer-to-shared which indicates the element-offset within an
+     affinity block; used in pointer-to-shared arithmetic
+     to determine affinity boundaries.
+
+\addtocontents{toc}{\protect\setcounter{tocdepth}{3}}
+
+\section{Conformance}
+
+\xchangenote[id=DB]{58}{TWO PARAGRAPHS THAT DUPLICATE C99 REMOVED}
+
+\npf  All terminology and requirements defined in [ISO/IEC00 Sec. 4] also apply
+      to this document and UPC implementations.
+
+\pagebreak
+\section{Environment}
+
+\subsection{Conceptual models}
+\subsubsection{Translation environment}
+
+\paragraph{Threads environment}
+\index{static THREADS environment}
+\index{dynamic THREADS environment}
+\npf A UPC program is translated under either a {\em static
+      THREADS} environment or a {\em dynamic THREADS} environment. Under
+      the static THREADS environment, the number of threads to be
+      used in execution is indicated to the translator in an
+      implementation-defined manner. If the actual execution
+      environment differs from this number of threads, the behavior of
+      the program is undefined.
+       
+\subsubsection{Execution environment}
+
+\npf This subsection provides the UPC parallel extensions of
+   [ISO/IEC00 Sec. 5.1.2]
+   
+\index{thread creation}
+\np A UPC program consists of a set of threads which may
+      allocate both shared and private objects.  
+      Accesses to these objects are defined as either
+      local or shared, based on the type of the access.  Each thread's local
+      accesses behave independently and exactly as described in 
+      [ISO/IEC00].  All shared accesses behave as described herein.
+
+\index{implicit barriers}
+\np There is an implicit {\tt upc\_barrier} at program startup
+     and termination.  Except as explicitly specified by {\tt upc\_barrier} operations
+     or by certain library functions (all of which are explicitly documented), there
+     are no other barrier synchronization guarantees among the threads.
+
+       {\bf Forward references:} {\tt upc\_barrier} (\ref{upc_barrier}).  
+
+\paragraph{Program startup}
+
+\index{program startup}
+\index{main}
+\npf In the execution environment of a UPC program, derived
+      from the hosted environment as defined in the C Standard [ISO/IEC00],
+      each thread calls the UPC program's {\tt main()}
+      function\footnote{e.g., in the program {\tt main()\{
+      printf("hello"); \} }, each thread prints {\tt hello}.}.
+
+\paragraph{Program termination}
+
+\index{program termination}
+\index{upc\_global\_exit}
+\index{exit}
+\npf A program is terminated by the termination of all the
+      threads\footnote{A barrier is automatically inserted at thread termination.} or a call
+      to the function {\tt upc\_global\_exit()}.
+
+\np Thread termination follows the C Standard definition of
+    program termination in [ISO/IEC00 Sec. 5.1.2.2.3]. A thread is
+    terminated by reaching the \}  that terminates the main
+    function, by a call to the exit function, or by a return from the
+    initial main. Note that thread termination does not imply the
+    completion of all I/O and that shared data allocated by a thread
+    either statically or dynamically shall not be freed before UPC
+    program termination.
+
+     {\bf Forward references:} {\tt upc\_global\_exit} (\ref{upc_global_exit}).  
+
+\paragraph{Program execution}
+\label{strict_relaxed}
+
+\index{memory consistency}
+\index{shared access}
+\index{strict shared read}
+\index{strict shared write}
+\index{relaxed shared read}
+\index{relaxed shared write}
+\index{sequential consistency}
+\index{program order}
+\index{data races}
+\npf Thread execution follows the C Standard definition of
+  program execution in [ISO/IEC00 Sec. 5.1.2.3].  This section describes
+  the additional operational semantics users can expect from accesses to shared
+  objects.  In a shared memory model such as UPC, operational
+  descriptions of semantics are insufficient to completely
+  and definitively describe a memory consistency model.  Therefore
+  Appendix \ref{mem-semantics} presents the formal memory
+  semantics of UPC.  The information presented in this section is consistent with
+  the formal semantic description, but not complete.  Therefore, implementations
+  of UPC based on this section alone may be non-compliant.
+  
+\np All shared accesses are classified as being either strict or relaxed,
+  as described in sections \ref{type_qualifiers} and \ref{pragmas}.
+  Accesses to shared objects via
+  pointers-to-local behave as relaxed shared accesses with respect to memory
+  consistency. Most synchronization-related language operations and library
+  functions (notably {\it upc\_fence}, {\it upc\_notify}, {\it upc\_wait}, and
+  {\it upc\_lock}/{\it upc\_unlock}) imply the consistency effects of a strict
+  access.
+
+\np In general, any sequence of purely relaxed shared accesses
+  issued by a given
+  thread in an execution may appear to be arbitrarily reordered relative to
+  program order by the implementation, and different threads need not agree upon
+  the order in which such accesses appeared to have taken place. The only
+  exception to the previous statement is that two relaxed accesses issued by a
+  given thread to the same memory location where at least one is a write will
+  always appear to all threads to have executed in program order. Consequently,
+  relaxed shared accesses should never be used to perform deterministic
+  inter-thread synchronization - synchronization should be performed using
+  language/library operations whenever possible, or otherwise using only strict
+  shared reads and strict shared writes.
+
+\np Strict accesses always appear (to all threads) to have executed
+  in program
+  order with respect to other strict accesses, and in a given execution all
+  threads observe the effects of strict accesses in a manner consistent with a
+  single, global total order over the strict operations. Consequently, an
+  execution of a program whose only accesses to shared objects are strict 
+  is guaranteed to behave in a sequentially consistent [Lam79] manner.
+
+\np When a thread's program order dictates a set of relaxed
+  operations followed by
+  a strict operation, all threads will observe the effects of the prior relaxed
+  operations made by the issuing thread (in some order) before observing the
+  strict operation. Similarly, when a thread's program order dictates a strict
+  access followed by a set of relaxed accesses, the strict access will be
+  observed by all threads before any of the subsequent relaxed accesses by the
+  issuing thread. Consequently, strict operations can be used to synchronize the
+  execution of different threads, and to prevent the apparent reordering of
+  surrounding relaxed operations across a strict operation.
+
+\np NOTE: It is anticipated that most programs will use the strict 
+  synchronization facilities provided by the
+  language and library (e.g. barriers, locks, etc) to synchronize threads and
+  prevent non-determinism arising from data races. A data race may occur whenever
+  two or more relaxed operations from different threads access the same location
+  with no intervening strict synchronization, and at least one such access is a
+  write. Programs which produce executions that are always free of data races (as
+  formally defined in Appendix \ref{mem-semantics}), are guaranteed to behave in
+  a sequentially consistent manner.
+
+   {\bf Forward references:} {\tt upc\_fence}, {\tt upc\_notify}, 
+    {\tt upc\_wait}, {\tt upc\_barrier} (\ref{upc_barrier}). {\tt upc\_lock},
+    {\tt upc\_unlock} (\ref{upc_lock}).
+    

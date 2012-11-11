@@ -1,0 +1,69 @@
+\pagebreak
+\section{Additions and Extensions}
+\index{proposed extensions}
+
+\xchangenote[id=JD]{54}{UPDATED TO REFLECT NEW DOCUMENT ORGANIZATION}
+
+\np The UPC additions and extensions specification is divided into required
+    [UPC-LIB-REQ] and optional [UPC-LIB-OPT] library specifications.  Required extensions shall be provided by
+    a conformant UPC implementation, while a conformant UPC implementation is
+    not required to provide optional extensions.
+    The optional extensions specifications contains proposed additions and extensions to the UPC
+    specification.  Such proposals are included when stable enough for
+    developers to implement and for users to study and experiment with
+    them.  However, their presence does not suggest long term support.
+    When fully stable and tested, they will be moved to the required extensions
+    specification.
+
+\np This section also describes the process used to add new items to the
+    additions and extensions specification, which starts with inclusion in the
+    optional extensions specification.  Requirements
+    for inclusion are:\footnote{These requirements ensure that most of
+    the semantic issues that arise during initial implementation have
+    been addressed and prevents the accumulation of interfaces that no
+    one commits to implement. Nothing prevents the circulation of more
+    informal {\em what if} interface proposals from circulating in the
+    community before an extension reaches this point.}
+
+\begin{enumerate}
+\item A documented API which shall use the format and conventions of
+    this specification and [ISO/IEC00].
+
+\item Either a complete, publicly available, implementation of the API
+    or a set of publicly available example programs which demonstrate
+    the interface.
+    
+\item The concurrence of the UPC consortium that its inclusion would be
+    in the best interest of the language.    
+\end{enumerate}
+
+\np If all implementations drop support for an extension and/or all interested parties
+    no longer believe the extension is worth pursuing, then it may simply be dropped.
+    Otherwise, the requirements for inclusion of an extension in the required
+    extensions specification are:
+
+\begin{enumerate}
+\item Six months residence in the optional extensions specification.
+
+\item The existence of either one (or more) publicly available "reference" implementation 
+written in standard UPC OR at least two independent implementations (possibly specific 
+to a given UPC implementation).
+
+\item The existence of a significant base of experimental user experience
+   which demonstrates positive results with a substantial portion of the
+   proposed API.
+
+\item The concurrence of the UPC consortium that its inclusion would be
+    in the best interest of the language.
+\end{enumerate}
+
+\index{feature macros}
+\np For each extension, there shall be a predefined {\em feature macro}
+   beginning with {\tt \_\_UPC} which will be defined by an implementation
+   to be the interface version of the extension if it is supported, otherwise
+   undefined.
+
+\index{header files}
+\np For each library extension, a separate header file whose name begins with
+    {\tt upc\_} shall be specified.  This header file shall be provided by an
+    implementation if the extension is supported.

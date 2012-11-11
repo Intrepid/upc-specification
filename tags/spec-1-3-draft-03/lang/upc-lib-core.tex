@@ -1,0 +1,841 @@
+\pagebreak
+\section{Library}
+\subsection{Standard headers}
+
+\npf This subsection provides the UPC parallel extensions of
+    [ISO/IEC00 Sec 7.1.2].
+
+
+\np The standard headers are 
+
+\begin{verbatim}
+    <upc_strict.h> 
+    <upc_relaxed.h>
+    <upc.h> 
+    <upc_types.h> 
+\end{verbatim}
+
+\index{upc\_strict.h}
+\np Every inclusion of {\tt <upc\_strict.h>} asserts the upc 
+    strict pragma and has the effect of including {\tt <upc.h>}.
+
+\index{upc\_relaxed.h}
+\np Every inclusion of {\tt <upc\_relaxed.h>} asserts the upc 
+    relaxed pragma and has the effect of including {\tt <upc.h>}.
+
+\index{upc\_types.h}
+\np \xadded[id=DB]{10}{
+    Every inclusion of {\tt <upc.h>} has the effect of including {\tt <upc\_types.h>}.
+    }
+
+\index{collective}
+\np By convention, all UPC standard library functions are  named
+    using the prefix {\tt upc\_}.  Those which are collective have
+    prefix {\tt upc\_all\_}. 
+
+\pagebreak
+\subsection{UPC utilities \tt{<upc.h>}}
+\label{upc_h}
+
+\npf This subsection provides the UPC parallel extensions of
+    [ISO/IEC00 Sec 7.20].  All of the characteristics of library functions
+    described in [ISO/IEC00 Sec 7.1.4] apply to these as well.
+
+\np \xadded[id=DB]{91}{
+    Unless otherwise noted, all of the functions, types and macros
+    specified in Section~\ref{upc_h} 
+    are declared by the header {\tt <upc.h>}.
+    }
+
+\subsubsection{Termination of all threads}
+\label{upc_global_exit}
+
+{\bf Synopsis} 
+
+\index{upc\_global\_exit}
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+     void upc_global_exit(int status);
+\end{verbatim}
+
+{\bf Description}
+
+\np{\tt upc\_global\_exit()} flushes all I/O, releases all
+      storage, and terminates the execution for all active threads.
+
+\subsubsection{Shared memory allocation functions}
+\label{shared_allocation}
+\index{shared object, allocation}
+\index{memory allocation}
+
+\npf The UPC memory allocation functions return, if successful,
+    a pointer-to-shared which is suitably aligned so that it may be assigned 
+    to a pointer-to-shared of any type.  The pointer has zero phase and points
+    to the start of the allocated space.  If the space cannot be allocated, a null
+    pointer-to-shared is returned.
+    
+\np \xadded[id=DB]{12}{
+    There is no required correspondence between the functions specified 
+    in Section~\ref{shared_allocation} to allocate and free objects.
+    Either of the {\tt upc\_free} or {\tt upc\_all\_free} functions
+    may be used to free shared space allocated using {\tt upc\_all\_alloc},
+    {\tt upc\_global\_alloc} or {\tt upc\_alloc}.
+    }
+
+\paragraph{The {\tt upc\_global\_alloc} function}
+
+{\bf Synopsis} 
+
+\index{upc\_global\_alloc}
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    shared void *upc_global_alloc(size_t nblocks, size_t nbytes); 
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_global\_alloc} allocates shared space
+     compatible with the declaration:
+
+\begin{verbatim}
+        shared [nbytes] char[nblocks * nbytes]. 
+\end{verbatim}
+
+\np The {\tt upc\_global\_alloc} function is not a {\em
+    collective} function. If called by multiple threads,
+    all threads which make the call get different allocations.
+    If {\tt nblocks*nbytes} is zero, the result is a null pointer-to-shared.
+    
+\paragraph{The {\tt upc\_all\_alloc} function}
+
+{\bf Synopsis} 
+\index{upc\_all\_alloc}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    shared void *upc_all_alloc(size_t nblocks, size_t nbytes); 
+\end{verbatim}
+
+{\bf Description}
+
+\np{\tt upc\_all\_alloc} is a {\em collective} function with
+    {\em single-valued} arguments.
+
+\np The {\tt upc\_all\_alloc} function allocates  shared 
+      space compatible with the following declaration:
+
+\begin{verbatim}
+    shared [nbytes] char[nblocks * nbytes].  
+\end{verbatim}
+
+\np The {\tt upc\_all\_alloc} function returns the same pointer
+   value on all threads. 
+   If {\tt nblocks*nbytes} is zero, the result is a null pointer-to-shared.
+   
+\np The dynamic lifetime of an allocated object extends from
+   the time any thread completes the call to {\tt upc\_all\_alloc}
+   until any thread has deallocated the object.
+
+\paragraph{The {\tt upc\_alloc} function}
+
+{\bf Synopsis} 
+\index{upc\_alloc}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    shared void *upc_alloc(size_t nbytes); 
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_alloc} function allocates shared space of at
+    least {\tt nbytes} bytes with affinity to the calling thread. 
+
+\np{\tt upc\_alloc} is similar to malloc() except that it
+    returns a pointer-to-shared value. It is not a {\em collective} function.
+    If {\tt nbytes} is zero, the result is a null pointer-to-shared.
+
+\cbstart
+\xdeletedncb[id=DB]{82}{SECTION REMOVED: The {\tt upc\_local\_alloc} function {\em deprecated}}
+\cbend
+
+\paragraph{The {\tt upc\_free} function}
+
+{\bf Synopsis} 
+\index{upc\_free}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    void upc_free(shared void *ptr); 
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_free} function frees the dynamically
+    allocated shared storage pointed to by {\tt ptr}.  If {\tt ptr} is
+    a null pointer, no action occurs.  Otherwise, if the argument does
+    not match a pointer earlier returned by the {\tt upc\_alloc},
+\xdeleted[id=DB]{82}{ {\tt upc\_local\_alloc}, }
+    {\tt upc\_global\_alloc} or {\tt upc\_all\_alloc} functions,
+    or if the space has been deallocated by a previous call
+    to {\tt upc\_free} by any thread,\footnote{i.e., only one thread may call {\tt upc\_free} for
+     each allocation} 
+    \xadded[id=DB]{12}{or a previous call to {\tt upc\_all\_free}}, 
+    the behavior is undefined.
+
+\cbstart
+\paragraph{The {\tt upc\_all\_free} function}
+\xchangenote[id=DB]{12}{SECTION ADDED}
+
+{\bf Synopsis} 
+\index{upc\_all\_free}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    void upc_all_free(shared void *ptr); 
+\end{verbatim}
+
+{\bf Description}
+
+\np {\tt upc\_all\_free} is a {\em collective} variant of {\tt upc\_free}, provided as a convenience.
+    It must be called collectively by all threads with the {\em single-valued} argument {\tt ptr}.
+
+\np The {\tt upc\_all\_free} function frees the dynamically
+    allocated shared storage pointed to by {\tt ptr}.  If {\tt ptr} is
+    a null pointer, no action occurs.  Otherwise, if the argument does
+    not match a pointer earlier returned by the {\tt upc\_alloc},
+    {\tt upc\_global\_alloc},  or {\tt upc\_all\_alloc} functions,
+    or if the space has been deallocated by a previous call to {\tt upc\_free}
+    or {\tt upc\_all\_free}, the behavior is undefined.
+
+\np The shared storage referenced by {\tt ptr} is guaranteed to remain valid
+    until all threads have entered the call to {\tt upc\_all\_free}, but the
+    function does not otherwise guarantee any synchronization or strict reference.
+
+\cbend
+
+\subsubsection{Pointer-to-shared manipulation functions}
+
+\paragraph{The {\tt upc\_threadof} function}
+\label{upc_threadof}
+
+{\bf Synopsis} 
+\index{upc\_threadof}
+\index{affinity}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    size_t upc_threadof(shared void *ptr); 
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_threadof} function returns the index of the
+   thread that has affinity to the shared object pointed to by {\tt ptr}.\footnote{%
+   This function is used in defining the semantics of pointer-to-shared
+   arithmetic in Section \ref{pointer-arithmetic}}
+
+\np If {\tt ptr} is a null pointer-to-shared, the function returns 0.
+
+
+\paragraph{The {\tt upc\_phaseof} function}
+\label{upc_phaseof}
+
+{\bf Synopsis} 
+\index{upc\_threadof}
+\index{phase}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    size_t upc_phaseof(shared void *ptr); 
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_phaseof} function returns the phase component of the
+    pointer-to-shared argument.\footnote{%
+   This function is used in defining the semantics of pointer-to-shared
+   arithmetic in Section \ref{pointer-arithmetic}}
+
+    
+\np If {\tt ptr} is a null pointer-to-shared, the function returns 0.
+
+\paragraph{The {\tt upc\_resetphase} function}
+
+{\bf Synopsis} 
+\index{upc\_resetphase}
+\index{phase}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    shared void *upc_resetphase(shared void *ptr); 
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_resetphase} function returns a pointer-to-shared
+    which is identical to its input except that it has zero phase. 
+
+\paragraph{The {\tt upc\_addrfield} function}
+\label{upc_addrfield}
+
+{\bf Synopsis} 
+\index{upc\_addrfield}
+
+\npf\vspace{-2.5em}
+
+\begin{verbatim}
+    #include <upc.h> 
+    size_t upc_addrfield(shared void *ptr); 
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_addrfield} function returns an
+   implementation-defined value reflecting the ``local address'' of the
+   object pointed to by the pointer-to-shared argument.\footnote{%
+   This function is used in defining the semantics of pointer-to-shared
+   arithmetic in Section \ref{pointer-arithmetic}}
+
+   
+\paragraph{The {\tt upc\_affinitysize} function}
+
+{\bf Synopsis} 
+\index{upc\_affinitysize}
+\index{upc\_localsizeof}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    size_t upc_affinitysize(size_t totalsize, size_t nbytes, 
+         size_t threadid);
+\end{verbatim}
+
+{\bf Description}
+
+\np{\tt upc\_affinitysize} is a convenience function which 
+    calculates the exact size of the local portion of the data in a 
+    shared object with affinity to {\tt threadid}.
+    
+\np In the case of a dynamically allocated shared object,
+    the {\tt totalsize} argument shall be {\tt nbytes*nblocks} and the {\tt nbytes}
+    argument shall be {\tt nbytes}, where {\tt nblocks} and {\tt nbytes} are exactly as
+    passed to {\tt upc\_global\_alloc} or {\tt upc\_all\_alloc} when the 
+    object was allocated.
+
+\np In the case of a statically allocated shared object
+    with declaration:
+
+\begin{verbatim}
+    shared [b] t d[s];
+\end{verbatim}   
+
+    the {\tt totalsize} argument shall be {\tt s * sizeof (t)} and the
+    {\tt nbytes} argument shall be {\tt b * sizeof (t)}.  If the block
+    size is indefinite, {\tt nbytes} shall be 0.
+        
+\np{\tt threadid} shall be a value in {\tt 0..(THREADS-1)}.
+
+\subsubsection{Lock functions}
+\label{upc_lock}
+\index{locks}
+\index{synchronization}
+\index{mutual exclusion}
+
+\paragraph{Type}
+
+\npf The type declared is 
+\index{upc\_lock\_t}
+
+\begin{verbatim}
+    upc_lock_t 
+\end{verbatim}
+
+\np The type {\tt upc\_lock\_t} is an opaque UPC type. {\tt
+    upc\_lock\_t} is a shared datatype with incomplete type (as
+    defined in [ISO/IEC00 Sec 6.2.5]).  Objects of type {\tt
+    upc\_lock\_t} may therefore only be manipulated through pointers.
+    Such objects have two states called {\em locked} and {\em unlocked}.
+
+\np Two pointers to {\tt upc\_lock\_t} that reference the same lock object will
+    compare as equal.  The results of applying {\tt upc\_phaseof()},
+     {\tt upc\_threadof()}, and {\tt upc\_addrfield()} to such pointers
+     are undefined.
+
+\np \xadded[id=DB]{12}{
+    There is no required correspondence between the functions specified
+    in Section~\ref{upc_lock} to allocate and free locks.
+    Either of the {\tt upc\_lock\_free} or {\tt upc\_all\_lock\_free} functions
+    may be used to free locks allocated using {\tt upc\_global\_lock\_alloc} or 
+    {\tt upc\_all\_lock\_alloc}.
+    }
+
+\paragraph{The {\tt upc\_global\_lock\_alloc} function}
+
+{\bf Synopsis} 
+\index{upc\_global\_lock\_alloc}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    upc_lock_t *upc_global_lock_alloc(void); 
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_global\_lock\_alloc} function dynamically
+    allocates a lock and returns a pointer to it.  The lock is created
+    in an unlocked state.
+
+\np The {\tt upc\_global\_lock\_alloc} function is not a {\em
+    collective} function. If called by multiple threads,
+    all threads which make the call get different allocations.
+    
+\paragraph{The {\tt upc\_all\_lock\_alloc} function}
+
+{\bf Synopsis} 
+\index{upc\_all\_lock\_alloc}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    upc_lock_t *upc_all_lock_alloc(void); 
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_all\_lock\_alloc} function dynamically
+    allocates a lock and returns a pointer to it. The lock is created
+    in an unlocked state.
+
+\np The {\tt upc\_all\_lock\_alloc} is a {\em collective}
+    function.  The return value on every thread points to the same
+    lock object.
+
+\paragraph{The {\tt upc\_lock\_free} function}
+
+{\bf Synopsis} 
+\index{upc\_lock\_free}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    void upc_lock_free(upc_lock_t *ptr); 
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_lock\_free} function frees all resources
+    associated with the dynamically allocated {\tt upc\_lock\_t} pointed to
+    by {\tt ptr}.  If {\tt ptr} is a null pointer, no action occurs.
+    Otherwise, if the argument does not match a pointer earlier
+    returned by the {\tt upc\_global\_lock\_alloc} or {\tt
+    upc\_all\_lock\_alloc} function, or if the lock has been
+    deallocated by a previous call to {\tt upc\_lock\_free} by any thread,~%
+    \footnote
+    {i.e., only one thread may call {\tt upc\_lock\_free} for each
+    allocation} 
+    \xadded[id=DB]{12}{or a previous call to {\tt upc\_all\_lock\_free},}
+    the behavior is undefined.
+
+\np{\tt upc\_lock\_free} succeeds regardless of whether the
+    referenced lock is currently unlocked or currently locked (by any
+    thread).
+
+\np %
+\xreplaced[id=DB]{49}{%
+    Subsequent or concurrent calls from any thread to functions defined in
+    Section~\ref{upc_lock} using the lock referenced by {\tt ptr} have
+    undefined behavior.  This also applies to any call to {\tt upc\_lock} on
+    the the lock referenced by {\tt ptr} which is blocked at the time of the
+    call to {\tt upc\_lock\_free}.
+}{%
+    Any subsequent calls to locking functions from any
+    thread using {\tt ptr} have undefined effects. This also
+    applies to any thread currently calling {\tt upc\_lock}.
+}
+
+\cbstart
+\paragraph{The {\tt upc\_all\_lock\_free} function}
+\xchangenote[id=DB]{12}{SECTION ADDED}
+
+{\bf Synopsis}
+\index{upc\_all\_lock\_free}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    void upc_all_lock_free(upc_lock_t *ptr); 
+\end{verbatim}
+
+{\bf Description}
+
+\np {\tt upc\_all\_lock\_free} is a {\em collective} variant of {\tt upc\_lock\_free}, provided as a convenience.
+    It must be called collectively by all threads with the {\em single-valued} argument {\tt ptr}.
+
+\np The {\tt upc\_all\_lock\_free} function frees all resources
+    associated with the dynamically allocated {\tt upc\_lock\_t} pointed to
+    by {\tt ptr}.  If {\tt ptr} is a null pointer, no action occurs.
+    Otherwise, if the argument does not match a pointer earlier
+    returned by the {\tt upc\_global\_lock\_alloc} or {\tt
+    upc\_all\_lock\_alloc} function, or if the lock has been
+    deallocated by a previous call to {\tt upc\_lock\_free}
+    or {\tt upc\_all\_lock\_free}, the behavior is undefined.
+
+\np{\tt upc\_all\_lock\_free} succeeds regardless of whether the
+    referenced lock is currently unlocked or currently locked (by any
+    thread).
+
+\np The lock referenced by {\tt ptr} is guaranteed to remain valid
+    until all threads have entered the call to {\tt upc\_all\_lock\_free}, but the
+    function does not otherwise guarantee any synchronization or strict reference.
+
+\np Any subsequent calls from any thread to functions defined in
+    Section~\ref{upc_lock} using the lock referenced by {\tt ptr} have
+    undefined behavior. 
+
+\cbend
+
+\paragraph{The {\tt upc\_lock} function}
+
+{\bf Synopsis} 
+\index{upc\_lock}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    void upc_lock(upc_lock_t *ptr); 
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_lock} function sets the state of the lock
+    pointed to by {\em ptr} to locked.
+
+\np If the lock is already in locked state due to the calling thread setting it
+    to locked state, the result is undefined.
+
+\np If the lock is already in locked state, then the calling
+    thread waits for some other thread to set the state to 
+    unlocked.\footnote{If no other thread calls {\tt upc\_unlock} on {\em ptr}
+    the calling thread will never return from this function.}
+
+\np Once the lock is in state unlocked, a single calling thread
+    sets the state to locked and the function returns.
+
+\np A null strict access is implied after a call to {\tt
+    upc\_lock()}.
+
+\paragraph{The {\tt upc\_lock\_attempt} function}
+
+{\bf Synopsis} 
+\index{upc\_lock\_attempt}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    int upc_lock_attempt(upc_lock_t *ptr); 
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_lock\_attempt} function attempts to set the state of
+   the lock pointed to by {\em ptr} to locked.
+
+\np If the lock is already in locked state due to the calling thread setting it
+    to locked state, the result is undefined.
+
+\np If the lock is already in locked state the function returns 0.
+    
+\np If the lock is in state unlocked, a single calling thread
+    sets the state to locked and the function returns 1.
+
+\np A null strict access is implied after a call to {\tt
+    upc\_lock\_attempt()} that returns 1.
+
+\paragraph{The {\tt upc\_unlock} function}
+
+{\bf Synopsis} 
+\index{upc\_unlock}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    void upc_unlock(upc_lock_t *ptr); 
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_unlock} function sets the state of
+   the lock pointed to by {\em ptr} to unlocked.
+
+\np Unless the lock is in locked state and the calling
+    thread is the locking thread, the result is undefined.
+
+\np A null strict access is implied before a call to {\tt
+    upc\_unlock()}.
+
+\subsubsection{Shared string handling functions}
+\index{shared object, copying}
+\index{memory copy}
+
+\paragraph{The {\tt upc\_memcpy} function}
+
+{\bf Synopsis} 
+\index{upc\_memcpy}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    void upc_memcpy(shared void * restrict dst, 
+         shared const void * restrict src, size_t n); 
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_memcpy} function copies {\tt n} characters
+  from a shared object having affinity with one thread to a shared object
+  having affinity with the same or another thread.
+
+\np The {\tt upc\_memcpy} function treats the {\tt dst} and
+   {\tt src} pointers as if they had type:
+
+\begin{verbatim}
+    shared [] char[n] 
+\end{verbatim}
+
+   The effect is equivalent to copying the entire contents from one
+   shared array object with this type (the {\tt src} array) to another shared
+   array object with this type (the {\tt dst} array).
+
+\paragraph{The {\tt upc\_memget} function}
+
+{\bf Synopsis} 
+\index{upc\_memget}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    void upc_memget(void * restrict dst, 
+         shared const void * restrict src, size_t n); 
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_memget} function copies {\tt n} characters from a
+   shared object with affinity to any single thread to an object on the calling thread.
+
+\np The {\tt upc\_memget} function treats the {\tt src}
+   pointer as if it had type:
+
+\begin{verbatim}
+    shared [] char[n] 
+\end{verbatim}
+
+   The effect is equivalent to copying the entire contents from one
+   shared array object with this type (the {\tt src} array) to an array
+   object (the {\tt dst} array) declared with the type
+
+\begin{verbatim}
+    char[n] 
+\end{verbatim}
+
+\paragraph{The {\tt upc\_memput} function}
+
+{\bf Synopsis} 
+\index{upc\_memput}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    void upc_memput(shared void * restrict dst,
+         const void * restrict src, size_t n); 
+\end{verbatim}
+
+{\bf Description}
+ 
+\np The {\tt upc\_memput} function copies {\tt n} characters from
+   an object on the calling thread to a shared object with affinity
+   to any single thread.
+   
+\np The {\tt upc\_memput} function is equivalent to copying the
+   entire contents from an array object (the {\tt src} array) declared
+   with the type
+
+\begin{verbatim}
+    char[n] 
+\end{verbatim}
+
+   to a shared array object (the {\tt dst} array) with the type 
+
+\begin{verbatim}
+    shared [] char[n] 
+\end{verbatim}
+
+\paragraph{The {\tt upc\_memset} function}
+
+{\bf Synopsis}
+\index{upc\_memset}
+\index{shared object, clearing}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc.h> 
+    void upc_memset(shared void *dst, int c, size_t n); 
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_memset} function copies the value of {\tt
+   c}, converted to an {\tt unsigned char}, to a shared object with affinity
+   to any single thread.  The number of bytes set is {\tt n}.
+
+\np The {\tt upc\_memset} function treats the {\tt dst}
+   pointer as if had type:
+
+\begin{verbatim}
+    shared [] char[n] 
+\end{verbatim}
+
+   The effect is equivalent to setting the entire contents of a shared
+   array object with this type (the {\tt dst} array) to the value {\tt c}.
+
+\pagebreak
+\def\header{{\tt <upc\_types.h>}\xspace}
+% would prefer to indent with \hspace{30}, but can't make that work right
+\newcommand\defmacro[1]{{\tt \quote UPC\_#1\endquote}\index{UPC\_#1}\vspace{-8pt}}
+\newcommand\deftype[1]{{\tt \quote #1 \endquote}\index{#1}}
+\newcommand\defmacrotab[2]{ & {\tt UPC\_#1}\index{UPC\_#1} & {\tt #2}\\}
+\subsection{UPC standard types \header}
+\index{upc\_types.h}
+\label{upc-types-h}
+\xchangenote[id=DB]{10}{SECTION ADDED}
+
+% 7.1.4 reference boilerplate deliberately omitted as it is not applicable to this header
+
+\npf The \header header declares several standard types and value macros
+     used by other UPC libraries.
+
+\np Unless otherwise noted, all of the types and macros
+    specified in Section~\ref{upc-types-h}
+    are declared by the header \header.
+
+\np The \header header shall constitute a strictly-conforming translation
+    unit for an [ISO/IEC00] C compiler (ie one that lacks UPC language extensions).
+
+\subsubsection{Operation designator ({\tt upc\_op\_t})}
+\label{upc-op-t}
+
+\npf The \header header defines the type:
+
+\deftype{upc\_op\_t}
+
+which is an integer type whose values are used to designate a library operation 
+or set of operations.
+
+% Following text modeled on C99 signal.h
+\np The \header header defines the following macros, 
+which expand to integer constant expressions with type {\tt upc\_op\_t},
+which are suitable for use in {\tt \#if} preprocessing directives. 
+Each macro value designates the specified operation.
+The expressions are defined such that bitwise or ({\tt |}) of all combinations 
+of the macros result in distinct positive values less than 65536.
+\begin{tabular}{ p{30pt} l l }
+& Macro name & Specified operation\\
+\cline{2-3}
+\defmacrotab{ADD}	{Addition}
+\defmacrotab{MULT}	{Multiplication}
+\defmacrotab{AND}	{Bitwise and ({\tt \&})}
+\defmacrotab{OR}	{Bitwise inclusive or ({\tt |})}
+\defmacrotab{XOR}	{Bitwise exclusive or ({\tt $\wedge$})}
+\defmacrotab{LOGAND}	{Logical and ({\tt \&\&})}
+\defmacrotab{LOGOR}	{Logical or ({\tt ||})}
+\defmacrotab{MIN}	{Minimum value ({\tt op1<op2?op1:op2})}
+\defmacrotab{MAX}	{Maximum value ({\tt op1>op2?op1:op2})}
+% When adding operations need to also update the max combination in the text
+\end{tabular}
+
+\np Extension libraries may define additional value macros of type {\tt upc\_op\_t},
+but their values shall not conflict with those defined in \header.
+
+\subsubsection{Type designator ({\tt upc\_type\_t})}
+\label{upc-type-t}
+
+\npf The \header header defines the type:
+
+\deftype{upc\_type\_t}
+
+which is an integer type whose values are used to designate a language type.
+
+\np The \header header defines the following macros, 
+which expand to integer constant expressions with type {\tt upc\_type\_t},
+distinct positive values less than 65536, and which are suitable for use 
+in {\tt \#if} preprocessing directives. 
+Each macro value designates the specified type.
+
+\begin{tabular}[b]{ p{30pt} l l }
+& Macro name & Specified type\\
+\cline{2-3}
+\defmacrotab{CHAR}	{char}
+\defmacrotab{UCHAR}	{unsigned char}
+\defmacrotab{SHORT}	{short}
+\defmacrotab{USHORT}	{unsigned short}
+\defmacrotab{INT}	{int}
+\defmacrotab{UINT}	{unsigned int}
+\defmacrotab{LONG}	{long}
+\defmacrotab{ULONG}	{unsigned long}
+\defmacrotab{LLONG}	{long long}
+\defmacrotab{ULLONG}	{unsigned long long}
+\defmacrotab{INT8}	{int8\_t}
+\defmacrotab{UINT8}	{uint8\_t}
+\defmacrotab{INT16}	{int16\_t}
+\defmacrotab{UINT16}	{uint16\_t}
+\defmacrotab{INT32}	{int32\_t}
+\defmacrotab{UINT32}	{uint32\_t}
+\defmacrotab{INT64}	{int64\_t}
+\defmacrotab{UINT64}	{uint64\_t}
+\defmacrotab{FLOAT}	{float}
+\defmacrotab{DOUBLE}	{double}
+\defmacrotab{LDOUBLE}	{long double}
+\defmacrotab{PTS}	{shared void *}
+\end{tabular}
+
+\np Extension libraries may define additional value macros of type {\tt upc\_type\_t},
+but their values shall not conflict with those defined in \header.
+
+\subsubsection{Synchronization flags ({\tt upc\_flag\_t})}
+\label{upc-flag-t}
+
+\npf The \header header defines the type:
+
+\deftype{upc\_flag\_t}
+
+which is an integer type.
+
+\np The following macros are defined in \header:
+
+\defmacro{OUT\_ALLSYNC}
+\defmacro{OUT\_MYSYNC}
+\defmacro{OUT\_NOSYNC}
+\defmacro{IN\_ALLSYNC}
+\defmacro{IN\_MYSYNC}
+\defmacro{IN\_NOSYNC}
+\vspace{8pt}
+
+All expand to integer constant expressions with type {\tt upc\_flag\_t}
+which are suitable for use in {\tt \#if} preprocessing directives.
+The expressions are defined such that bitwise or ({\tt |}) of all combinations 
+of the macros result in distinct positive values less than 64.
+
+\np The semantics of these macros are defined in Section~\ref{upc-flag-semantics}.
+
+\input{upc-lib-mem-semantics}

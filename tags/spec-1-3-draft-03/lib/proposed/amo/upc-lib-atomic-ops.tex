@@ -1,0 +1,349 @@
+\subsection{UPC Atomic Memory Operations {\tt <upc\_atomic.h>}}
+\label{upc-atomic}
+\index{\_\_UPC\_ATOMIC\_\_}
+\index{upc\_atomic.h}
+
+\npf This subsection provides the UPC parallel extensions of [ISO/IEC00 
+    Sec 7.19].  All the characteristics of library functions described
+    in [ISO/IEC00 Sec 7.1.4] apply to these as well.  Implementations
+    that support this interface shall predefine the feature macro {\tt
+    \_\_UPC\_ATOMIC\_\_} to the value 1.
+
+% STANDARD HEADERS
+\subsubsection{Standard headers}
+
+\np The standard header is
+
+{\tt <upc\_atomic.h>}
+
+\np Unless otherwise noted, all of the functions, types and macros specified
+    in Section~\ref{upc-atomic} are declared by the header {\tt <upc\_atomic.h>}.
+
+\np Every inclusion of {\tt <upc\_atomic.h>} has the effect of including
+    {\tt <upc\_types.h>}.
+
+% COMMON REQUIREMENTS
+\subsubsection{Common Requirements}
+\label{upc-atomic-reqs}
+\npf The following requirements apply to all of the functions defined
+     in Section~\ref{upc-atomic}.
+
+\np The UPC Atomic Memory Operations library introduces an
+    \emph{atomicity domain}, an object that specifies a single operand type and
+    a set of operations over which access to a memory location in a given
+    synchronization phase is guaranteed to be atomic if and only if no other
+    mechanisms or atomicity domains are used to access the same memory
+    location in the same synchronization phase.~%
+    \footnote{In particular, this implies that atomicity is only guaranteed
+    if atomic operations accessing a given memory location are separated from any 
+    other accesses to that location (via direct read/writes or a different domain) 
+    by a {\tt upc\_barrier} or {\tt upc\_notify}/{\tt upc\_wait}.}
+
+\np The following table presents the required support for operations and
+    operand types
+
+\begin{center}
+\begin{tabular}{l|ccccc}
+Operand Type   & Accessors & Bit-wise Ops & Numeric Ops \\ \hline
+Integer        &  X        &  X           &  X          \\
+Floating Point &  X        &              &  X          \\
+{\tt UPC\_PTS} &  X        &              &             \\
+\end{tabular}
+\end{center}
+
+    where
+\begin{itemize}
+  \item[-] Supported integer types are {\tt UPC\_INT}, {\tt UPC\_UINT},
+    {\tt UPC\_LONG}, {\tt UPC\_ULONG}, {\tt UPC\_INT32}, {\tt UPC\_UINT32},
+    {\tt UPC\_INT64}, and {\tt UPC\_UINT64}.
+  \item[-] Supported floating-point types are {\tt UPC\_FLOAT} and
+    {\tt UPC\_DOUBLE}.
+  \item[-] Supported accessors are {\tt UPC\_GET}, {\tt UPC\_SET}, and
+    {\tt UPC\_CSWAP}.
+  \item[-] Supported bit-wise operations are {\tt UPC\_AND}, {\tt UPC\_OR},
+    and {\tt UPC\_XOR}.
+  \item[-] Supported numeric operations are
+    {\tt UPC\_ADD}, {\tt UPC\_SUB}, {\tt UPC\_MULT}, 
+    {\tt UPC\_INC}, {\tt UPC\_DEC}, 
+    {\tt UPC\_MAX}, and {\tt UPC\_MIN}.
+\end{itemize}
+
+\np The value macros listed below are defined in {\tt <upc\_atomic.h>}.  
+    All other {\tt UPC\_*} value macros used
+    in this subsection are defined by {\tt <upc\_types.h>} (see
+    \upcopsection{} and \upctypesection{}).
+
+\newcommand\defmacrotab[2]{ & {\tt UPC\_#1}\index{UPC\_#1} & {\tt #2}\\}
+\begin{tabular}{ p{30pt} l l }
+& Macro name & Specified operation\\
+\cline{2-3}
+\defmacrotab{GET}       {Read}
+\defmacrotab{SET}       {Write or swap}
+\defmacrotab{CSWAP}     {Conditional swap}
+\defmacrotab{SUB}       {Subtraction}
+\defmacrotab{INC}       {Increment by 1}
+\defmacrotab{DEC}       {Decrement by 1}
+\end{tabular}
+
+\subsubsection{Atomic Library Types}
+\label{upc-atomic-types}
+
+\paragraph{The {\tt upc\_atomicdomain\_t} type}
+\index{upc\_atomicdomain\_t}
+
+\npf The header {\tt <upc\_atomic.h>} declares the type
+\begin{verbatim}
+    upc_atomicdomain_t
+\end{verbatim}
+
+\np The type {\tt upc\_atomicdomain\_t} is an opaque UPC type.
+    {\tt upc\_atomicdomain\_t} is a shared datatype with incomplete type (as 
+    defined in [ISO/IEC00 Sec 6.2.5]).  Objects of type {\tt upc\_atomicdomain\_t}
+    may therefore only be manipulated through pointers.
+
+\np Two pointers that reference the same atomicity domain object will compare
+    as equal.  The results of applying {\tt upc\_phaseof()},
+    {\tt upc\_threadof()}, and {\tt upc\_addrfield()} to such pointers are
+    undefined.
+
+\paragraph{The {\tt upc\_atomichint\_t} type}
+\index{upc\_atomichint\_t}
+
+\npf The header {\tt <upc\_atomic.h>} declares the integral type
+\begin{verbatim}
+    upc_atomichint_t
+\end{verbatim}
+
+\np The following macros expand to positive integer constant expressions 
+    with type {\tt upc\_atomichint\_t} and distinct values.
+    They allow the specification of a ``hint'' to the library implementation to indicate
+    a \emph{preferred} mode of optimization for atomic operations performed on a domain.
+\begin{description}
+  \item[{\tt UPC\_ATOMIC\_HINT\_DEFAULT == 0}]
+    An implementation-defined default mode
+  \item[{\tt UPC\_ATOMIC\_HINT\_LATENCY}]
+    Favor low-latency atomic memory operations
+  \item[{\tt UPC\_ATMOIC\_HINT\_THROUGHPUT}]
+    Favor high-throughput atomic memory operations
+  \item[{\tt UPC\_ATOMIC\_HINT\_*}]
+    Implementation-defined additional hint values
+\end{description}
+
+\newpage
+\subsubsection{Atomic Library Functions}
+\label{upc-atomic-functions}
+
+\paragraph{The {\tt upc\_all\_atomicdomain\_alloc} function}
+\index{upc\_all\_atomicdomain\_alloc}
+
+{\bf Synopsis}
+
+\npf\vspace{-1.8em}
+\begin{verbatim}
+    #include <upc_atomic.h>
+    upc_atomicdomain_t *upc_all_atomicdomain_alloc(upc_type_t type,
+         upc_op_t ops, upc_atomichint_t hints);
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_all\_atomicdomain\_alloc} function dynamically allocates an
+    atomicity domain and returns a pointer to it.
+
+\np The {\tt upc\_all\_atomicdomain\_alloc} function is a {\em collective} function,
+    with {\em single-valued} arguments.
+    The return value on every thread points to the same atomicity domain
+    object.
+
+\np The atomicity domain created supports atomic library calls to operate on objects of a
+    unique type, specified by the {\tt type} parameter.  The {\tt upc\_type\_t}
+    values and the corresponding type they specify are listed in
+    \upctypesection{}.
+    The {\tt type} parameter shall specify a type permitted
+    by Section~\ref{upc-atomic-reqs}, otherwise behavior is undefined.
+
+\np The {\tt ops} parameter specifies the atomic operations to be supported by
+    the atomicity domain.  The {\tt ops} parameter shall only specify
+    operations within the set permitted for {\tt type} (as defined in
+    \ref{upc-atomic-reqs}), otherwise behavior is undefined.
+    Multiple atomic operation value macros from \ref{upc-atomic-reqs}
+    can be combined by using the bitwise OR operator ($|$), and each value has
+    a unique bitwise representation that can be unambiguously tested using the
+    bitwise AND operator ({\tt \&}).
+
+\np The implementation is free to ignore the {\tt hints} parameter.
+
+\np EXAMPLE: Collectively allocate an atomicity domain that supports the
+    addition, maximum, and minimum operations (i.e., {\tt UPC\_ADD},
+    {\tt UPC\_MAX}, {\tt UPC\_MIN}) on signed 64-bit integers (i.e.,
+    {\tt int64\_t}).
+\begin{verbatim}
+    #include <upc_atomic.h>
+    upc_atomicdomain_t* domain = upc_all_atomicdomain_alloc(
+         UPC_INT64, UPC_ADD | UPC_MAX | UPC_MIN, 0);
+\end{verbatim}
+\vfill
+
+\paragraph{The {\tt upc\_all\_atomicdomain\_free} function}
+\index{upc\_all\_atomicdomain\_free}
+
+{\bf Synopsis}
+
+\npf\vspace{-1.8em}
+\begin{verbatim}
+    #include <upc_atomic.h>
+    void upc_all_atomicdomain_free(upc_atomicdomain_t *ptr);
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_all\_atomicdomain\_free} function is a {\em collective} function,
+    with the {\em single-valued} argument {\tt ptr}.
+
+\np The {\tt upc\_all\_atomicdomain\_free} function frees the resources associated with
+    the atomicity domain pointed to by {\tt ptr}.  If {\tt ptr} is a null pointer,
+    no action occurs.  Otherwise, if the argument does not match a pointer
+    earlier returned by the {\tt upc\_all\_atomicdomain\_alloc} function, or if
+    the atomicity domain has been deallocated by a previous call to
+    {\tt upc\_all\_atomicdomain\_free} the behavior is undefined.
+
+\np The atomicity domain referenced by {\tt ptr} is guaranteed to remain valid
+    until all threads have entered the call to {\tt upc\_all\_atomicdomain\_free},
+    but the function does not otherwise guarantee any synchronization or
+    strict reference.
+
+\np Any subsequent calls to atomic library functions from any thread using {\tt ptr} have
+    undefined behavior.
+
+\paragraph{The {\tt upc\_atomic\_strict} and {\tt upc\_atomic\_relaxed} functions}
+\index{upc\_atomic\_strict}
+\index{upc\_atomic\_relaxed}
+
+{\bf Synopsis}
+
+\npf\vspace{-1.8em}
+\begin{verbatim}
+    #include <upc_atomic.h>
+    void upc_atomic_strict(upc_atomicdomain_t *domain,
+         void * restrict fetch_ptr, upc_op_t op,
+         shared void * restrict target,
+         const void * restrict operand1,
+         const void * restrict operand2);
+    void upc_atomic_relaxed(upc_atomicdomain_t *domain,
+         void * restrict fetch_ptr, upc_op_t op,
+         shared void * restrict target,
+         const void * restrict operand1,
+         const void * restrict operand2);
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt op} argument shall specify an operation included in the {\tt ops}
+    argument to the {\tt upc\_all\_atomicdomain\_alloc} call used to construct
+    {\tt domain}, otherwise behavior is undefined.
+
+\np The {\tt target} argument shall point to an object having the type
+    specified in the {\tt type} argument to the {\tt upc\_all\_atomicdomain\_alloc} 
+    call used to construct {\tt domain}, otherwise behavior is undefined. 
+    The function treats the arguments {\tt fetch\_ptr}, {\tt target}, 
+    {\tt operand1} and {\tt operand2} as pointers to this type.
+
+\np The {\tt upc\_atomic\_strict} and {\tt upc\_atomic\_relaxed} functions perform
+    an atomic update of the object pointed to by {\tt target} such that:
+
+    \begin{verse}
+      {\tt *target = *target $\oplus$ *operand1},
+        where ``$\oplus$'' is the operator specified by the variable {\tt op}
+        and {\tt op} $\in$ \{{\tt UPC\_AND}, {\tt UPC\_OR}, {\tt UPC\_XOR},
+        {\tt UPC\_ADD}, {\tt UPC\_SUB}, {\tt UPC\_MULT}, {\tt UPC\_MIN}, {\tt UPC\_MAX}\} \\
+      {\tt *target = *target + 1}, 
+        where {\tt op} is {\tt UPC\_INC} \\
+      {\tt *target = *target - 1}, 
+        where {\tt op} is {\tt UPC\_DEC} \\
+      {\tt *target = (*target == *operand1) ? *operand2 : *target},
+        where {\tt op} is {\tt UPC\_CSWAP}%
+        \footnote{UPC\_CSWAP does not fail spuriously, for example due to cache events.} \\
+      {\tt *target = *operand1},
+        where {\tt op} is {\tt UPC\_SET} \\
+      {\tt *target} is unchanged,
+        where {\tt op} is {\tt UPC\_GET} \\
+    \end{verse}
+
+\np The arguments {\tt operand1} and {\tt operand2} shall each be a null
+    pointer for those operations that do not require them.%
+    \footnote{That is, for all permitted operations other than {\tt UPC\_CSWAP},
+    {\tt operand2} shall be a null pointer, and for {\tt UPC\_GET}, {\tt UPC\_INC} and {\tt UPC\_DEC}
+    both {\tt operand1} and {\tt operand2} shall be a null pointer.}
+
+\np The value of {\tt *target} prior to performing
+    the specified update is stored in {\tt *fetch\_ptr} if and only if
+    {\tt fetch\_ptr} is not a null pointer.%
+    \footnote{If {\tt op} is {\tt UPC\_SET} and {\tt fetch\_ptr} is
+    not a null pointer, the effect is an unconditional atomic swap.}
+    If {\tt op} is {\tt UPC\_GET}, {\tt fetch\_ptr} shall not be a null pointer.
+
+\np The following requirements apply when {\tt domain} was allocated 
+    with {\tt type} $\in$ \{{\tt UPC\_FLOAT}, {\tt UPC\_DOUBLE}\}:
+    If {\tt *target}, {\tt *operand1} or {\tt *operand2} is a {\em signalling NaN} value 
+    (as defined in [ISO/IEC00 Sec 5.2.4.2.2]), behavior is undefined.
+    If {\tt op} is {\tt UPC\_CSWAP} and {\tt *target} or {\tt *operand1} is a {\em quiet NaN} value 
+    (as defined in [ISO/IEC00 Sec 5.2.4.2.2]), behavior is undefined.
+
+\np If {\tt domain} was allocated with {\tt type == UPC\_PTS} and {\tt op} is {\tt UPC\_CSWAP},
+    the comparison shall be performed as specified in [UPC Language Specification Sec. 6.4.2];
+    specifically, it ignores the phase component of the pointers-to-shared.
+
+\np In all other cases, the value computed by {\tt op} and stored in {\tt *target} 
+    shall be equal to the value that would have been computed by passing the operands 
+    to the corresponding built-in language operator. In particular, this requires that
+    overflows, underflows and quiet NaN values are handled as specified in [ISO/IEC00].
+
+\np The {\tt upc\_atomic\_relaxed} function {\em atomically} performs a relaxed shared read of {\tt *target} 
+    followed by a relaxed shared write of {\tt *target}. 
+    The {\tt upc\_atomic\_strict} function {\em atomically} performs a strict shared read of {\tt *target} 
+    followed by a strict shared write of {\tt *target}. The write is omitted for {\tt UPC\_GET} 
+    or a {\tt UPC\_CSWAP} that fails, 
+    and the read is omitted for {\tt UPC\_SET} when {\tt fetch\_ptr} is a null pointer.
+    {\em Atomically} requires the read and write accesses comprising one atomic operation shall not appear (to any thread) 
+    to have been interleaved (or word-torn) with the read/write pair of a conflicting atomic operation to the same location
+    using the same atomicity domain.
+
+\np EXAMPLE: Perform a relaxed atomic fetch-and-increment of a value of type
+    {\tt uint64\_t} after allocating an atomicity domain {\tt domain} to
+    support {\tt UPC\_INC} for {\tt UPC\_UINT64}.
+\begin{verbatim}
+    #include <upc_atomic.h>
+    shared uint64_t val = 42;
+    uint64_t oldval;
+    upc_atomicdomain_t* domain = upc_all_atomicdomain_alloc(
+         UPC_UINT64, UPC_INC, 0);
+    upc_atomic_relaxed(domain, &oldval, UPC_INC, &val, 0, 0);
+\end{verbatim}
+\vfill
+
+\paragraph{The {\tt upc\_atomic\_isfast} function}
+\index{upc\_atomic\_isfast}
+
+{\bf Synopsis}
+
+\npf\vspace{-1.8em}
+\begin{verbatim}
+    #include <upc_atomic.h>
+    int upc_atomic_isfast(upc_type_t type, upc_op_t ops,
+         shared void *addr);
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_atomic\_isfast} function queries the implementation to determine
+    the expected performance of a {\tt upc\_atomic\_relaxed} call on
+    {\tt addr}, using a domain allocated with the arguments {\tt type} and
+    {\tt ops}.  The call returns non-zero if the performance is expected to be
+    comparable to the fastest expected performance of {\tt upc\_atomic\_relaxed}
+    for any combination of {\tt addr}, {\tt type}, and {\tt ops}.  Otherwise
+    the function returns zero.%
+    \footnote{This function allows the implementation to report which
+    combinations of type, ops, and alignment are best supported; e.g., using
+    hardware atomic instructions.  Some implementations may also return zero
+    when {\tt upc\_threadof(addr)} is not equal to the calling thread, to
+    indicate the additional cost of remote access.}
