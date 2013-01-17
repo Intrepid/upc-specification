@@ -626,6 +626,12 @@ $\oplus \cdots \oplus$ {\tt src[i]}
 for $0 \leq$ {\tt i} $\leq$ {\tt nelems-1} and
 where ``$\oplus$'' is the operator specified by the variable {\tt op}.
 
+\np \xadded[id=DB]{96}{
+   If a floating-point variant of either function encounters an
+   operand with a {\em NaN} value (as defined in [ISO/IEC00 Sec 5.2.4.2.2]),
+   behavior is implementation-defined.
+}
+
 \np
 If the value of {\tt blk\_size} passed to these functions is
 greater than 0 then they treat the {\tt src} pointer
