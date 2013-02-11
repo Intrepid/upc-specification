@@ -617,6 +617,10 @@
    shared array object with this type (the {\tt src} array) to another shared
    array object with this type (the {\tt dst} array).
 
+\xadded[id=DB]{50}{
+\np If copying takes place between objects that overlap, the behavior is undefined.
+}
+
 \paragraph{The {\tt upc\_memget} function}
 
 {\bf Synopsis} 
@@ -649,6 +653,10 @@
     char[n] 
 \end{verbatim}
 
+\xadded[id=DB]{50}{
+\np If copying takes place between objects that overlap, the behavior is undefined.
+}
+
 \paragraph{The {\tt upc\_memput} function}
 
 {\bf Synopsis} 
@@ -680,6 +688,10 @@
 \begin{verbatim}
     shared [] char[n] 
 \end{verbatim}
+
+\xadded[id=DB]{50}{
+\np If copying takes place between objects that overlap, the behavior is undefined.
+}
 
 \paragraph{The {\tt upc\_memset} function}
 
