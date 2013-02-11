@@ -239,6 +239,13 @@ as keywords and shall not be otherwise used.
 \npf No binary operators shall be applied to one pointer-to-shared
     and one pointer-to-local.
 
+\xadded[id=DB]{104}{
+\np Relational operators (as defined in [ISO/IEC00 Sec 6.5.8]) 
+    shall not be applied to a pointer-to-shared with incomplete type.%
+    \truefootnote{Eg. The (>,<,>=,<=) operators may not have an operand 
+    with {\tt (shared void *)} type.}
+}
+
 {\bf Semantics} 
 
 \np When an expression that has integer type is added to or
@@ -311,6 +318,13 @@ as keywords and shall not be otherwise used.
     AND {\tt upc\_phaseof(pts1 + x) == upc\_phaseof(pts2)}.
     In this case (pts2 - pts1) evaluates to x.
 
+\xadded[id=DB]{104}{
+\np When two pointers-to-shared are compared using a relational operator, 
+    as described in [ISO/IEC00 Sec 6.5.8], 
+    the expression {\tt pts1 $\oplus$ pts2} where {\tt $\oplus$ $\in$ \{>,<,>=,<=\}} 
+    is equivalent to: {\tt (pts1 - pts2) $\oplus$ 0}. 
+    If the result of the subtraction is undefined, so is the result of the relational operator.
+}
 
 {\bf Forward references:}  {\tt upc\_threadof} (\ref{upc_threadof}),
           {\tt upc\_phaseof} (\ref{upc_phaseof}), {\tt upc\_addrfield} (\ref{upc_addrfield}). 
