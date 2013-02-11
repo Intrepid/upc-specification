@@ -999,6 +999,10 @@ expression$_{opt}${\bf ;}}\\
     statements which are not controlling in a {\em nested
     upc\_forall} behave as if their {\em affinity} expressions were
     {\tt continue}.
+    \xadded[id=DB]{88}{
+    Nesting of {\tt upc\_forall} statements is considered an obsolescent
+    feature, and may be prohibited in a future revision of this specification.
+    }
 
 \np Every thread evaluates the first three clauses of a 
     {\tt upc\_forall} statement in accordance with the semantics of
