@@ -82,6 +82,10 @@ thread 0.
 
 \np The {\tt dst} pointer is treated as if it has phase 0.
 
+\xadded[id=DB]{50}{
+\np If copying takes place between objects that overlap, the behavior is undefined.
+}
+
 \np EXAMPLE 1 shows {\tt upc\_all\_broadcast}
 \begin{verbatim}
   #include <upc_collective.h>
@@ -166,6 +170,10 @@ memory area with the type:
 the $i$th block of {\tt nbytes} bytes pointed to by {\tt src} to
 the block of {\tt nbytes} bytes 
 pointed to by {\tt dst} that has affinity to thread $i$.
+
+\xadded[id=DB]{50}{
+\np If copying takes place between objects that overlap, the behavior is undefined.
+}
 
 \np EXAMPLE 1 {\tt upc\_all\_scatter} for the {dynamic THREADS} translation
 environment.
@@ -253,6 +261,10 @@ the block of {\tt nbytes} bytes
 pointed to by {\tt src} that has affinity to thread $i$
 to the $i$th block of {\tt nbytes} bytes pointed to by {\tt dst}.
 
+\xadded[id=DB]{50}{
+\np If copying takes place between objects that overlap, the behavior is undefined.
+}
+
 \np EXAMPLE 1 {\tt upc\_all\_gather} for the {\em static THREADS}
 translation environment.
 
@@ -334,6 +346,10 @@ $i$th block of {\tt nbytes} bytes pointed to by {\tt src} to the
 $i$th block of {\tt nbytes} bytes pointed to by {\tt dst} that
 has affinity to each thread.
 
+\xadded[id=DB]{50}{
+\np If copying takes place between objects that overlap, the behavior is undefined.
+}
+
 \np EXAMPLE 1 {\tt upc\_all\_gather\_all} for the {\em static THREADS}
 translation environment.
 
@@ -414,6 +430,10 @@ pointed to by {\tt src}
 to
 the $j$th block of {\tt nbytes} bytes that has affinity to thread $i$ 
 pointed to by {\tt dst}.
+
+\xadded[id=DB]{50}{
+\np If copying takes place between objects that overlap, the behavior is undefined.
+}
 
 \np EXAMPLE 1 {\tt upc\_all\_exchange} for the {\em static THREADS}
 translation environment.
@@ -502,6 +522,11 @@ if they have phase 0.
 that has affinity to thread {\tt i} pointed to by {\tt src}
 to the block of {\tt nbytes} bytes
 that has affinity to thread {\tt perm}[$i$] pointed to by {\tt dst}.
+
+\xadded[id=DB]{50}{
+\np If any of the elements referenced by {\tt dst} overlap any of the 
+    elements referenced by {\tt src} or {\tt perm}, the behavior is undefined.
+}
 
 \np EXAMPLE 1 {\tt upc\_all\_permute}.
 \begin{verbatim}
@@ -673,6 +698,10 @@ phase of the {\tt src} and {\tt dst} pointers to match -- ie.
 \begin{verbatim}
     shared TYPE *
 \end{verbatim}
+
+\xadded[id=DB]{50}{
+\np If any of the elements referenced by {\tt src} and {\tt dst} overlap, the behavior is undefined.
+}
 
 \np EXAMPLE 1 {\tt upc\_all\_reduce} of type {\tt long UPC\_ADD}.
 \begin{verbatim}
