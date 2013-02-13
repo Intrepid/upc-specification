@@ -1,0 +1,39 @@
+#summary Spec 1.3 changes likely to affect implementations
+
+= Introduction =
+
+This page lists the UPC specification changes introduced in version 1.3 that are likely to have an implementation impact on existing UPC 1.2 compilers seeking to upgrade their compliance. Wording clarifications and other minor changes that are unlikely to have an implementation impact are omitted, but can be seen in the [http://code.google.com/p/upc-specification/issues/list?can=1&q=status%3ARatified+Milestone%3DSpec-1.3&sort=id complete list of changes to the spec]. In many cases constructs that were accepted or underspecified in 1.2 have become explicitly prohibited/undefined under 1.3; in the case of a strengthened Constraint, type-checker implementations are required to issue a diagnostic to be in full compliance. In the case of Semantic behavior that has become undefined, implementations may already be compliant, although there may be an opportunity to remove some outdated support which is no longer required for compliance.
+
+Each change links to the relevant issue thread, which usually includes extensive discussion and the actual spec wording changes near the end. The issue numbers also correspond to those appearing in the "List of Changes" section and footnotes of the [http://code.google.com/p/upc-specification/downloads/detail?name=upc-lang-spec-1.3-draft-3.pdf draft specification].
+
+= Type-checker changes =
+
+  * [http://code.google.com/p/upc-specification/issues/detail?id=3 Issue 3]: Address of a shared array is a pointer-to-shared
+  * [http://code.google.com/p/upc-specification/issues/detail?id=33 Issue 33]: MYTHREAD/THREADS are not l-values
+  * [http://code.google.com/p/upc-specification/issues/detail?id=64 Issue 64]: Barrier argument type relaxation
+  * [http://code.google.com/p/upc-specification/issues/detail?id=71 Issue 71]: `shared [*]` layout prohibited in typedefs
+  * [http://code.google.com/p/upc-specification/issues/detail?id=78 Issue 78]: Shared array initialization removed (undefined)
+  * [http://code.google.com/p/upc-specification/issues/detail?id=94 Issue 94/95]: Constraint on dimension expr in shared array types under dynamic THREADS 
+  * [http://code.google.com/p/upc-specification/issues/detail?id=104 Issue 104]: Relational operators on PTS (new constraint and semantic clarification)
+
+= Code-generator changes =
+
+  * [http://code.google.com/p/upc-specification/issues/detail?id=59 Issue 59]: upc_forall negative affinity undefined
+  * [http://code.google.com/p/upc-specification/issues/detail?id=70 Issue 70]: phase reset on cast/assign of incomplete PTS type
+  * [http://code.google.com/p/upc-specification/issues/detail?id=83 Issue 83]: Default #pragma upc relaxed
+  * [http://code.google.com/p/upc-specification/issues/detail?id=85 Issue 85]: Address/index arithmetic on multi-D shared arrays
+  * [http://code.google.com/p/upc-specification/issues/detail?id=88 Issue 88]: Nested `upc_forall` deprecation
+
+
+= Runtime/Library Changes =
+
+  * [http://code.google.com/p/upc-specification/issues/detail?id=10 Issue 10]: `upc_types.h` header (required)
+  * [http://code.google.com/p/upc-specification/issues/detail?id=12 Issue 12]: `upc_all_(lock_)free` function (required)
+  * [http://code.google.com/p/upc-specification/issues/detail?id=9 Issue 9]: `upc_tick_t` library (required)
+  * [http://code.google.com/p/upc-specification/issues/detail?id=7 Issue 7]: Atomics library (optional)
+  * [http://code.google.com/p/upc-specification/issues/detail?id=37 Issue 37]: Castability library (optional)
+  * [http://code.google.com/p/upc-specification/issues/detail?id=41 Issue 41]: Non-blocking `upc_mem*` library (optional)
+  * [http://code.google.com/p/upc-specification/issues/detail?id=51 Issue 51]: Barrier matching rules corner cases
+
+
+
