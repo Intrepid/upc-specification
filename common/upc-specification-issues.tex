@@ -6,7 +6,7 @@
       \or % issue #2
         Layout specifier '[*]' interpretation in typedef
       \or % issue #3
-        Is a pointer to an array-of-shared a pointer-to-shared or a pointer-to-local?
+        Clarifying pointers to shared arrays, and multi-D shared arrays
       \or % issue #4
         Progress guarantee of upc\_notify and upc\_wait
       \or % issue #5
@@ -204,13 +204,21 @@
       \or % issue #101
         Solidify and document process for spec changes and ratification
       \or % issue #102
-        Update community URL in introduction
+        Update community URL and introduction/acknowledgement sections
       \or % issue #103
         Draft 3 preparation
       \or % issue #104
         Clarify relational operators (>,<,>=,<=) applied to PTS operands
       \or % issue #105
         Update the predefined macro "\_\_UPC\_VERSION\_\_" for 1.3
+      \or % issue #106
+        Clarify contiguity of local slice of a shared array
+      \or % issue #107
+        Either deprecate or strengthen upc\_addrfield()
+      \or % issue #108
+        Utility for converting PTS to human-readable text
+      \or % issue #109
+        Extend PTS arithmetic to allow pointing to "one past" the end of a shared array
     \else
         \empty
     \fi
