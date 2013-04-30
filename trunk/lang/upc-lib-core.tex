@@ -302,11 +302,26 @@
 
 \np The {\tt upc\_addrfield} function returns an
    implementation-defined value reflecting the ``local address'' of the
-   object pointed to by the pointer-to-shared argument.\footnote{%
-   This function is used in defining the semantics of pointer-to-shared
-   arithmetic in Section \ref{pointer-arithmetic}}
+   object pointed to by the pointer-to-shared argument.
 
-   
+\np Given the following declarations:
+
+\begin{verbatim}
+    T *P1, *P2;    /* T is not a shared type */
+    shared T *S1, *S2;  
+
+    P1 = (T*) S1;  /* allowed if upc_threadof(S1) == MYTHREAD */ 
+    P2 = (T*) S2;  /* allowed if upc_threadof(S2) == MYTHREAD */ 
+\end{verbatim}
+
+   For all S1 and S2 that point to two distinct elements of
+   the same shared array object which have affinity to the same
+   thread, the expression:\\
+    {\tt ((ptrdiff\_t) upc\_addrfield(S2) - (ptrdiff\_t)upc\_addrfield(S1))} \\
+   shall evaluate to the same value as: {\tt ((P2 - P1) * sizeof(T))}.
+
+\xchangenote[id=DB]{106}{Paragraph moved from 6.4.2 and cross-reference footnote removed.}
+
 \paragraph{The {\tt upc\_affinitysize} function}
 
 {\bf Synopsis} 
