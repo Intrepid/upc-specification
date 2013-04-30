@@ -704,19 +704,38 @@ assignment-expression }{\bf ]}
 
 {\bf Constraints} 
 
-\np When a UPC program is translated in the {\em dynamic
-    THREADS} environment and an array with shared-qualified elements
-    is declared with definite blocksize, the THREADS expression shall
-    occur exactly once in one dimension of the array declarator
-    (including through typedefs).  Further, the THREADS expression
+\np 
+    When a UPC program is translated in the {\em dynamic THREADS} environment,
+  \xreplaced[id=DB]{95}{%
+    the following restrictions apply: 
+    Every declaration of a shared array with definite blocksize shall include the
+    THREADS keyword exactly once, in one dimension of the array 
+    (including through typedefs).  
+    Every array type that is a shared type with definite blocksize
+    shall include the THREADS keyword at most once, in one dimension
+    (including through typedefs).  
+  }{%
+    and an array with shared-qualified elements
+    is declared with definite blocksize, the THREADS expression shall occur 
+    exactly once in one dimension of the array declarator
+    (including through typedefs).  
+  }%
+  \xreplaced[id=DB]{94}{%
+    In both cases, the THREADS keyword shall only occur either alone or when
+    multiplied by an integer constant expression 
+    (as defined in [ISO/IEC00 Sec. 6.6]) with positive value.
+  }{%
+    Further, the THREADS expression
     shall only occur either alone or when multiplied by an integer
-    constant expression.\footnote{In the {\em static THREADS} environment
+    constant expression.
+  }%
+    \footnote{In the {\em static THREADS} environment
     THREADS is an integer constant expression, and is therefore valid in
     all dimensions.} 
 
 \np \xadded[id=DB]{15}{
-    The THREADS expression
-    shall not appear anywhere in the declarator of a shared array with 
+    The THREADS keyword
+    shall not appear in any array type that is a shared array with 
     indefinite blocksize under the {\em dynamic THREADS} environment.
     }
 
@@ -743,19 +762,31 @@ assignment-expression }{\bf ]}
 \np EXAMPLE 1: declarations allowed in either {\em static THREADS} or
     {\em dynamic THREADS} translation environments:
 
+\cbstart
 \begin{verbatim}
     shared int x [10*THREADS];  
+    shared int x [THREADS*(100*20)];  
     shared [] int x [10]; 
 \end{verbatim}
+\cbend
 
 \np EXAMPLE 2: declarations allowed only in {\em static THREADS} translation
     environment:
 
+\cbstart
 \begin{verbatim}
     shared int x [10+THREADS];  
     shared [] int x [THREADS];  
     shared int x [10]; 
+    shared int x [THREADS][4*THREADS];
+    shared int x [THREADS*THREADS];
+    shared int x [THREADS*100*20];
+    shared int (**p)[THREADS][THREADS];
+    typedef shared int (*t)[THREADS][13][THREADS];
+    shared void *p = (shared int (*)[THREADS][THREADS])q;  
 \end{verbatim}
+\cbend
+\xchangenote[id=DB]{94}{SEVEN NEW EXAMPLES ADDED ABOVE}
 
 \np EXAMPLE 3: declaration of a shared array 
 
