@@ -121,9 +121,11 @@ set for a particular region is set in the {\tt probablyCastable} field,
 it indicates that it is likely, but not guaranteed, that a pointer into
 that region with affinity to {\tt threadId} is castable.
 
-\np Flag values are as specified below.  Each flag has a
-unique bitwise representation that can be unambiguously tested using the
-bitwise AND operator (\&).
+\np The {\tt <upc\_castable.h>} header defines the following macros, which expand to
+integer constant expressions with type {\tt int}, which are suitable for use
+in {\tt \#if} preprocessing directives. Each macro value designates the specified
+memory region. The expressions are defined such that each value can be unambiguously
+tested using the bitwise AND operator ({\tt \&}).
 
 \begin{description}
 \index{UPC\_CASTABLE\_ALL\_ALLOC}
