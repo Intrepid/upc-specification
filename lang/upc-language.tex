@@ -153,15 +153,17 @@ as keywords and shall not be otherwise used.
 
 \index{upc\_localsizeof}
 \npf The {\tt upc\_localsizeof} operator shall apply only to
-     shared-qualified expressions or
-     shared-qualified types.  All constraints on the {\tt sizeof} operator
+     \xreplaced[id=SV]{3}{a shared type or an expression with shared type}
+     {shared-qualified expressions or
+     shared-qualified types}.  All constraints on the {\tt sizeof} operator
      [ISO/IEC00 Sec. 6.5.3.4] also apply to this operator.
 
 {\bf Semantics} 
 
 \np The {\tt upc\_localsizeof} operator returns the size, in
      bytes, of the local portion of its operand, which may be a shared
-     object or a shared-qualified type. It returns the same value on
+     object or a \xreplaced[id=SV]{3}{shared}{shared-qualified} type. 
+     It returns the same value on
      all threads; the value is an upper bound of the size allocated with
      affinity to any single thread and may include an unspecified amount of
      padding.  The result of {\tt upc\_localsizeof} is an integer constant.
@@ -177,15 +179,18 @@ as keywords and shall not be otherwise used.
 {\bf Constraints} 
 
 \index{upc\_blocksizeof}
-\npf The {\tt upc\_blocksizeof} operator shall apply only to shared-qualified
-     expressions or shared-qualified types.    All constraints on the {\tt sizeof} operator
+\npf The {\tt upc\_blocksizeof} operator shall apply only to
+     \xreplaced[id=SV]{3}{a shared type or an expression with shared type}
+     {shared-qualified expressions or shared-qualified types}.
+     All constraints on the {\tt sizeof} operator
      [ISO/IEC00 Sec. 6.5.3.4] also apply to this operator.
 
 {\bf Semantics} 
 
 \np The {\tt upc\_blocksizeof} operator returns the block
-     size of the operand, which may be a shared object or a
-     shared-qualified type.  The block size is the value specified in
+     size of \xreplaced[id=SV]{3}{the ultimate element type of the operand}
+     {the operand, which may be a shared object or a shared-qualified type}.
+     The block size is the value specified in
      the layout qualifier of the type declaration. If there is no
      layout qualifier, the block size is 1.  The result of {\tt
      upc\_blocksizeof } is an integer constant.
@@ -206,16 +211,20 @@ as keywords and shall not be otherwise used.
 {\bf Constraints} 
 
 \index{upc\_elemsizeof}
-\npf The {\tt upc\_elemsizeof} operator shall apply only to shared-qualified
-     expressions or shared-qualified types.  All constraints on the {\tt sizeof} operator
+\npf The {\tt upc\_elemsizeof} operator shall apply only to
+     \xreplaced[id=SV]{3}{a shared type or an expression with shared type}
+     {shared-qualified expressions or shared-qualified types}.
+     All constraints on the {\tt sizeof} operator
      [ISO/IEC00 Sec. 6.5.3.4] also apply to this operator.
 
 {\bf Semantics} 
 
 \np The {\tt upc\_elemsizeof} operator returns the size, in bytes,
-     of the highest-level (leftmost) type that is not an array. For
-     non-array objects, {\tt upc\_elemsizeof} returns the same value as
-     sizeof. The result of {\tt upc\_elemsizeof} is an integer constant.
+     of the \xreplaced[id=SV]{3}{ultimate element type of its operand.}
+     {highest-level (leftmost) type that is not an array.}  For
+     \xreplaced[id=SV]{3}{a non-array operand}{non-array objects}, 
+     {\tt upc\_elemsizeof} returns the same value as {\tt sizeof}. The
+     result of {\tt upc\_elemsizeof} is an integer constant.
 
 \np The type of the result is {\tt size\_t}. 
 
@@ -263,11 +272,13 @@ as keywords and shall not be otherwise used.
 
       
 \begin{verbatim}
-    shared [B] int *p, *p1;  /* B a positive integer */ 
+    shared [B] T *p, *p1; /* B a positive integer,
+                             T not a shared type */
     int i;  
 
     p1 = p + i;  
 \end{verbatim}
+\xchangenote[id=SV]{3}{Changed referenced type of pointer.}
     
 \np After this assignment the following equations must hold
    in any UPC implementation.  In each case the {\tt div} operator
@@ -276,12 +287,14 @@ as keywords and shall not be otherwise used.
    remainder:\footnote{The C ``{\tt \%}'' and ``{\tt /}''
    operators do not have the necessary properties}
 
-    
 \begin{verbatim}
-    upc_phaseof(p1) == (upc_phaseof(p) + i) mod B 
-    upc_threadof(p1) == (upc_threadof(p) 
-                         + (upc_phaseof(p) + i) div B) mod THREADS 
-\end{verbatim}    
+    ptrdiff_t elem_delta = i * (sizeof(T) / upc_elemsizeof(*p))
+    upc_phaseof(p1) == (upc_phaseof(p) + elem_delta) mod B
+    upc_threadof(p1) == (upc_threadof(p)
+                          + (upc_phaseof(p) + elem_delta) div B)
+                        mod THREADS
+\end{verbatim}
+\xchangenote[id=SV]{3}{Changed formulas to support multi-dimensional shared arrays.}    
 
 \np In addition, the correspondence between shared and
    local addresses and arithmetic is defined using the following
@@ -349,7 +362,8 @@ as keywords and shall not be otherwise used.
 
 \npf A shared type qualifier shall not appear in a type cast
     where the corresponding pointer component of the type of the expression
-    being cast is not shared-qualified.\footnote{i.e., pointers-to-local
+    being cast is not \xreplaced[id=SV]{3}{a shared type}{shared-qualified}.
+    \footnote{i.e., pointers-to-local
     cannot be cast to pointers-to-shared.}  An exception is made when 
     \xreplaced[id=DB]{65}{a null pointer constant}{the constant expression 0}
     is cast, the result is called the {\em null 
@@ -378,14 +392,16 @@ as keywords and shall not be otherwise used.
      are not type compatible, explicit casts are required.} to a
      pointer-to-local\footnote{Accesses through such cast pointers are
      local accesses and behave accordingly.} and the affinity
-     of the pointed-to shared object is not to the current thread, the result is
-     undefined.
+     of \xadded[id=SV]{3}{any byte comprising} the
+     pointed-to shared object is not to the current thread, the result
+     is undefined.
      
 \np If a null pointer-to-shared is cast to a pointer-to-local,
      the result is a null pointer.    
        
-\np Shared objects with affinity to a given thread can be
-    accessed by either pointers-to-shared or pointers-to-local of
+\np \xreplaced[id=SV]{3}{Bytes}{Shared objects} with
+    affinity to a given thread \xadded[id=SV]{3}{containing shared objects}
+    can be accessed by either pointers-to-shared or pointers-to-local of
     that thread.
 
 \np EXAMPLE 1: 
@@ -404,6 +420,13 @@ as keywords and shall not be otherwise used.
 
 \npf When the unary {\tt \&} is applied to a shared structure
     element of type {\tt T}, the result has type {\tt shared [] T *}.
+
+\xadded[id=SV]{3}{
+\np When the unary {\tt \&} is applied to an expression with a shared
+    array type, the result is a pointer-to-shared that points to the
+    beginning of the pointed-to shared array, whose referenced type
+    matches that of the expression the unary {\tt \&} was applied to.
+}
 
 \subsection{Declarations}
 
@@ -547,7 +570,8 @@ as keywords and shall not be otherwise used.
 \index{blocking factor}
 \np The layout qualifier dictates the blocking factor for
     the type being shared qualified. This factor is the nonnegative
-    number of consecutive elements (when evaluating pointer-to-shared
+    number of consecutive \xreplaced[id=SV]{3}{objects with ultimate
+    element type of the array}{elements} (when evaluating pointer-to-shared
     arithmetic and array declarations) which have affinity to the
     same thread. If the optional constant expression is 0 or is not
     specified (i.e. {\tt[]}), this indicates an {\em indefinite blocking factor}\index{indefinite}
@@ -684,9 +708,10 @@ assignment-expression }{\bf ]}
     and {\tt relaxed} either directly or indirectly through one or
     more typedefs.
 
-\np No object with automatic storage duration shall have a type
+\np No object with automatic storage duration shall have \xreplaced[id=SV]{3}
+    {a shared type}{a type
     that is shared-qualified and no array object with automatic
-    storage duration shall have an element type that is shared-qualified.
+    storage duration shall have an element type that is shared-qualified}.
 
 {\bf Semantics} 
 
@@ -740,19 +765,25 @@ assignment-expression }{\bf ]}
     }
 
 \np \xadded[id=DB]{78}{
-    If an init-declarator that declares an array with shared-qualified elements
+    If an init-declarator that declares a shared array
     includes an initializer, the behavior is implementation-defined.
     }
 
 {\bf Semantics} 
 
-\np Elements of shared arrays are distributed in a round
+\np \xreplaced[id=SV]{3}
+    {The objects with ultimate element type that comprise a shared array are
+    distributed in a round robin fashion, by chunks of block-size objects,
+    such that the i-th object}
+    {Elements of shared arrays are distributed in a round
     robin fashion, by chunks of block-size elements, such that the
-    i-th element has affinity with thread (floor (i/block\_size) {\tt
-    mod THREADS}).
+    i-th element} has affinity with thread \xreplaced[id=SV]{3}
+    {($\lfloor i/block\_size \rfloor$ {\tt mod THREADS})}
+    {(floor (i/block\_size) {\tt mod THREADS})}.
 
 \np In an array declaration, the type qualifier applies to
-    the elements.
+    the \xreplaced[id=SV]{3}{ultimate element type of the
+    array}{elements}.
 
 \index{upc\_phaseof}
 \np For any shared array, {\tt a}, {\tt upc\_phaseof (\&a)} is
@@ -805,7 +836,8 @@ assignment-expression }{\bf ]}
 \end{verbatim}
    
 
-   {\tt shared [3]} applies to the underlying type of T, which is int,
+   {\tt shared [3]} applies to the \xreplaced[id=SV]{3}{ultimate
+   element type}{underlying type} of T, which is int,
    regardless of the typedef.  The array is blocked as if it were
    declared:
 

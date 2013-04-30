@@ -355,8 +355,9 @@
 \end{verbatim}   
 
     the {\tt totalsize} argument shall be {\tt s * sizeof (t)} and the
-    {\tt nbytes} argument shall be {\tt b * sizeof (t)}.  If the block
-    size is indefinite, {\tt nbytes} shall be 0.
+    {\tt nbytes} argument shall be {\tt b * \xreplaced[id=SV]{3}
+    {upc\_elemsizeof (d)}{sizeof (t)}}.  If the block size is indefinite,
+    {\tt nbytes} shall be 0.
         
 \np{\tt threadid} shall be a value in {\tt 0..(THREADS-1)}.
 
