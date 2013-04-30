@@ -288,24 +288,33 @@ as keywords and shall not be otherwise used.
    constructs:
 
 \begin{verbatim}
-    T *P1, *P2;  
-    shared T *S1, *S2;  
+    T *P1, *P2;    /* T is not a shared type */
+    shared [] T *S1, *S2;  
 
-    P1 = (T*) S1;  /* allowed if S1 has affinity to MYTHREAD */ 
-    P2 = (T*) S2;  /* allowed if S2 has affinity to MYTHREAD */ 
+    P1 = (T*) S1;  /* allowed if upc_threadof(S1) == MYTHREAD */ 
+    P2 = (T*) S2;  /* allowed if upc_threadof(S2) == MYTHREAD */ 
 \end{verbatim}    
-    
+\xchangenote[id=DB]{106}{Declaration of S1 and S1 changed to indefinite blocksize to accommodate new constraint. Comments clarified.}
 
-\np For all S1 and S2 that point to two distinct elements of
-   the same shared array object which have affinity to the same
-   thread:
+\np For all S1 and S2 that point to two distinct 
+\xreplaced[id=DB]{106}{
+   objects with affinity to the same thread, 
+   where both are subobjects contained in the same shared array whose
+   ultimate element type is a qualified version of {\tt T}: 
+}{
+   elements of the same shared array object 
+   which have affinity to the same thread:
+}
 
 \begin{itemize}
 \item S1 and P1 shall point to the same object. 
 \item S2 and P2 shall point to the same object. 
-\item The expression (({\tt (ptrdiff\_t) upc\_addrfield} (S2) -  {\tt (ptrdiff\_t) upc\_addrfield(S1))} shall 
-   evaluate to the same value as ((P2 - P1) * sizeof(T)).  
+\xadded[id=DB]{106}{
+\item The expression {\tt P1 + (S2 - S1) == P2} shall evaluate to 1.%
+\truefootnote{This implies there is no padding inserted between blocks of shared array elements with affinity to a thread.}
+}
 \end{itemize}
+\xchangenote[id=DB]{106}{Constraint on {\tt upc\_addrfield} moved to Section~\ref{upc_addrfield}.}
 
 \np Two compatible pointers-to-shared which point to the same
     object (i.e. having the same address and thread components) shall
@@ -327,7 +336,7 @@ as keywords and shall not be otherwise used.
 }
 
 {\bf Forward references:}  {\tt upc\_threadof} (\ref{upc_threadof}),
-          {\tt upc\_phaseof} (\ref{upc_phaseof}), {\tt upc\_addrfield} (\ref{upc_addrfield}). 
+          {\tt upc\_phaseof} (\ref{upc_phaseof}). 
 
 \subsubsection{Cast and assignment expressions}
 
