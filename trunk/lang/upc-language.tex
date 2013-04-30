@@ -559,6 +559,22 @@ as keywords and shall not be otherwise used.
 
 \np For purposes of assignment compatibility, generic pointers-to-shared
     behave as if they always have a compatible block size.
+
+\np \xadded[id=DB]{110}{
+    The {\it effective type} of a shared object
+    is the type as determined by [ISO/IEC00 Sec. 6.5],
+    with the top-level (rightmost) shared qualifier removed.%
+      \truefootnote{For example, in the file-scope declaration {\tt shared [10] int A[10*THREADS];}
+       the effective type of the object {\tt A[0]} is {\tt int}.
+       This implies the following lvalue expressions are all permitted for accessing the object:
+       % DOB: would like to use verbatim environment here, but Latex does not allow it in a footnote
+       \begin{quote}
+       {\tt int x1 = A[0];}\\
+       {\tt int x2 = *(int *)\&(A[0]); // valid only for MYTHREAD==0}\\
+       {\tt int x3 = *(shared [] int *)\&(A[0]); }
+       \end{quote}
+    }
+    }
         
 \np If the layout qualifier is of the form `{\bf [ * ]}',
     the shared object is distributed as if it had a block size of
