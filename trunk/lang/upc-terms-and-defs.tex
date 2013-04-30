@@ -19,6 +19,17 @@
      an instance of execution initiated by the execution
      environment at program startup.
 
+\sterm{ultimate element type}%
+     for non-array types, the type itself.  For an array type ``array of T'',
+     the ultimate element type of T.
+
+\xchangenote[id=SV]{3}{SECTION ADDED}
+
+\sterm{shared type}%
+     a type whose ultimate element type is shared-qualified.
+
+\xchangenote[id=SV]{3}{SECTION ADDED}
+
 \sterm{object}%
      region of data storage in the execution environment
      which can represent values.
@@ -40,19 +51,27 @@
      {\tt int y;} creates a separate object for each thread to access.}
 
 \ssterm{shared array}%
-     an array with elements that have shared qualified type.
+     an array with \xreplaced[id=SV]{3}{shared type}{elements that have
+     shared qualified type}.
   
 \sterm{affinity}%
      logical association between shared
-     objects and threads.  Each element of data storage that contains
-     shared objects has affinity to exactly one thread.
+     objects and threads.  Each \xreplaced[id=SB]{3}{byte in a shared object}
+     {element of data storage that contains shared objects} has affinity
+     to exactly one thread.
+     \xadded[id=SV]{3}{The affinity of a shared object is the same as
+     that of the first byte in the object.\truefootnote{For non-array
+     shared objects, all bytes in the object have the same affinity as
+     the object itself.  This is not necessarily true for shared array
+     objects, which may span multiple threads.}}
  
 \sterm{pointer-to-shared}%
-     a pointer whose referenced type is shared-qualified.
+     a pointer whose referenced type is \xreplaced[id=SV]{3}{a shared type}
+     {shared-qualified}.
 
 \sterm{pointer-to-local}%
-     a pointer whose referenced type is not
-     shared-qualified.
+     a pointer whose referenced type is not \xreplaced[id=SV]{3}{a shared
+     type}{shared-qualified}.
 
 \label{def-access}
 \sterm{access}%
@@ -60,8 +79,8 @@
      modify the value of an object by a thread.
 
 \ssterm{shared access}%
-     an access using an expression whose type
-     is shared-qualified.
+     an access using an expression whose type is \xreplaced[id=SV]{3}
+     {a shared type}{shared-qualified}.
 
 \pterm{strict shared read}%
      a shared read access which is determined to be
@@ -80,8 +99,8 @@
      relaxed according to section \ref{type_qualifiers} of this specification.
 
 \ssterm{local access}%
-     an access using an expression whose type
-     is not shared-qualified.
+     an access using an expression whose type is not \xreplaced[id=SV]{3}
+     {a shared type}{shared-qualified}.
 
 \index{synchronization}
 \sterm{collective}%
