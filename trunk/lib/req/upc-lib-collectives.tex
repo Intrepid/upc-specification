@@ -593,20 +593,20 @@ the order of the operands will have undefined results.
 \npf 
 \begin{verbatim}
 #include <upc_collective.h>
-void upc_all_reduce_<<T>>(
+void upc_all_reduce<<T>>(
         shared void * restrict dst,
-        void shared const void * restrict src,
+        shared const void * restrict src,
         upc_op_t op,
         size_t nelems,
-        void size_t blk_size,
+        size_t blk_size,
         <<TYPE>>(*func)(<<TYPE>>, <<TYPE>>),
         upc_flag_t flags);
 void upc_all_prefix_reduce<<T>>(
         shared void * restrict dst,
-        void  shared const void * restrict src,
+        shared const void * restrict src,
         upc_op_t op,
         size_t nelems,
-        void size_t blk_size,
+        size_t blk_size,
         <<TYPE>>(*func)(<<TYPE>>, <<TYPE>>),
         upc_flag_t flags);
 \end{verbatim}
