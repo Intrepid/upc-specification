@@ -14,6 +14,9 @@ TEX_INC_SRCS = \
 	$(COMMON)/upc-specification-issues.tex \
 	upc-lib-optional-spec.tex \
 	upc-lib-optional-spec-draft.tex \
-	upc-lib-io.tex
+	upc-lib-atomic-ops.tex \
+	upc-lib-castability.tex \
+	upc-lib-io.tex \
+	upc-lib-nb-mem-ops.tex
 
 include $(COMMON)/Makefile.in
