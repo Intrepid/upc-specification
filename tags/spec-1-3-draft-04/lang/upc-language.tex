@@ -1,0 +1,1275 @@
+\pagebreak
+\section{Language}
+\subsection{Notations} 
+
+\npf In the syntax notation used in this section, syntactic
+    categories (nonterminals) are indicated by {\em italic type}, and
+    literal words and character set members (terminals) by {\bf bold
+    type}. A colon (:) following a nonterminal introduces its
+    definition.  An optional symbol is
+    indicated by the subscript ``opt'', so that
+
+\begin{center}
+          \{ $expression_{opt}$ \}
+\end{center}
+
+    indicates an optional expression enclosed in braces. 
+
+\np When syntactic categories are referred to in the main
+    text, they are not italicized and words are separated by spaces
+    instead of hyphens.
+    
+\subsection{Keywords}
+
+\index{keywords}
+\index{tokens}
+\index{MYTHREAD}
+\index{upc\_barrier}
+\index{upc\_localsizeof}
+\index{relaxed}
+\index{upc\_blocksizeof}
+\index{UPC\_MAX\_BLOCK\_SIZE}
+\index{shared}
+\index{upc\_elemsizeof}
+\index{upc\_notify}
+\index{strict}
+\index{upc\_fence}
+\index{upc\_wait}
+\index{THREADS}
+\index{upc\_forall}
+\npf This subsection provides the UPC extensions of [ISO/IEC00 Sec 6.4.1].
+
+{\bf Syntax}
+
+\np{\em upc\_keyword:}
+
+\begin{center}
+{\tt\bf 
+\begin{tabular}{lll}
+MYTHREAD & upc\_barrier & upc\_localsizeof  \\
+relaxed & upc\_blocksizeof & UPC\_MAX\_BLOCK\_SIZE \\
+shared &  upc\_elemsizeof & upc\_notify \\
+strict &   upc\_fence  & upc\_wait \\
+THREADS & upc\_forall  \\
+\end{tabular}
+}
+\end{center}
+\xchangenote[id=DB]{55}{UPC\_MAX\_BLOCKSIZE changed to UPC\_MAX\_BLOCK\_SIZE in the above table}
+
+
+{\bf Semantics}
+
+\np In addition to the keywords defined in [ISO/IEC00 Sec 6.4.1], the above
+tokens (case sensitive) are reserved (in translation phases 7 and 8) for use
+as keywords and shall not be otherwise used.
+
+ 
+\subsection{Predefined identifiers}
+
+\npf This subsection provides the UPC parallel extensions of
+    [ISO/IEC00 Sec. 6.4.2.2].
+
+\subsubsection{{\tt THREADS}}
+\label{threads}
+\index{THREADS}
+\npf{\tt THREADS} is an expression with %
+     \xreplaced[id=DB]{32}{integral value}{a value of type int}; %
+     it specifies the number of
+     threads and has the same value on every
+     thread.   Under the static THREADS translation environment, {\tt THREADS}
+     is an integer constant suitable for use in {\tt \#if} preprocessing directives.
+
+\subsubsection{{\tt MYTHREAD}}
+\index{MYTHREAD}
+\npf{\tt MYTHREAD} is an expression with %
+     \xreplaced[id=DB]{32}{integral value}{a value of type int}; %
+     it specifies the
+     unique thread index.%
+     \xadded[id=DB]{33}{%
+       \truefootnote{The definition of MYTHREAD and THREADS as expressions, not objects or   
+               l-values, means one cannot assign to them or take their address.}%
+     }%
+     The range of possible values is {\tt
+     0..THREADS-1}\footnote{e.g., the program {\tt main()\{
+     printf("\%d ",MYTHREAD); \} }, prints the numbers 0 through
+     THREADS-1, in some order.}.
+
+\subsubsection{{\tt UPC\_MAX\_BLOCK\_SIZE}}
+\label{max_block_size}
+\index{UPC\_MAX\_BLOCK\_SIZE}      
+\index{block size}
+\npf{\tt UPC\_MAX\_BLOCK\_SIZE} is a predefined integer
+     constant value.  It indicates the maximum value\footnote{
+     e.g. {\tt shared [UPC\_MAX\_BLOCK\_SIZE+1] char
+     x[UPC\_MAX\_BLOCK\_SIZE+1]} and {\tt shared [*] char
+     x[(UPC\_MAX\_BLOCK\_SIZE+1)*THREADS]} are translation errors.} allowed
+     in a layout qualifier for shared data.  It shall be suitable for use in 
+     {\tt \#if} preprocessing directives.
+
+\subsection{Expressions}
+
+\npf This subsection provides the UPC parallel extensions of
+    [ISO/IEC00 Sec. 6.5].  In particular, the unary operator expressions
+    in [ISO/IEC00 Sec. 6.5.3] are extended with new syntax.
+
+\subsubsection{Unary Operators}
+
+{\bf Syntax}
+
+\npf{\em unary-expression}
+
+\hspace{3em}{\em ...}
+
+\hspace{3em}{\tt{\bf sizeof} {\em unary-expression}}
+
+\hspace{3em}{\tt{\bf sizeof} ( {\em type-name} )}
+
+\hspace{3em}{\tt{\bf upc\_localsizeof} {\em unary-expression}}
+
+\hspace{3em}{\tt{\bf upc\_localsizeof} ( {\em type-name} )}
+
+\hspace{3em}{\tt{\bf upc\_blocksizeof} {\em unary-expression}}
+
+\hspace{3em}{\tt{\bf upc\_blocksizeof} ( {\em type-name} )}
+
+\hspace{3em}{\tt{\bf upc\_elemsizeof} {\em unary-expression}}
+
+\hspace{3em}{\tt{\bf upc\_elemsizeof} ( {\em type-name} )}
+
+
+\paragraph{The {\tt\bf sizeof} operator}
+
+{\bf Semantics} 
+
+\index{sizeof}
+\npf The {\tt sizeof} operator will result in an
+    integer value which is not constant when 
+    applied to a definitely blocked shared array under
+    the {\em dynamic THREADS} environment.
+
+\paragraph{The {\tt\bf upc\_localsizeof} operator}
+ 
+{\bf Constraints} 
+
+\index{upc\_localsizeof}
+\npf The {\tt upc\_localsizeof} operator shall apply only to
+     \xreplaced[id=SV]{3}{a shared type or an expression with shared type}
+     {shared-qualified expressions or
+     shared-qualified types}.  All constraints on the {\tt sizeof} operator
+     [ISO/IEC00 Sec. 6.5.3.4] also apply to this operator.
+
+{\bf Semantics} 
+
+\np The {\tt upc\_localsizeof} operator returns the size, in
+     bytes, of the local portion of its operand, which may be a shared
+     object or a \xreplaced[id=SV]{3}{shared}{shared-qualified} type. 
+     It returns the same value on
+     all threads; the value is an upper bound of the size allocated with
+     affinity to any single thread and may include an unspecified amount of
+     padding.  The result of {\tt upc\_localsizeof} is an integer constant.
+
+\np The type of the result is {\tt size\_t}. 
+
+\np If the operand is an expression, that expression
+     is not evaluated.
+
+\paragraph{The {\tt\bf upc\_blocksizeof} operator}
+ 
+
+{\bf Constraints} 
+
+\index{upc\_blocksizeof}
+\npf The {\tt upc\_blocksizeof} operator shall apply only to
+     \xreplaced[id=SV]{3}{a shared type or an expression with shared type}
+     {shared-qualified expressions or shared-qualified types}.
+     All constraints on the {\tt sizeof} operator
+     [ISO/IEC00 Sec. 6.5.3.4] also apply to this operator.
+
+{\bf Semantics} 
+
+\np The {\tt upc\_blocksizeof} operator returns the block
+     size of \xreplaced[id=SV]{3}{the ultimate element type of the operand}
+     {the operand, which may be a shared object or a shared-qualified type}.
+     The block size is the value specified in
+     the layout qualifier of the type declaration. If there is no
+     layout qualifier, the block size is 1.  The result of {\tt
+     upc\_blocksizeof } is an integer constant.
+
+\np If the operand of {\tt upc\_blocksizeof} has indefinite
+     block size, the value of {\tt upc\_blocksizeof} is 0.
+
+\np The type of the result is {\tt size\_t}. 
+
+\np If the operand is an expression, that expression
+     is not evaluated.
+
+      {\bf Forward references:} indefinite block size (\ref{indefinite_block_size}).  
+      
+
+\paragraph{The {\tt\bf upc\_elemsizeof} operator}
+
+{\bf Constraints} 
+
+\index{upc\_elemsizeof}
+\npf The {\tt upc\_elemsizeof} operator shall apply only to
+     \xreplaced[id=SV]{3}{a shared type or an expression with shared type}
+     {shared-qualified expressions or shared-qualified types}.
+     All constraints on the {\tt sizeof} operator
+     [ISO/IEC00 Sec. 6.5.3.4] also apply to this operator.
+
+{\bf Semantics} 
+
+\np The {\tt upc\_elemsizeof} operator returns the size, in bytes,
+     of the \xreplaced[id=SV]{3}{ultimate element type of its operand.}
+     {highest-level (leftmost) type that is not an array.}  For
+     \xreplaced[id=SV]{3}{a non-array operand}{non-array objects}, 
+     {\tt upc\_elemsizeof} returns the same value as {\tt sizeof}. The
+     result of {\tt upc\_elemsizeof} is an integer constant.
+
+\np The type of the result is {\tt size\_t}. 
+
+\np If the operand is an expression, that expression
+     is not evaluated.
+
+\subsubsection{Pointer-to-shared arithmetic}
+\label{pointer-arithmetic}
+\index{pointer-to-shared}
+\index{pointer-to-local}
+\index{pointer addition}
+\index{upc\_phaseof}
+\index{upc\_threadof}
+\index{upc\_addrfield}
+\index{pointer equality}
+\index{pointer subtraction}
+\index{affinity}
+\index{phase}
+{\bf Constraints} 
+
+\npf No binary operators shall be applied to one pointer-to-shared
+    and one pointer-to-local.
+
+\xadded[id=DB]{104}{
+\np Relational operators (as defined in [ISO/IEC00 Sec 6.5.8]) 
+    shall not be applied to a pointer-to-shared with incomplete type.%
+    \truefootnote{Eg. The (>,<,>=,<=) operators may not have an operand 
+    with {\tt (shared void *)} type.}
+}
+
+{\bf Semantics} 
+
+\np When an expression that has integer type is added to or
+     subtracted from a pointer-to-shared, the result has the type of the
+     pointer-to-shared operand.  If the pointer-to-shared operand points to
+     an element of a shared array object, and the shared array is
+     large enough, the result points to an element of the shared
+     array.  If the shared array is declared with indefinite block
+     size, the result of the pointer-to-shared arithmetic is identical to
+     that described for normal C pointers in [ISO/IEC00 Sec. 6.5.6],
+     except that the thread of the new pointer shall be the same as
+     that of the original pointer and the phase component is defined to
+     always be zero.  If the shared array has a definite block size,
+     then the following example describes pointer arithmetic:
+
+      
+\begin{verbatim}
+    shared [B] T *p, *p1; /* B a positive integer,
+                             T not a shared type */
+    int i;  
+
+    p1 = p + i;  
+\end{verbatim}
+\xchangenote[id=SV]{3}{Changed referenced type of pointer.}
+    
+\np After this assignment the following equations must hold
+   in any UPC implementation.  In each case the {\tt div} operator
+   indicates integer division rounding towards negative infinity and
+   the {\tt mod} operator returns the nonnegative
+   remainder:\footnote{The C ``{\tt \%}'' and ``{\tt /}''
+   operators do not have the necessary properties}
+
+\begin{verbatim}
+    ptrdiff_t elem_delta = i * (sizeof(T) / upc_elemsizeof(*p))
+    upc_phaseof(p1) == (upc_phaseof(p) + elem_delta) mod B
+    upc_threadof(p1) == (upc_threadof(p)
+                          + (upc_phaseof(p) + elem_delta) div B)
+                        mod THREADS
+\end{verbatim}
+\xchangenote[id=SV]{3}{Changed formulas to support multi-dimensional shared arrays.}    
+
+\np In addition, the correspondence between shared and
+   local addresses and arithmetic is defined using the following
+   constructs:
+
+\begin{verbatim}
+    T *P1, *P2;    /* T is not a shared type */
+    shared [] T *S1, *S2;  
+
+    P1 = (T*) S1;  /* allowed if upc_threadof(S1) == MYTHREAD */ 
+    P2 = (T*) S2;  /* allowed if upc_threadof(S2) == MYTHREAD */ 
+\end{verbatim}    
+\xchangenote[id=DB]{106}{Declaration of S1 and S1 changed to indefinite blocksize to accommodate new constraint. Comments clarified.}
+
+\np For all S1 and S2 that point to two distinct 
+\xreplaced[id=DB]{106}{
+   objects with affinity to the same thread, 
+   where both are subobjects contained in the same shared array whose
+   ultimate element type is a qualified version of {\tt T}: 
+}{
+   elements of the same shared array object 
+   which have affinity to the same thread:
+}
+
+\begin{itemize}
+\item S1 and P1 shall point to the same object. 
+\item S2 and P2 shall point to the same object. 
+\xadded[id=DB]{106}{
+\item The expression {\tt P1 + (S2 - S1) == P2} shall evaluate to 1.%
+\truefootnote{This implies there is no padding inserted between blocks of shared array elements with affinity to a thread.}
+}
+\end{itemize}
+\xchangenote[id=DB]{106}{Constraint on {\tt upc\_addrfield} moved to Section~\ref{upc_addrfield}.}
+
+\np Two compatible pointers-to-shared which point to the same
+    object (i.e. having the same address and thread components) shall
+    compare as equal according to == and !=, regardless of whether the 
+    phase components match.
+
+\np When two pointers-to-shared are subtracted, as described in
+    [ISO/IEC00 Sec. 6.5.6], the result is undefined unless there exists
+    an integer x, representable as a {\tt ptrdiff\_t}, such that (pts1 + x) == pts2
+    AND {\tt upc\_phaseof(pts1 + x) == upc\_phaseof(pts2)}.
+    In this case (pts2 - pts1) evaluates to x.
+
+\xadded[id=DB]{104}{
+\np When two pointers-to-shared are compared using a relational operator, 
+    as described in [ISO/IEC00 Sec 6.5.8], 
+    the expression {\tt pts1 $\oplus$ pts2} where {\tt $\oplus$ $\in$ \{>,<,>=,<=\}} 
+    is equivalent to: {\tt (pts1 - pts2) $\oplus$ 0}. 
+    If the result of the subtraction is undefined, so is the result of the relational operator.
+}
+
+{\bf Forward references:}  {\tt upc\_threadof} (\ref{upc_threadof}),
+          {\tt upc\_phaseof} (\ref{upc_phaseof}). 
+
+\subsubsection{Cast and assignment expressions}
+
+\index{pointer-to-shared, casts}
+\index{pointer-to-shared, conversion}
+\index{pointer-to-shared, null}
+\index{pointer-to-shared, generic}
+\index{block size, conversion}
+{\bf Constraints} 
+
+\npf A shared type qualifier shall not appear in a type cast
+    where the corresponding pointer component of the type of the expression
+    being cast is not \xreplaced[id=SV]{3}{a shared type}{shared-qualified}.
+    \footnote{i.e., pointers-to-local
+    cannot be cast to pointers-to-shared.}  An exception is made when 
+    \xreplaced[id=DB]{65}{a null pointer constant}{the constant expression 0}
+    is cast, the result is called the {\em null 
+    pointer-to-shared}.\footnote{[ISO/IEC00 Sec.
+    6.3.2.3/6.5.16.1] imply that an implicit cast is allowed for zero
+    and that all null pointers-to-shared compare equal.}
+
+{\bf Semantics} 
+
+\np The casting or assignment from one pointer-to-shared 
+    to another in which either the type size or block size differs,
+    \xadded[id=DB]{70}{or either type is incomplete,}
+    results in 
+    a pointer with a zero phase, unless one of the types is a qualified or
+    unqualified version of {\tt shared void*}, the {\em generic pointer-to-shared},
+    in which case the phase is preserved unchanged in the resulting
+    pointer value.
+    
+\np If a generic pointer-to-shared is cast to a non-generic 
+     pointer-to-shared type with indefinite block size or with block size of 
+     one, the result is a pointer with a phase of zero.  Otherwise, if the
+     phase of the former pointer value is not within the range of possible
+     phases of the latter pointer type, the result is undefined.
+  
+\np If a non-null pointer-to-shared is cast\footnote{As such pointers
+     are not type compatible, explicit casts are required.} to a
+     pointer-to-local\footnote{Accesses through such cast pointers are
+     local accesses and behave accordingly.} and the affinity
+     of \xadded[id=SV]{3}{any byte comprising} the
+     pointed-to shared object is not to the current thread, the result
+     is undefined.
+     
+\np If a null pointer-to-shared is cast to a pointer-to-local,
+     the result is a null pointer.    
+       
+\np \xreplaced[id=SV]{3}{Bytes}{Shared objects} with
+    affinity to a given thread \xadded[id=SV]{3}{containing shared objects}
+    can be accessed by either pointers-to-shared or pointers-to-local of
+    that thread.
+
+\np EXAMPLE 1: 
+\begin{verbatim}
+    int i, *p; 
+    shared int *q; 
+    q = (shared int *)p;         /* is not allowed */ 
+    if (upc_threadof(q) == MYTHREAD)
+        p = (int *) q;          /* is allowed */ 
+\end{verbatim}
+
+\subsubsection{Address operators}
+
+\index{struct field, address-of}
+{\bf Semantics} 
+
+\npf When the unary {\tt \&} is applied to a shared structure
+    element of type {\tt T}, the result has type {\tt shared [] T *}.
+
+\xadded[id=SV]{3}{
+\np When the unary {\tt \&} is applied to an expression with a shared
+    array type, the result is a pointer-to-shared that points to the
+    beginning of the pointed-to shared array, whose referenced type
+    matches that of the expression the unary {\tt \&} was applied to.
+}
+
+\subsection{Declarations}
+
+\npf UPC extends the declaration ability of C to allow shared
+     types, shared data layout across threads, and ordering constraint
+     specifications.
+
+{\bf Constraints} 
+
+\index{strict}
+\index{relaxed}
+\index{block size}
+\np The declaration specifiers in a given declaration shall
+     not include, either directly or through one or more typedefs,
+     both {\tt strict} and {\tt relaxed}.
+
+ 
+\np The declaration specifiers in a given declaration shall
+     not specify more than one block size, either directly or
+     indirectly through one or more typedefs.
+
+{\bf Syntax} 
+
+\np The following is the declaration definition as per
+    [ISO/IEC00 Sec. 6.7], repeated here for self-containment and
+    clarity of the subsequent UPC extension specifications.
+
+\np{\em declaration:}
+
+\hspace{3em}{\em declaration-specifiers init-declarator-list$_{opt}$} {\bf ;}
+
+\np{\em declaration-specifiers:}
+
+\hspace{3em}{\em storage-class-specifier declaration-specifiers$_{opt}$}
+
+\hspace{3em}{\em type-specifier declaration-specifiers$_{opt}$}
+
+\hspace{3em}{\em type-qualifier declaration-specifiers$_{opt}$}
+
+\hspace{3em}{\em function-specifier declaration-specifiers$_{opt}$}
+
+\np{\em init-declarator-list:}
+
+\hspace{3em}{\em init-declarator}
+
+\hspace{3em}{\em init-declarator-list {\bf ,} init-declarator}
+
+\np{\em init-declarator:}
+
+\hspace{3em}{\em declarator}
+
+\hspace{3em}{\em declarator {\bf =} initializer}
+
+ {\bf Forward references:} strict and relaxed type qualifiers (\ref{type_qualifiers}). 
+
+\subsubsection{Type qualifiers}
+\index{strict}
+\index{relaxed}
+\index{shared layout qualifier}
+\npf This subsection provides the UPC parallel extensions of
+    in [ISO/IEC00 Sec 6.7.3].
+
+{\bf Syntax} 
+
+\np{\em type-qualifier:} 
+
+\hspace{3em}{\bf const}
+
+\hspace{3em}{\bf restrict}
+
+\hspace{3em}{\bf volatile}
+
+\hspace{3em}{\em shared-type-qualifier}
+
+\hspace{3em}{\em reference-type-qualifier}
+
+\paragraph{The shared and reference type qualifiers}
+\label{type_qualifiers}
+\label{indefinite_block_size}
+
+{\bf Syntax} 
+
+\npf{\em shared-type-qualifier:}
+
+\hspace{3em}{\bf shared} {\em layout-qualifier$_{opt}$}
+
+\np{\em reference-type-qualifier:}
+
+\hspace{3em}{\bf relaxed}
+
+\hspace{3em}{\bf strict}
+
+\np{\em layout-qualifier:}
+
+\hspace{3em}{\bf [}{\em constant-expression$_{opt}$}{\bf ]}
+
+\hspace{3em}{\bf [ {\em *}  ]}
+
+{\bf Constraints} 
+
+\np A reference type qualifier shall appear in a qualifier
+    list only when the list also contains a shared type qualifier.
+
+\np A shared type qualifier can appear anywhere a type qualifier can appear
+    except that it shall not appear in the {\em specifier-qualifier-list} of a structure
+    declaration unless it qualifies a pointer's referenced type, nor shall it appear 
+    in any declarator where prohibited by section \ref{declarator}.%
+    \footnote{E.g., {\tt struct S1 \{ shared char * p1; \};} is allowed,
+    while {\tt struct S2 \{ char * shared p2; \};} is not.}
+
+\np A layout qualifier of [*] shall not appear in the
+    declaration specifiers of a pointer type.
+
+\np \xadded[id=DB]{71}{
+    A layout qualifier of [*] shall not appear in the declaration specifiers of
+    a declaration whose storage-class specifier is typedef.
+    }
+
+\np A layout qualifier shall not appear in the type
+    qualifiers for the referenced type in a pointer to void type.
+
+{\bf Semantics} 
+
+\np Shared accesses shall be either strict or relaxed.
+    Strict and relaxed shared accesses behave as described in section
+    \ref{strict_relaxed} of this document.
+
+\np An access shall be determined to be strict or relaxed
+    as follows.  If the referenced type is strict-qualified or
+    relaxed-qualified, the access shall be strict or relaxed,
+    respectively.  Otherwise the access shall be determined to be
+    strict or relaxed by the UPC pragma rules, as described in section
+    6.6.1 of this document.
+
+\index{block size, indefinite}
+\index{block size, definite}
+\index{block size, default}
+\index{block size, automatically-computed}
+\index{indefinite block size}
+\index{definite block size}
+\index{blocking factor}
+\np The layout qualifier dictates the blocking factor for
+    the type being shared qualified. This factor is the nonnegative
+    number of consecutive \xreplaced[id=SV]{3}{objects with ultimate
+    element type of the array}{elements} (when evaluating pointer-to-shared
+    arithmetic and array declarations) which have affinity to the
+    same thread. If the optional constant expression is 0 or is not
+    specified (i.e. {\tt[]}), this indicates an {\em indefinite blocking factor}\index{indefinite}
+    where all elements have affinity to the same thread.  If there
+    is no layout qualifier, the blocking factor has the default value
+    (1). The blocking factor is also referred to as the block size.
+
+\np A layout qualifier which does not specify an indefinite
+    block size is said to specify a {\em definite block size} \index{definite block size}.
+
+\index{pointer-to-shared, type compatibility}
+\np The block size is a part of the type
+    compatibility\footnote{This is a powerful statement which allows,
+    for example, that in an implementation {\tt sizeof(shared int *)}
+    may differ from {\tt sizeof (shared [10] int *)} and if T and S
+    are pointer-to-shared types with different block sizes, then T* and S*
+    cannot be aliases.}
+
+\np For purposes of assignment compatibility, generic pointers-to-shared
+    behave as if they always have a compatible block size.
+
+\np \xadded[id=DB]{110}{
+    The {\it effective type} of a shared object
+    is the type as determined by [ISO/IEC00 Sec. 6.5],
+    with the top-level (rightmost) shared qualifier removed.%
+      \truefootnote{For example, in the file-scope declaration {\tt shared [10] int A[10*THREADS];}
+       the effective type of the object {\tt A[0]} is {\tt int}.
+       This implies the following lvalue expressions are all permitted for accessing the object:
+       % DOB: would like to use verbatim environment here, but Latex does not allow it in a footnote
+       \begin{quote}
+       {\tt int x1 = A[0];}\\
+       {\tt int x2 = *(int *)\&(A[0]); // valid only for MYTHREAD==0}\\
+       {\tt int x3 = *(shared [] int *)\&(A[0]); }
+       \end{quote}
+    }
+    }
+        
+\np If the layout qualifier is of the form `{\bf [ * ]}',
+    the shared object is distributed as if it had a block size of
+
+\begin{verbatim}
+    ( sizeof(a) / upc_elemsizeof(a) + THREADS - 1 ) / THREADS, 
+\end{verbatim}
+
+    where `a' is the array being distributed. 
+
+\index{shared declarations, examples}
+\np EXAMPLE 1: declaration of a shared scalar 
+
+\begin{verbatim}
+    strict shared int y;
+\end{verbatim}
+
+    {\tt strict shared} is the type qualifier.
+
+\np EXAMPLE 2: automatic storage duration 
+
+\begin{verbatim}
+    void foo (void) { 
+    shared int x;  /* a shared automatic variable is not allowed  */ 
+    shared int* y; /* a pointer-to-shared is allowed  */ 
+    int * shared z; /*a shared automatic variable is not allowed*/ 
+    ... } 
+\end{verbatim}
+
+\np EXAMPLE 3: inside a structure  
+
+\begin{verbatim}
+    struct foo { 
+    shared int x;  /* this is not allowed  */ 
+    shared int* y; /* a pointer-to-shared is allowed  */ 
+    }; 
+\end{verbatim}
+
+{\bf Forward references:} shared array (\ref{shared_array})
+\subsubsection{Declarators}
+\label{declarator}
+
+{\bf Syntax} 
+
+\index{block size, declaration}
+\npf The following is the declarator definition as per
+    [ISO/IEC00 Sec. 6.7.5], repeated here for self-containment and
+    clarity of the subsequent UPC extension specifications.
+
+\np{\em declarator:}
+
+\hspace{3em}{\em pointer$_{opt}$ direct-declarator}
+
+\np{\em direct-declarator:}
+
+\hspace{3em}{\em identifier }
+
+\hspace{3em}{\em ( declarator )}
+
+\hspace{3em}{\em direct-declarator {\bf [} type-qualifier-list$_{opt}$
+                 assignment-expression$_{opt}$}{\bf ]}
+
+\hspace{3em}{\em direct-declarator {\bf [ static} type-qualifier-list$_{opt}$
+assignment-expression }{\bf ]}
+
+\hspace{3em}{\em direct-declarator {\bf [} type-qualifier-list {\bf static}
+                 assignment-expression }{\bf ]}
+
+\hspace{3em}{\em direct-declarator {\bf [} type-qualifier-list$_{opt}$ }
+                 {\bf * ]}
+
+\hspace{3em}{\em direct-declarator {\bf (} parameter-type-list {\bf )}}
+
+\hspace{3em}{\em direct-declarator {\bf (} identifier-list$_{opt}$ {\bf )}}
+
+\np{\em pointer:}
+
+\hspace{3em}{\em{\bf *} type-qualifier-list$_{opt}$}
+
+\hspace{3em}{\em{\bf *} type-qualifier-list$_{opt}$  pointer}
+
+\np{\em type-qualifier-list:}
+
+\hspace{3em}{\em type-qualifier}
+
+\hspace{3em}{\em type-qualifier-list type-qualifier}
+
+{\bf Constraints} 
+
+\index{shared declarations, restrictions}
+\np No type qualifier list shall specify more than one block
+    size, either directly or indirectly through one or more
+    typedefs.\footnote{While layout qualifiers are most often seen in
+    array or pointer declarators, they are allowed in all declarators.  For
+    example, {\tt shared [3] int y} is allowed.}
+
+\np No type qualifier list shall include both {\tt strict}
+    and {\tt relaxed} either directly or indirectly through one or
+    more typedefs.
+
+\np No object with automatic storage duration shall have \xreplaced[id=SV]{3}
+    {a shared type}{a type
+    that is shared-qualified and no array object with automatic
+    storage duration shall have an element type that is shared-qualified}.
+
+{\bf Semantics} 
+
+\index{shared declarations, scalar}
+\np All shared objects created by non-array static declarators have
+    affinity with thread zero.
+
+\paragraph{Array declarators}
+\label{shared_array}
+\index{shared declarations, array}
+\index{dynamic THREADS environment}
+\index{static THREADS environment}
+\npf This subsection provides the UPC parallel extensions of
+     [ISO/IEC00 Sec. 6.7.5.2].
+
+{\bf Constraints} 
+
+\np 
+    When a UPC program is translated in the {\em dynamic THREADS} environment,
+  \xreplaced[id=DB]{95}{%
+    the following restrictions apply: 
+    Every declaration of a shared array with definite blocksize shall include the
+    THREADS keyword exactly once, in one dimension of the array 
+    (including through typedefs).  
+    Every array type that is a shared type with definite blocksize
+    shall include the THREADS keyword at most once, in one dimension
+    (including through typedefs).  
+  }{%
+    and an array with shared-qualified elements
+    is declared with definite blocksize, the THREADS expression shall occur 
+    exactly once in one dimension of the array declarator
+    (including through typedefs).  
+  }%
+  \xreplaced[id=DB]{94}{%
+    In both cases, the THREADS keyword shall only occur either alone or when
+    multiplied by an integer constant expression 
+    (as defined in [ISO/IEC00 Sec. 6.6]) with positive value.
+  }{%
+    Further, the THREADS expression
+    shall only occur either alone or when multiplied by an integer
+    constant expression.
+  }%
+    \footnote{In the {\em static THREADS} environment
+    THREADS is an integer constant expression, and is therefore valid in
+    all dimensions.} 
+
+\np \xadded[id=DB]{15}{
+    The THREADS keyword
+    shall not appear in any array type that is a shared array with 
+    indefinite blocksize under the {\em dynamic THREADS} environment.
+    }
+
+\np \xadded[id=DB]{78}{
+    If an init-declarator that declares a shared array
+    includes an initializer, the behavior is implementation-defined.
+    }
+
+{\bf Semantics} 
+
+\np \xreplaced[id=SV]{3}
+    {The objects with ultimate element type that comprise a shared array are
+    distributed in a round robin fashion, by chunks of block-size objects,
+    such that the i-th object}
+    {Elements of shared arrays are distributed in a round
+    robin fashion, by chunks of block-size elements, such that the
+    i-th element} has affinity with thread \xreplaced[id=SV]{3}
+    {($\lfloor i/block\_size \rfloor$ {\tt mod THREADS})}
+    {(floor (i/block\_size) {\tt mod THREADS})}.
+
+\np In an array declaration, the type qualifier applies to
+    the \xreplaced[id=SV]{3}{ultimate element type of the
+    array}{elements}.
+
+\index{upc\_phaseof}
+\np For any shared array, {\tt a}, {\tt upc\_phaseof (\&a)} is
+    zero.
+
+\index{shared declarations, examples}
+\np EXAMPLE 1: declarations allowed in either {\em static THREADS} or
+    {\em dynamic THREADS} translation environments:
+
+\cbstart
+\begin{verbatim}
+    shared int x [10*THREADS];  
+    shared int x [THREADS*(100*20)];  
+    shared [] int x [10]; 
+\end{verbatim}
+\cbend
+
+\np EXAMPLE 2: declarations allowed only in {\em static THREADS} translation
+    environment:
+
+\cbstart
+\begin{verbatim}
+    shared int x [10+THREADS];  
+    shared [] int x [THREADS];  
+    shared int x [10]; 
+    shared int x [THREADS][4*THREADS];
+    shared int x [THREADS*THREADS];
+    shared int x [THREADS*100*20];
+    shared int (**p)[THREADS][THREADS];
+    typedef shared int (*t)[THREADS][13][THREADS];
+    shared void *p = (shared int (*)[THREADS][THREADS])q;  
+\end{verbatim}
+\cbend
+\xchangenote[id=DB]{94}{SEVEN NEW EXAMPLES ADDED ABOVE}
+
+\np EXAMPLE 3: declaration of a shared array 
+
+\begin{verbatim}
+    shared [3] int x [10];
+\end{verbatim}
+
+   {\tt shared [3]} is the type qualifier of an array, {\tt x}, of 10
+   integers. {\tt [3]} is the layout qualifier.
+
+\np EXAMPLE 4: 
+
+\begin{verbatim}
+    typedef int S[10]; 
+    shared [3] S T[3*THREADS]; 
+\end{verbatim}
+   
+
+   {\tt shared [3]} applies to the \xreplaced[id=SV]{3}{ultimate
+   element type}{underlying type} of T, which is int,
+   regardless of the typedef.  The array is blocked as if it were
+   declared:
+
+\begin{verbatim}
+    shared [3] int T[3*THREADS][10]; 
+\end{verbatim}
+
+\np EXAMPLE 5: 
+
+\begin{verbatim}
+    shared [] double D[100]; 
+\end{verbatim}
+    
+
+   All elements of the array D have affinity to thread 0.  No {\tt
+   THREADS} dimension is allowed in the declaration of D.
+
+\np EXAMPLE 6: 
+
+\begin{verbatim}
+    shared [] long *p;
+\end{verbatim}
+    
+
+   All elements accessed by subscripting or otherwise dereferencing
+   p have affinity to the same thread.  That thread is determined by
+   the assignment which sets p.
+
+\subsection{Statements and blocks}
+
+\npf This subsection provides the UPC parallel extensions of
+    [ISO/IEC00 Sec. 6.8].
+
+{\bf Syntax} 
+
+\np{\em statement:}
+
+\hspace{3em}{\em labeled-statement}
+
+\hspace{3em}{\em compound-statement}
+
+\hspace{3em}{\em expression-statement}
+
+\hspace{3em}{\em selection-statement}
+
+\hspace{3em}{\em iteration-statement}
+
+\hspace{3em}{\em jump-statement}
+
+\hspace{3em}{\em synchronization-statement}
+
+\subsubsection{Barrier statements}
+\label{upc_barrier}
+
+{\bf Syntax} 
+
+\npf{\em synchronization-statement:}
+
+\hspace{3em}{\bf upc\_notify} {\em expression$_{opt}$} {\bf ;}
+
+\hspace{3em}{\bf upc\_wait} {\em expression$_{opt}$} {\bf ;}
+
+\hspace{3em}{\bf upc\_barrier} {\em expression$_{opt}$} {\bf ;}
+
+\hspace{3em}{\bf upc\_fence ;}
+
+{\bf Constraints} 
+
+\np{\em expression} shall have
+\xadded[id=DB]{64}{a type such that its value may be assigned to an object of}
+type {\tt int}. 
+
+
+{\bf Semantics} 
+
+\index{synchronization}
+\index{barriers}
+\index{upc\_barrier}
+\index{upc\_notify}
+\index{upc\_wait}
+\index{synchronization phase}
+\index{memory consistency}
+\index{collective}
+\index{implicit barriers}
+
+\np Each thread shall execute an alternating sequence of
+     {\tt upc\_notify} and {\tt upc\_wait} statements, starting with a
+     {\tt upc\_notify } and ending with a {\tt upc\_wait} statement.   After a
+     thread executes {\tt upc\_notify} the next collective operation it executes
+     must be a {\tt upc\_wait}.\footnote{This effectively prohibits issuing any
+     collective operations between a {\tt upc\_notify} and  a {\tt upc\_wait}.}
+     A synchronization phase consists of the execution of all statements
+     between the completion of one {\tt upc\_wait} and the start of
+     the next.
+
+\np A {\tt upc\_wait} statement completes, and the
+     thread enters the next synchronization phase, only after all
+     threads have completed the {\tt upc\_notify} statement in the
+     current synchronization phase.\footnote{Therefore,
+     all threads are entering the same synchronization phase as they
+     complete the {\tt upc\_wait} statement.}  {\tt upc\_wait}
+     and {\tt upc\_notify} are {\em collective} operations.
+
+\index{upc\_fence}
+\np The {\tt upc\_fence} statement is equivalent to a {\em
+    null} strict access.  This insures that all shared accesses
+    issued before the fence are complete before any after it are
+    issued.\footnote{One implementation of {\tt upc\_fence} 
+    may be achieved by a null strict access:
+     {\tt  \{ static shared strict int x; x = x;\}}} 
+
+\index{null strict access}
+\np A null strict access is implied before\footnote{After the evaluation 
+    of {\em expression}, if present} a {\tt upc\_notify} statement and 
+    after a {\tt upc\_wait} 
+    statement.\footnote{This implies that shared accesses executed 
+    after the {\tt upc\_notify} and before the {\tt upc\_wait} may occur in 
+    either the synchronization phase containing the {\tt upc\_notify} or 
+    the next on different threads.}
+
+\np %
+\xreplaced[id=DB]{51}{%
+     If one or more threads provide optional expressions to {\tt upc\_notify} in
+     the current synchronization phase, then the subsequent {\tt upc\_wait} statement of at
+     least one thread shall interrupt the execution of the program in an
+     implementation-defined manner if either of the following two rules are violated:~%
+     \truefootnote{After such an interruption, subsequent behavior is undefined.}
+     1) All optional expressions provided to {\tt upc\_notify} must have
+        equal values (a consensus).
+     2) Any optional expression provided to {\tt upc\_wait} must equal
+        the consensus value from the {\tt upc\_notify}.
+     If no thread provides an optional expression to {\tt upc\_notify}, 
+     then no interruption shall be generated.
+}{%
+    The {\tt upc\_wait} statement shall interrupt the execution of
+    the program in an implementation defined manner
+    if the value of its expression differs from the value of
+    the expression on the {\tt upc\_notify} statement issued by any
+    thread in the current
+    synchronization phase.  After such an interruption, subsequent behavior
+    is undefined. No "difference" exists if either statement is missing
+    this optional expression.
+}
+%\np The {\tt upc\_wait} statement will generate a runtime
+%    error if the value of its expression differs from any
+%    expression on the {\tt upc\_wait} and {\tt upc\_notify}
+%    statements issued by any thread in the current synchronization
+%    phase.  No error will be generated from a ``difference'' involving
+%    a statement for which no expression is given.
+
+\np The {\tt upc\_barrier} statement is equivalent to the
+    compound statement\footnote{This equivalence is explicit with
+    respect to matching expressions in semantic 7 and collective
+    status in semantic 3.}:
+
+\begin{verbatim}
+    { upc_notify barrier_value; upc_wait barrier_value; }
+\end{verbatim}
+
+    where {\tt barrier\_value} is the result of evaluating {\em expression}
+    if present, otherwise omitted.
+
+\np The barrier operations at thread
+    startup and termination have a value of {\em expression} which is not in
+    the range of the type {\tt int}.\footnote{These barriers are never expressed
+    in a UPC source program and this semantic says these barrier values can
+    never match one expressed in a user program.}
+
+\np EXAMPLE 1:  The following will result in a runtime error:  
+\begin{verbatim}
+    { upc_notify; upc_barrier; upc_wait; }                 
+\end{verbatim}
+
+    as it is equivalent to 
+
+\begin{verbatim}
+    { upc_notify; upc_notify; upc_wait; upc_wait; } 
+\end{verbatim}
+
+\subsubsection{Iteration statements}
+
+\npf This subsection provides the UPC parallel extensions of
+    [ISO/IEC00 Sec. 6.8.5].
+
+{\bf Syntax} 
+
+\np{\em iteration-statement:}
+
+\hspace{3em}{\bf while (} {\em expression} {\bf )} {\em statement}
+
+\hspace{3em}{\bf do} {\em statement} {\bf while (} {\em expression} {\bf ) ;}
+
+\hspace{3em}{\bf for (} {\em expression$_{opt}${\bf ;} 
+                         expression$_{opt}${\bf ;}
+expression$_{opt}${\bf )} statement}
+
+\hspace{3em}{\bf for (} {\em declaration expression$_{opt}${\bf ;} 
+                         expression$_{opt}${\bf )} statement}
+
+\hspace{3em}{\bf upc\_forall (} {\em expression$_{opt}${\bf ;} 
+expression$_{opt}${\bf ;}
+expression$_{opt}${\bf ;}
+affinity$_{opt}${\bf )}}
+\makebox[5.4in][r] {\em statement}
+
+\hspace{3em}{\bf upc\_forall (} {\em declaration expression$_{opt}${\bf ;} 
+expression$_{opt}${\bf ;}}\\
+\makebox[5.4in][r] {\em affinity$_{opt}${\bf )} statement}
+                            
+
+\np{\em affinity:}
+
+\hspace{3em}{\em expression}
+
+\hspace{3em}{\bf continue }
+
+{\bf Constraints}: 
+
+\np The {\em expression} for affinity shall have pointer-to-shared
+    type or integer type.
+
+{\bf Semantics}: 
+
+\index{upc\_forall}
+\index{continue}
+\index{work sharing}
+\index{parallel loop}
+\np{\tt upc\_forall} is a {\em collective} operation in which, for each
+    execution of the loop body, the controlling expression and
+    affinity expression are {\em single-valued}.\footnote{Note that
+    single-valued implies that all thread agree on the total number
+    of iterations, their sequence, and which threads execute each
+    iteration.}
+
+\np The {\em affinity} field specifies the executions of the loop
+    body which are to be performed by a thread.
+    
+\np When {\em affinity} is of pointer-to-shared type, the loop body of
+    the {\tt upc\_forall} statement is executed for each iteration in
+    which the value of {\tt MYTHREAD} equals the value of {\tt
+    upc\_threadof(}{\em affinity}{\tt )}.  Each iteration of the  loop body is executed by
+    precisely one thread.
+
+\np When {\em affinity} is an integer expression, the loop body of
+    the {\tt upc\_forall} statement is executed for each iteration in which
+    the value of {\tt MYTHREAD} equals the value {\em affinity }{\tt mod THREADS}.
+    \xadded[id=DB]{59}{If the value of {\em affinity} is negative, behavior is undefined.}
+
+\np When {\em affinity} is {\tt continue} or not specified, each loop
+    body of the {\tt upc\_forall} statement is performed by every thread and
+    semantic \xreplaced[id=DB]{55}{5}{1} does not apply. 
+    % XXX: WARNING: THIS HARD-CODED CROSS-REFERENCE MUST BE ADJUSTED IF THIS SECTION CHANGES
+
+\np If the loop body of a {\tt upc\_forall} statement
+    contains one or more {\tt upc\_forall} statements, either directly
+    or through one or more function calls, the construct is called a
+    {\em nested upc\_forall} statement.  In a {\em nested upc\_forall},
+    the outermost {\tt upc\_forall} statement that has an {\em
+    affinity} expression which is not {\tt continue} is called the
+    {\em controlling upc\_forall} statement.  All {\tt upc\_forall}
+    statements which are not controlling in a {\em nested
+    upc\_forall} behave as if their {\em affinity} expressions were
+    {\tt continue}.
+    \xadded[id=DB]{88}{
+    Nesting of {\tt upc\_forall} statements is considered an obsolescent
+    feature, and may be prohibited in a future revision of this specification.
+    }
+
+\np Every thread evaluates the first three clauses of a 
+    {\tt upc\_forall} statement in accordance with the semantics of
+    the corresponding clauses for the {\tt for} statement, as defined in
+    [ISO/IEC00 Sec. 6.8.5.3].  Every thread evaluates the fourth
+    clause of every iteration.
+
+\np If the execution of any loop body of a {\tt upc\_forall} statement
+    produces a side-effect which affects the execution of another loop
+    body of the same {\tt upc\_forall} statement which is executed by a different
+    thread\footnote{This semantic implies that side effects on the same thread 
+    have defined behavior, just like in the {\tt for} statement.}, the behavior is
+    undefined.
+
+\np If any thread terminates or executes a collective operation
+   within the dynamic scope of a {\tt upc\_forall}
+   statement, the result is undefined. If any thread terminates
+   a  {\tt upc\_forall}  statement using a {\tt break},
+   {\tt goto} , or {\tt return} statement, or the {\tt longjmp} function,
+   the result is undefined.
+   If any thread enters the body of a {\tt upc\_forall} statement
+   using a {\tt goto} statement, the result is undefined.\footnote{The
+   {\tt continue} statement behaves as defined in [ISO/IEC00 Sec. 
+   6.8.6.2]; equivalent to a {\tt goto} the end of the loop body.}
+
+\np EXAMPLE 1: Nested {\tt upc\_forall}: 
+
+\begin{verbatim}
+    main () { 
+       int i,j,k; 
+       shared float *a, *b, *c; 
+    
+       upc_forall(i=0; i<N; i++; continue) 
+           upc_forall(j=0; j<N; j++; &a[j]) 
+               upc_forall (k=0; k<N; k++; &b[k]) 
+                   a[j] = b[k] * c[i]; 
+    } 
+\end{verbatim}
+
+   This example executes all iterations of the ``i'' and ``k'' loops
+   on every thread, and executes iterations of the ``j'' loop on those
+   threads where {\tt upc\_threadof (\&a[j])} equals the value of {\tt
+   MYTHREAD}.
+   
+\np EXAMPLE 2: Evaluation of upc\_forall arguments:
+
+\begin{verbatim}
+    int i;
+    upc_forall((foo1(), i=0); (foo2(), i<10); (foo3(), i++); i) {
+         foo4(i);
+    }
+\end{verbatim}
+   Each thread evaluates foo1() exactly once, before any further action on that
+   thread. Each thread will execute foo2() and foo3() in alternating sequence, 
+   10 times on each thread,
+   \xadded[id=DB]{29}{followed by a final call to foo2() on each thread before the loop terminates.}
+   Assuming there is no enclosing upc\_forall loop, 
+   foo4() will be evaluated exactly 10 times total before the last thread exits the 
+   loop, once with each of i=0..9. Evaluations of foo4() may occur on different 
+   threads (as determined by the affinity clause) with no implied synchronization 
+   or serialization between foo4() evaluations or controlling expressions on 
+   different threads. The final value of i is 10 on all threads.
+
+
+\subsection{Preprocessing directives}
+
+\npf This subsection provides the UPC parallel extensions of
+   [ISO/IEC00 Sec. 6.10].
+
+\subsubsection{UPC pragmas}
+\label{pragmas}
+{\bf Semantics} 
+\index{pragmas}
+\index{strict}
+\index{relaxed}
+\index{shared access}
+\index{strict shared read}
+\index{strict shared write}
+\index{relaxed shared read}
+\index{relaxed shared write}
+
+\npf If the preprocessing token {\tt upc} immediately follows
+    the {\tt pragma}, then no macro replacement is performed and the
+    directive shall have one of the following forms:
+
+\begin{verbatim}
+     #pragma upc strict
+
+     #pragma upc relaxed 
+\end{verbatim}
+ 
+
+\np These pragmas affect the strict or relaxed
+    categorization of shared accesses where the
+    referenced type is neither strict-qualified nor
+    relaxed-qualified. Such accesses shall be strict if a strict
+    pragma is in effect, or relaxed if a relaxed pragma is in effect.
+
+\np %
+\xreplaced[id=DB]{83}{%
+    Each translation unit has an implicit {\tt \#pragma upc relaxed}
+    before the first line.
+}{%
+    Shared accesses which are not categorized by either
+    referenced type or by these pragmas behave in an implementation
+    defined manner in which either all such accesses are strict or
+    all are relaxed.  Users wishing portable programs are strongly
+    encouraged to categorize all shared accesses either by using
+    type qualifiers, these directives, or by including {\tt <upc\_strict.h>}
+    or {\tt <upc\_relaxed.h>}.
+}
+
+\np The pragmas shall occur either outside external
+    declarations or preceding all explicit declarations and statements
+    inside a compound statement.  When they are outside external
+    declarations, they apply until another such pragma or the end of
+    the translation unit.  When inside a compound statement, they
+    apply until the end of the compound statement; at the end of the
+    compound statement the state of the pragmas is restored to that
+    preceding the compound statement.  If these pragmas are used in
+    any other context, their behavior is undefined.
+
+\subsubsection{Predefined macro names}
+
+\index{predefined macros}
+\npf The following macro names shall be defined by the
+    implementation\footnote{In addition to these macro names,
+    the semantics of [ISO/IEC00 Sec. 6.10.8] apply to the identifier MYTHREAD.}
+
+\begin{description}
+\item{\tt \_\_UPC\_\_} 
+\index{\_\_UPC\_\_}
+The integer constant 1, indicating a conforming implementation.
+
+\item{\tt \_\_UPC\_VERSION\_\_}
+\index{\_\_UPC\_VERSION\_\_}
+The integer constant 
+\xreplaced[id=DB]{105}{201309L}{200505L}.
+
+\item{\tt UPC\_MAX\_BLOCK\_SIZE}
+\index{UPC\_MAX\_BLOCK\_SIZE}
+The integer constant as defined in section \ref{max_block_size}.
+\end{description}
+
+\np The following macro names are conditionally defined 
+    by the implementation:
+
+\begin{description}
+\item{\tt \_\_UPC\_DYNAMIC\_THREADS\_\_} 
+\index{\_\_UPC\_DYNAMIC\_THREADS\_\_} 
+\index{dynamic THREADS environment}
+The integer constant 1 in the {\em dynamic THREADS} translation environment,
+otherwise undefined.
+
+\item{\tt \_\_UPC\_STATIC\_THREADS\_\_} 
+\index{\_\_UPC\_STATIC\_THREADS\_\_} 
+\index{static THREADS environment}
+The integer constant 1 in the {\em static THREADS} translation environment,
+otherwise undefined.
+
+\item{\tt THREADS}
+\index{THREADS}
+\index{MYTHREAD}
+The integer constant as defined in section \ref{threads} in the
+{\em static THREADS} translation environment.
+
+\end{description}
+
