@@ -224,7 +224,7 @@
       \or % issue #111
         UPC\_CASTABLE flags underspecified
       \or % issue #112
-        Implicit conversion from pointer-to-shared-array to pointer to first element does not reset phase
+        Removing implicit phase reset for pointer-to-shared-array casting/assignment with differing referent type but matching ultimate element type
       \or % issue #113
         Should arguments to PTS manipulation functions be const qualified?
       \or % issue #114
@@ -233,6 +233,10 @@
         Adjust upc\_type\_t values/requirements for types with the same representation
       \or % issue #116
         Be consistent with usage of 'signed char' type versus plain 'char' type
+      \or % issue #117
+        Public release of Draft 4
+      \or % issue #118
+        Google Code downloads going away Jan 2014
     \else
         \empty
     \fi
