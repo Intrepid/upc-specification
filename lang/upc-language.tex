@@ -373,14 +373,18 @@ as keywords and shall not be otherwise used.
 
 {\bf Semantics} 
 
-\np The casting or assignment from one pointer-to-shared 
-    to another in which either the type size or block size differs,
-    \xadded[id=DB]{70}{or either type is incomplete,}
-    results in 
-    a pointer with a zero phase, unless one of the types is a qualified or
-    unqualified version of {\tt shared void*}, the {\em generic pointer-to-shared},
-    in which case the phase is preserved unchanged in the resulting
-    pointer value.
+\np The casting or assignment from one pointer-to-shared to another 
+    where one of the types is a qualified or
+    unqualified version of {\tt shared void*}, the {\em generic pointer-to-shared}, 
+    preserves the phase component unchanged in the resulting pointer value
+    (except as discussed in the next paragraph).
+    The casting or assignment from one non-generic pointer-to-shared to another
+    in which either 
+    \xreplaced[id=DB]{112}{
+    the block size or the size of the ultimate element type of the referenced type differs,
+    }{ the type size or block size differs, }
+    \xadded[id=DB]{70}{or either type is incomplete,} 
+    results in a pointer with a zero phase.
     
 \np If a generic pointer-to-shared is cast to a non-generic 
      pointer-to-shared type with indefinite block size or with block size of 
