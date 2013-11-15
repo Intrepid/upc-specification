@@ -15,6 +15,7 @@ Each change links to the relevant issue thread, which usually includes extensive
   * [http://code.google.com/p/upc-specification/issues/detail?id=78 Issue 78]: Shared array initialization removed (undefined)
   * [http://code.google.com/p/upc-specification/issues/detail?id=94 Issue 94/95]: Constraint on dimension expr in shared array types under dynamic THREADS 
   * [http://code.google.com/p/upc-specification/issues/detail?id=104 Issue 104]: Relational operators on PTS (new constraint and semantic clarification)
+  * [http://code.google.com/p/upc-specification/issues/detail?id=105 Issue 105]: Update the predefined macro __UPC_VERSION__
 
 = Code-generator changes =
 
@@ -23,6 +24,7 @@ Each change links to the relevant issue thread, which usually includes extensive
   * [http://code.google.com/p/upc-specification/issues/detail?id=83 Issue 83]: Default #pragma upc relaxed
   * [http://code.google.com/p/upc-specification/issues/detail?id=85 Issue 85]: Address/index arithmetic on multi-D shared arrays
   * [http://code.google.com/p/upc-specification/issues/detail?id=88 Issue 88]: Nested `upc_forall` deprecation
+  * [http://code.google.com/p/upc-specification/issues/detail?id=112 Issue 112]: Removing implicit phase reset for pointer-to-shared-array casting/assignment with differing referent type but matching ultimate element type
 
 
 = Runtime/Library Changes =
@@ -34,6 +36,4 @@ Each change links to the relevant issue thread, which usually includes extensive
   * [http://code.google.com/p/upc-specification/issues/detail?id=37 Issue 37]: Castability library (optional)
   * [http://code.google.com/p/upc-specification/issues/detail?id=41 Issue 41]: Non-blocking `upc_mem*` library (optional)
   * [http://code.google.com/p/upc-specification/issues/detail?id=51 Issue 51]: Barrier matching rules corner cases
-
-
 
