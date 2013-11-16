@@ -1,0 +1,169 @@
+UPC Language Specification (version 1.3)
+
+Release Notice
+
+Date: November 16, 2013
+
+Background
+----------
+
+During the course of the past two years, a group of UPC compiler
+vendors, users, and programming language experts (known as the
+UPC Consortium) has convened for the purpose of updating the
+UPC (Unified Parallel C) language specification.
+
+The prior UPC language specification (version 1.2) was ratified
+several years ago (2005).  The recent effort to update the
+UPC language specification incorporated both compiler
+development experience and user experience to improve the precision
+of the standard and to define new library capabilities that 
+provide facilities which are often required when implementing
+parallel programming solutions in UPC.
+
+UPC Specification Version 1.3
+-----------------------------
+
+The UPC version 1.3 specification consists of three documents:
+
+* UPC Language Specifications, v1.3
+   Specifies the UPC language and core libraries
+   
+* UPC Required Library Specifications, v1.3
+   Specifies library extensions provided by all compliant UPC compilers
+   
+* UPC Optional Library Specifications, v1.3
+   Specifies experimental library extensions, which might be omitted
+   in some UPC implementations
+   
+Each document is available in both an official normative format, 
+and a draft format showing change annotations relative to the prior UPC 1.2 spec.
+   
+All UPC specification documents are publicly and freely available at:
+ http://upc-lang.org
+or alternatively from:
+ http://code.google.com/p/upc-specification/downloads/list
+
+
+Change History
+--------------
+
+Final
+*****
+
+Issue #112:     Removing implicit phase reset for pointer-to-shared-array casting/assignment 
+                with differing referent type but matching ultimate element type
+
+Issue #116:     Correct UPC_CHAR to be a 'signed' char
+
+Draft 4
+*******
+
+Issue  #3:	Clarifying pointers to shared arrays, and multi-D shared arrays
+
+Issue  #50:	Clarification: overlapping memory copies undefined by presence of "restrict" keyword
+
+Issue  #88:	Nested upc_forall semantics 
+
+Issue  #94:	Clarification: dynamic threads and the constraint 
+                "when multiplied by an integer expression"
+                
+Issue  #95:	Clarification: can THREADS appear more than once 
+                in a PTS typedef (in a dynamic threads environment)?
+                
+Issue  #96:	upc_all_(prefix_)reduce: behavior is under-specified for floating-point NaNs
+
+Issue  #102:	Update community URL and introduction/acknowledgement sections
+
+Issue  #104:	Clarify relational operators (>,<,>=,<=) applied to PTS operands
+
+Issue  #106:	Clarify contiguity of local slice of a shared array
+
+Issue  #110:	Clarify interaction of shared with effective type for accesses
+
+Issue  #111:	UPC_CASTABLE flags underspecified
+
+Draft 3
+*******
+
+Issue  #7: Library: Atomic Memory Operations (AMO)
+           (This library was added to the optional library)
+
+Issue  #10: Add upc_types.h to define common library types
+
+Issue  #12: Library: Collective Deallocation Functions
+           (These library functions were added to the core library)
+
+Issue  #15: Add constraint: a declaration of an array with indefinite block size
+            must have compile-time constant dimensions
+
+Issue  #29: Correct example 2 in the UPC specification in the discussion of
+            upc_forall
+
+Issue  #37: Library: Shared-pointer privatizability (castability) functions
+           (This library was added to the optional library)
+           
+Issue  #41: Library: non-blocking memory copy extensions
+           (This library was added to the optional library)
+           
+Issue  #54: Write section "Proposed Additions and Extensions"
+
+Issue  #58: Bring Conformance section into agreement with the C99 specification
+
+Issue  #59: The affinity test on integer values in a upc_forall statement is
+            undefined for negative values
+
+Issue  #64: Barrier statement optional expression type is an integer type, not
+            just ’int’
+
+Issue  #65: Define a null pointer-to-shared in terms of C99’s "null pointer constant"
+
+Issue  #70: Clarification: how is type compatibility defined when one/both
+            pointer-to-shared target types are incomplete?
+
+Issue  #71: Clarification: can the [*] layout qualifier be applied to a typedef?
+
+Issue  #78: Remove shared array initialization
+
+Issue  #91: Library section boilerplate spec text
+
+Issue #100: Update introduction section
+
+Draft 2
+*******
+
+Issue  #4: Progress guarantee of upc_notify and upc_wait
+
+Issue  #9: Library: High-Performance Wall-Clock Timers (upc_tick_t)
+           (This timer library was added as a required library)
+
+Issue #32: modification: THREADS/MYTHREAD have "integral value"
+           rather than "type int"
+
+Issue #33: clarification: MYTHREAD and THREADS are expressions
+           (cannot assign to or take address of them)
+
+Issue #49: clarification: unlock of freed lock
+
+Issue #51: clarification: revise text to eliminate an ambiguity
+           in barrier matching semantics
+
+Issue #55: Miscellaneous specification document typographical errors
+
+Issue #82: Remove the deprecated upc_local_alloc function
+
+Issue #83: Strengthen the "default" pragma from "implementation-defined"
+           to "relaxed"
+
+
+UPC Language Specification Review Process
+-----------------------------------------
+
+To learn more about planned changes or to participate in the UPC
+specification revision process, please visit:
+http://code.google.com/p/upc-specification
+
+If you would like to participate in the specification review
+process by contributing your time and effort to the various writing
+and editorial tasks, please contact Gary Funck at <gary@intrepid.com>
+or Yili Zheng at <yzheng@lbl.gov>.
+
