@@ -1,0 +1,47 @@
+\subsection{Template Functions \texttt{<}upc\_template.h\texttt{>}}
+\label{upc-template}
+\index{upc\_template.h}
+\index{\_\_UPC\_TEMPLATE\_\_}
+
+\npf This is a Latex template for writing UPC library proposals. Instructions:
+\begin{enumerate}
+\item Choose a "slug" name for your library (e.g. "castability")
+\item Copy the directory containing this file and all its contents to a new subdirectory of proposed, named by the slug
+\item Rename all the files in that directory, replacing "template" with the slug
+\item Search and replace the string "template" in each file with the slug
+\item Add new paragraphs that follow the skeleton below for each proposed function
+\item Replace this text with general introductory material for your library.
+\end{enumerate}
+
+\np Implementations that support this interface shall predefine the
+feature macro {\_\_UPC\_TEMPLATE\_\_} to the value 1.
+
+\subsubsection{Standard headers}
+
+\npf The standard header is
+
+{\tt <upc\_template.h>}
+
+\np Unless otherwise noted, all of the functions, types and macros
+specified in Section~\ref{upc-template}
+are declared by the header {\tt <upc\_template.h>}.
+
+\subsubsection{Template Functions}
+
+\paragraph{The {\tt upc\_template} function}
+\index{upc\_template}
+
+{\bf Synopsis}
+
+\npf\vspace{-2.5em}
+\begin{verbatim}
+    #include <upc_template.h>
+    void *upc_template(const shared void *ptr);
+\end{verbatim}
+
+{\bf Description}
+
+\np The {\tt upc\_template} function does something interesting.
+Replace this text with what it does.
+
+

@@ -1,0 +1,443 @@
+% shorthand macros used throughout
+% \xspace automatically ensures proper spacing after invocation
+\def \memcpy  {{\tt upc\_memcpy}\xspace}
+\def \memget  {{\tt upc\_memget}\xspace}
+\def \memput  {{\tt upc\_memput}\xspace}
+\def \memset  {{\tt upc\_memset}\xspace}
+
+\def \memall  {{\tt upc\_mem\{put, get, cpy\}}\xspace}
+\def \memstar {{\tt upc\_mem*}\xspace}
+\def \TIF {transfer initiation function\xspace}
+\def \TIFs {\TIF{}s}
+
+\def \bnbheader {<upc\_nb.h>\xspace}
+\def \nbheader  {{\tt \bnbheader}\xspace}
+\def \incheader {{\tt \#include \bnbheader}}
+
+\def \sync  {{\tt upc\_sync[\_attempt]}\xspace}
+\def \synci {{\tt upc\_synci[\_attempt]}\xspace}
+
+\def \complete {{\tt UPC\_COMPLETE\_HANDLE}\xspace}
+
+\def\func{{\tt \bfunc}\xspace}
+\def\args{{\tt (dst, src, n)}\xspace}
+\def\sargs{{\tt (dst, c, n)}\xspace}
+
+\def\funcheader{%
+  \paragraph{The \func function}%
+  \expandafter\index\expandafter{\bfunc}%
+
+{\bf Synopsis}
+
+\npf \incheader%
+\vspace{-8pt}%
+}
+
+\subsection{UPC Non-Blocking Transfer Operations \nbheader}
+\label{upc-nb}
+\index{\_\_UPC\_NB\_\_}
+
+\npf Implementations that support this interface shall predefine the
+feature macro {\tt \_\_UPC\_NB\_\_} to the value 1.
+
+\subsubsection{Standard header}
+\index{upc\_nb.h}
+
+\np The standard header is
+
+\nbheader
+
+\np Unless otherwise noted, all of the functions, types and macros
+    specified in Section~\ref{upc-nb}
+    are declared by the header \nbheader.
+
+\subsubsection{Common Requirements}
+\label{upc-nb-common}
+
+\np The following requirements apply to all of the functions defined
+in Section~\ref{upc-nb}.
+
+\np This section defines extensions to the \memstar functions defined in
+[UPC Language Specifications, Section 7.2.5]. Data transfer effects are
+as specified in that document.
+
+\np \nbheader defines two non-blocking variants for each \memstar function.
+The {\tt \_nb} function name suffix denotes the {\em explicit-handle} variant, 
+whereas the {\tt \_nbi} function name suffix denotes the {\em implicit-handle} variant.
+These functions are jointly referred to as {\em \TIFs}. 
+A thread which invokes one of these functions is referred to
+as the {\em initiating thread} for the transfer.
+
+\np A \TIF returns as soon as possible after
+initiating the transfer and may return prior to the effects of the transfer being
+completed.~\footnote{
+Each call to a \TIF shall either initiate an asynchronous transfer or
+perform the transfer synchronously within the initiation call 
+(and return \complete in the case of an explicit-handle initiation).
+The conditions governing this decision are unspecified.
+For example, an implementation might choose to
+perform a synchronous transfer when all affected memory has affinity to the initiating thread.
+Implementations are encouraged to perform asynchronous transfers and
+return quickly whenever possible to allow the caller to overlap unrelated 
+computation and communication.
+}
+Generally the initiating thread must later take explicit action to 
+synchronize the completion of the transfer.
+
+\np The explicit-handle variant returns a handle that gives the initiating thread explicit
+control and responsibility to manage completion of the transfer.  
+The initiating thread shall eventually invoke a successful \sync function call
+upon each such handle, to synchronize completion of the associated transfer
+and allow the implementation to reclaim resources that may be associated with the handle.
+
+\np The implicit-handle variant allows the program to synchronize
+completion of an implicit group of transfers together, at the next call to \synci
+by the initiating thread.
+
+\np Each call entry to a \TIF defines the beginning of an abstract interval referred to 
+as the {\em transfer interval} for the transfer operation being performed. 
+The {\em transfer interval} extends until the return of the successful \sync or \synci call
+which synchronizes the completion of the transfer.
+
+\np Each non-blocking transfer proceeds independently of all other operations and actions
+by any thread until the end of the transfer interval. In particular, the transfer 
+interval may extend beyond strict operations and other forms of inter-thread synchronization.
+
+\np The order in which non-blocking transfers complete is unspecified - the implementation may
+coalesce and/or reorder non-blocking operations with respect to other blocking or non-blocking operations,
+or operations initiated from a separate thread. The only ordering guarantees are those
+explicitly enforced using the synchronization functions, i.e. all the accesses comprising the 
+transfer are guaranteed to occur during the transfer interval.
+
+\np Throughout the transfer interval, the contents of all destination memory specified by the 
+transfer are undefined. Specifically, concurrent reads to these locations from any
+thread will observe an indeterminate value.
+
+\np If any of the source or destination memory specified by a transfer is modified by any thread
+during the transfer interval, then the results of the transfer are undefined. Specifically, 
+concurrent writes to these locations will result in indeterminate values in the destination
+memory which persist after synchronization.
+
+\np The source memory specified in a transfer is not modified by the transfer.
+Concurrent reads of source memory areas by any thread are permitted and behave as usual.
+Multiple concurrent transfers initiated by any thread are permitted to specify overlapping source memory areas.
+If a transfer specifies destination memory which overlaps its own source, or the source or destination of a 
+concurrent transfer initiated by any thread, the resulting values in all destination memory specified
+by the affected transfers are indeterminate.
+
+\np The memory consistency semantics of all transfers performed by the library are as described in 
+[UPC Language Specifications, Section B.3.2.1]. Specifically, the effect on
+conflicting accesses issued {\em outside} the transfer interval is as if the transfer were
+performed by a set of relaxed shared reads and relaxed shared writes of
+unspecified size and order, issued at unspecified times anywhere within the transfer
+interval by the initiating thread. Conflicting accesses {\em inside} the transfer interval
+have undefined results, as specified in the preceding paragraphs.~%
+\footnote{The restrictions described in the three preceding paragraphs are a direct consequence of 
+[UPC Language Specifications, Section B.3.2.1], and also apply to the blocking \memstar functions.
+They are explicitly stated here for clarity.}
+Here {\em inside} and {\em outside} are defined by the {\tt Precedes()} program order for 
+accesses issued by the initiating thread; accesses issued by other threads are considered {\em inside} 
+unless every possible and valid $<_{strict}$ relationship orders them outside the transfer interval.~%
+\footnote{
+Stated differently, a successful \sync or \synci call completes transfers with respect 
+to the initiating thread, and subsequent relaxed accesses issued by the initiating thread
+are guaranteed to observe the effects of the synchronized transfer(s).
+
+Similarly, a successful \sync or \synci call followed by a strict operation 
+ensures the effects of the synchronized transfer(s) will be observed by all 
+threads prior to observing the strict operation.  
+}
+
+\newpage
+\subsubsection{Explicit Handle Type}
+\index{upc\_handle\_t}
+\index{UPC\_COMPLETE\_HANDLE}
+\npf An implementation shall define the following type and value:
+
+\begin{verbatim}
+type  upc_handle_t
+value UPC_COMPLETE_HANDLE
+\end{verbatim}
+
+\np \complete shall have type {\tt upc\_handle\_t}.  All of its bits shall be 0.
+
+\np Any handle value other than \complete is valid only for the initiating thread which 
+obtained it from an explicit-handle \TIF.
+Different threads shall not use it for any purpose.
+
+\np Every handle value returned from an explicit-handle \TIF call shall eventually be passed to
+a successful \sync call.  It is an error to discard a handle value and never
+synchronize it unless the value is \complete. 
+
+\np Once a handle value is successfully synchronized, it becomes invalid and shall not be
+used for any purpose.
+
+\newpage
+\subsubsection{Explicit-handle \TIFs}
+\def\bfunc{upc\_memcpy\_nb}
+\def\sfunc{\memcpy}
+\funcheader
+
+\begin{verbatim}
+upc_handle_t upc_memcpy_nb( shared void * restrict dst,
+                            shared const void * restrict src, 
+                            size_t n );
+\end{verbatim}
+
+{\bf Description}
+
+\np The transfer initiated by \func\args shall have the same effects as \sfunc\args.
+If the returned value is \complete, then these effects were performed synchronously
+and the transfer is complete. Otherwise, the transfer interval extends until
+the return of a successful \sync call upon the returned handle.
+
+\np All of the common requirements listed in Section~\ref{upc-nb-common} apply to this function.
+
+\np The following two code sequences demonstrate the relationship between
+\sfunc and \func. Both transfers ultimately result in the same data movement.
+
+\begin{verbatim}
+upc_memcpy( dst, src, n ); // perform an explicitly synchronous transfer
+...  // code that may access dst and src regions
+...  // accesses by THIS thread guaranteed to observe the effects
+upc_fence; // any strict operation
+...  // subsequent accesses by ANY thread guaranteed to observe the effects
+
+
+upc_handle_t handle = upc_memcpy_nb( dst, src, n ); // initiate a transfer 
+...  // code that must not read dst region or modify either region
+upc_sync( handle );   // sync the handle, ending the transfer interval
+...  // accesses by THIS thread guaranteed to observe the effects
+upc_fence; // any strict operation
+...  // subsequent accesses by ANY thread guaranteed to observe the effects
+\end{verbatim}
+\vfill
+
+\def\bfunc{upc\_memget\_nb}
+\def\sfunc{\memget}
+\funcheader
+
+\begin{verbatim}
+upc_handle_t upc_memget_nb( void * restrict dst,
+                            shared const void * restrict src, 
+                            size_t n );
+\end{verbatim}
+
+{\bf Description}
+
+\np The transfer initiated by \func\args shall have the same effects as \sfunc\args.
+If the returned value is \complete, then these effects were performed synchronously
+and the transfer is complete. Otherwise, the transfer interval extends until
+the return of a successful \sync call upon the returned handle.
+
+\np All of the common requirements listed in Section~\ref{upc-nb-common} apply to this function.
+
+\def\bfunc{upc\_memput\_nb}
+\def\sfunc{\memput}
+\funcheader
+
+\begin{verbatim}
+upc_handle_t upc_memput_nb( shared void * restrict dst,
+                            const void * restrict src, 
+                            size_t n );
+\end{verbatim}
+
+{\bf Description}
+
+\np The transfer initiated by \func\args shall have the same effects as \sfunc\args.
+If the returned value is \complete, then these effects were performed synchronously
+and the transfer is complete. Otherwise, the transfer interval extends until
+the return of a successful \sync call upon the returned handle.
+
+\np All of the common requirements listed in Section~\ref{upc-nb-common} apply to this function.
+
+\newpage
+\def\bfunc{upc\_memset\_nb}
+\def\sfunc{{\memset}}
+\funcheader
+
+\begin{verbatim}
+upc_handle_t upc_memset_nb( shared void *dst, int c, size_t n );
+\end{verbatim}
+
+{\bf Description}
+
+\np The transfer initiated by \func\sargs shall have the same effects as \sfunc\sargs.
+If the returned value is \complete, then these effects were performed synchronously
+and the transfer is complete. Otherwise, the transfer interval extends until
+the return of a successful \sync call upon the returned handle.
+
+\np All of the common requirements listed in Section~\ref{upc-nb-common} apply to this function.
+
+\newpage
+\subsubsection{Implicit-handle \TIFs}
+\def\bfunc{upc\_memcpy\_nbi}
+\def\sfunc{\memcpy}
+\funcheader
+
+\begin{verbatim}
+void upc_memcpy_nbi( shared void * restrict dst,
+                     shared const void * restrict src, 
+                     size_t n );
+\end{verbatim}
+
+{\bf Description}
+
+\np The transfer initiated by \func\args shall have the same effects as \sfunc\args.
+The transfer interval extends until the return of the next successful 
+\synci call performed by the initiating thread.
+
+\np All of the common requirements listed in Section~\ref{upc-nb-common} apply to this function.
+
+\np The following two code sequences demonstrate the relationship between
+\sfunc and \func. Both transfers ultimately result in the same data movement.
+
+\begin{verbatim}
+upc_memcpy( dst, src, n ); // perform an explicitly synchronous transfer
+...  // code that may access dst and src regions
+...  // accesses by THIS thread guaranteed to observe the effects
+upc_fence; // any strict operation
+...  // subsequent accesses by ANY thread guaranteed to observe the effects
+
+
+upc_memcpy_nbi( dst, src, n ); // initiate a transfer 
+...  // code that must not read dst region or modify either region
+upc_synci(); // sync all implicit-handle ops, ending the transfer interval(s)
+...  // accesses by THIS thread guaranteed to observe the effects
+upc_fence; // any strict operation
+...  // subsequent accesses by ANY thread guaranteed to observe the effects
+\end{verbatim}
+\vfill
+
+\def\bfunc{upc\_memget\_nbi}
+\def\sfunc{\memget}
+\funcheader
+
+\begin{verbatim}
+void upc_memget_nbi( void * restrict dst, 
+                     shared const void * restrict src, 
+                     size_t n );
+\end{verbatim}
+
+{\bf Description}
+
+\np The transfer initiated by \func\args shall have the same effects as \sfunc\args.
+The transfer interval extends until the return of the next successful 
+\synci call performed by the initiating thread.
+
+\np All of the common requirements listed in Section~\ref{upc-nb-common} apply to this function.
+
+\def\bfunc{upc\_memput\_nbi}
+\def\sfunc{\memput}
+\funcheader
+
+\begin{verbatim}
+void upc_memput_nbi( shared void * restrict dst, 
+                     const void * restrict src, 
+                     size_t n );
+\end{verbatim}
+
+{\bf Description}
+
+\np The transfer initiated by \func\args shall have the same effects as \sfunc\args.
+The transfer interval extends until the return of the next successful 
+\synci call performed by the initiating thread.
+
+\np All of the common requirements listed in Section~\ref{upc-nb-common} apply to this function.
+
+\newpage
+\def\bfunc{upc\_memset\_nbi}
+\def\sfunc{\memset}
+\funcheader
+
+\begin{verbatim}
+void upc_memset_nbi( shared void *dst, int c, size_t n );
+\end{verbatim}
+
+{\bf Description}
+
+\np The transfer initiated by \func\sargs shall have the same effects as \sfunc\sargs.
+The transfer interval extends until the return of the next successful 
+\synci call performed by the initiating thread.
+
+\np All of the common requirements listed in Section~\ref{upc-nb-common} apply to this function.
+
+\newpage
+\subsubsection{Explicit-handle synchronization functions}
+\def\bfunc{upc\_sync\_attempt}
+\funcheader
+
+\begin{verbatim}
+int upc_sync_attempt( upc_handle_t handle ); 
+\end{verbatim}
+
+{\bf Description}
+
+\np {\tt handle} shall be a valid handle value returned by
+an explicit-handle \TIF to the current thread, or the value \complete.
+
+\np The \func function always returns immediately, without blocking.
+It returns non-zero if the transfer associated with 
+{\tt handle} is complete, thereby ending the transfer interval.
+Otherwise, it returns 0.
+
+\np If {\tt handle == \complete} then the \func function returns non-zero.
+Otherwise, if the function returns non-zero then the handle value is consumed 
+and shall not be subsequently used for any purpose.
+
+\def\bfunc{upc\_sync}
+\funcheader
+
+\begin{verbatim}
+void upc_sync( upc_handle_t handle );
+\end{verbatim}
+
+{\bf Description}
+
+\np {\tt handle} shall be a valid handle value returned by
+an explicit-handle \TIF to the current thread, or the value \complete.
+
+\np The \func function does not return until the transfer associated
+with the {\tt handle} is complete, ending the transfer interval.
+
+\np If {\tt handle == \complete} then the \func function returns immediately.
+Otherwise, the handle value is consumed by this function and shall not be 
+subsequently used for any purpose.
+
+\newpage
+\subsubsection{Implicit-handle synchronization functions}
+\def\bfunc{upc\_synci\_attempt}
+\funcheader
+
+\begin{verbatim}
+int upc_synci_attempt( void );
+\end{verbatim}
+
+{\bf Description}
+
+\np The \func function always returns immediately, without blocking.
+It returns non-zero if all implicit-handle transfers
+previously initiated by the calling thread (but not yet synchronized) are complete, 
+thereby ending those transfer intervals. Otherwise, it returns 0.
+
+\np If there are no such pending implicit-handle transfers, the function returns non-zero.
+
+\np The \func function does not complete explicit-handle transfers.
+
+\def\bfunc{upc\_synci}
+\funcheader
+
+\begin{verbatim}
+void upc_synci( void );
+\end{verbatim}
+
+{\bf Description}
+
+\np The \func function does not return until all implicit-handle transfers
+previously initiated by the calling thread (but not yet synchronized) are complete, 
+thereby ending those transfer intervals.
+
+\np If there are no such pending implicit-handle transfers, the function returns immediately.
+
+\np The \func function does not complete explicit-handle transfers.
+
